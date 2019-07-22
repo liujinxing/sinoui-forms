@@ -1,6 +1,78 @@
 # sinoui-forms
 
-这是由[ts-lib-scripts](https://github.com/sinoui/ts-lib-scripts)创建的TypeScript库项目。
+主要用于表单状态管理。
+
+`useFormState`提供以下功能：
+
+- 表单值变更处理
+- 表单校验
+- 表单提交
+- 嵌套表单
+- 表单域值关联
+
+## 依赖安装
+
+```shell
+yarn add sinoui-forms
+```
+
+或
+
+```shell
+npm install --save sinoui-forms
+```
+
+## 快速使用
+
+```tsx
+import React from 'react';
+import useFormState, {
+  FormItem,
+  Field,
+  Label,
+  FormStateContext,
+} from 'sinoui-forms';
+import Button from 'sinoui-components/Button';
+import http from '@sinoui/http';
+
+function validate(values: any) {
+  let error: any = {};
+
+  if (values.password && values.password.length < 8) {
+    error['password'] = '不能少于8个字符';
+  }
+
+  return error;
+}
+
+const onSubmit = (values: any) => {
+  http.post('/test/login', values);
+};
+
+function FormDemo() {
+  const defaultValues = {};
+  const formState = useFormState(defaultValues, { validate, onSubmit });
+
+  return (
+    <FormStateContext.Provider value={formState}>
+      <FormItem>
+        <Label>用户名</Label>
+        <Field as="input" name="userName" required />
+      </FormItem>
+      <FormItem>
+        <Label>密码</Label>
+        <Field
+          as="input"
+          name="password"
+          required
+          compProps={{ type: 'password' }}
+        />
+      </FormItem>
+      <Button onClick={() => formState.onSubmit()}>登录</Button>
+    </FormStateContext.Provider>
+  );
+}
+```
 
 ## 本地开发
 
