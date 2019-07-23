@@ -3,6 +3,10 @@ import { useContext, useMemo } from 'react';
 import { get } from 'lodash';
 import FormStateContext from './FormStateContext';
 
+/**
+ * 获取表单域校验结果的hook
+ * @param name 表单域名称
+ */
 function useFieldError(name?: string) {
   const { errors, asyncErrors } = useContext(FormStateContext);
 
