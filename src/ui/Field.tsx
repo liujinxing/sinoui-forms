@@ -86,9 +86,8 @@ function InnerField(props: InnerFieldProps) {
   }, [name, addField, removeField]);
 
   const renderField = useCallback(() => {
-    const Comp: React.ReactNode = render
-      ? render({ setFieldValue: onChange, id, name })
-      : null;
+    const Comp: React.ReactNode =
+      render && render({ setFieldValue: onChange, id, name });
 
     return Comp;
   }, [id, name, onChange, render]);

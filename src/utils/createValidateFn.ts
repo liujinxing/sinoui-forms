@@ -1,4 +1,5 @@
-/* eslint-disable no-restricted-globals */
+import isNaN from 'lodash/isNaN';
+
 function createValidateFn(props: FieldValidateProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (value: any, values: any) => {

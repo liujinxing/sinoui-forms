@@ -3,6 +3,9 @@ import useFieldError from '../useFieldError';
 import FormItemContext from '../FormItemContext';
 import useFieldTouched from '../useFieldTouched';
 
+/**
+ * 渲染表单域错误信息
+ */
 function FieldError() {
   const { name, fields } = useContext(FormItemContext);
   const fieldName = useMemo(

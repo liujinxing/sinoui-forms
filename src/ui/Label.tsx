@@ -31,6 +31,10 @@ function InnerLabel(props: Props) {
 
 const MemoInnerLabel = React.memo(InnerLabel);
 
+/**
+ * 表单域标签
+ * @param props
+ */
 function Label(props: Omit<Props, 'id' | 'name'>) {
   const { id, name, fields } = useContext(FormItemContext);
   const fieldName = useMemo(
