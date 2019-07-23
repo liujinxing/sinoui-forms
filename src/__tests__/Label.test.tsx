@@ -13,22 +13,22 @@ const formState = {
   asyncErrors: {},
   isPending: {},
   isTouched: { userName: true },
-  setValue: () => console.log('李四'),
-  addField: () => {},
-  removeField: () => {},
-  setValues: (values: any) => console.log(values),
-  setTouched: (touched: FormTouched) => console.log(touched),
-  setErrors: (errors: any) => console.log(errors),
-  setAsyncErrors: (asyncErrors: any) => console.log(asyncErrors),
-  setPending: (pending: FormPending) => console.log(pending),
+  setValue: jest.fn(),
+  addField: jest.fn(),
+  removeField: jest.fn(),
+  setValues: jest.fn(),
+  setTouched: jest.fn(),
+  setErrors: jest.fn(),
+  setAsyncErrors: jest.fn(),
+  setPending: jest.fn(),
 };
 
 const formItemState = {
   name: 'userName',
   fields: ['userName', 'password'],
   id: 1,
-  addField: () => {},
-  removeField: () => {},
+  addField: jest.fn(),
+  removeField: jest.fn(),
 };
 
 afterEach(cleanup);
