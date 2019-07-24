@@ -1,0 +1,82 @@
+---
+name: 登录
+route: /login
+---
+
+import { Playground } from 'docz';
+import useFormState, { FormItem, Label, Field, FormStateContext } from '../src';
+
+# 登录
+
+登录是表单状态管理相对简单的一种场景，我们只需要指定一个`onSubmit`方法，在点击登录按钮时，调用一下`formState.onSubmit()`方法即可。
+
+代码示例：
+
+```tsx
+import React from 'raect';
+import useFormState, { FormItem, Label, Field, FormStateContext } from '../src';
+
+function LoginForm() {
+  const onSubmit = (values) => {
+    alert(JSON.stringify(values));
+  };
+  const formState = useFormState({}, { onSubmit });
+
+  return (
+    <FormStateContext.Provider value={formState}>
+      <div>
+        <FormItem>
+          <Label>用户名</Label>
+          <Field as="input" name="userName" required />
+        </FormItem>
+
+        <FormItem>
+          <Label>密码</Label>
+          <Field
+            as="input"
+            name="password"
+            compProps={{ type: 'password' }}
+            required
+          />
+        </FormItem>
+        <button onClick={() => formState.onSubmit()}>登录</button>
+      </div>
+    </FormStateContext.Provider>
+  );
+}
+```
+
+运行效果：
+
+<Playground>
+  {() => {
+    const onSubmit = (values) => {
+        alert(JSON.stringify(values));
+    };
+    const formState = useFormState({}, { onSubmit });
+    return (
+      <FormStateContext.Provider value={formState}>
+        <div>
+          <FormItem>
+            <Label>用户名</Label>
+            <Field as="input" name="userName" required />
+           </FormItem>
+
+          <FormItem>
+            <Label>密码</Label>
+            <Field
+              as="input"
+              name="password"
+              compProps={{ type: 'password' }}
+              required
+            />
+          </FormItem>
+        <button onClick={() => formState.onSubmit()}>登录</button>
+      </div>
+    </FormStateContext.Provider>
+
+    );
+
+}}
+
+</Playground>

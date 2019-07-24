@@ -1,5 +1,7 @@
 import React from 'react';
-import './Wrapper.css'
+import { ThemeProvider } from 'sinoui-components/styles';
+import defaultTheme from 'sinoui-components/styles/defaultTheme';
+import './Wrapper.css';
 
 interface WrapperProps {
   children: React.ReactNode;
@@ -7,5 +9,5 @@ interface WrapperProps {
 
 export default function Wrapper(props: WrapperProps) {
   const { children } = props;
-  return <>{children}</>;
+  return <ThemeProvider theme={defaultTheme}>{children}</ThemeProvider>;
 }
