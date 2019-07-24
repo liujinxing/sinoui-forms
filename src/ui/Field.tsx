@@ -47,9 +47,8 @@ function useFieldConfigSync(props: Props) {
   }, [props]);
 
   useEffect(() => {
-    const { name } = props;
     addField({
-      name,
+      name: propsRef.current.name,
       validate: createValidateFn(propsRef.current),
       asyncValidate: propsRef.current.asyncValidate,
       relyFieldsName: propsRef.current.relyFieldsName,
@@ -57,9 +56,9 @@ function useFieldConfigSync(props: Props) {
     });
 
     return () => {
-      removeField(name);
+      removeField(propsRef.current.name);
     };
-  }, [addField, removeField, props]);
+  }, [addField, removeField]);
 }
 
 function InnerField(props: InnerFieldProps) {
