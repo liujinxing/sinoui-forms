@@ -6,6 +6,7 @@ import { get, set } from 'lodash';
 import calcNewValues from './utils/calcNewValues';
 import reducer, { Reducer, State } from './reducer';
 import isError from './utils/isError';
+import { FieldConfig, FormErrors, FormPending, FormTouched } from './types';
 
 interface Options {
   validate?: any;

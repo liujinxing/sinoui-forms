@@ -11,6 +11,7 @@ import { get } from 'lodash';
 import FormItemContext from '../FormItemContext';
 import FormStateContext from '../FormStateContext';
 import createValidateFn from '../utils/createValidateFn';
+import { FieldValidateProps } from '../types';
 
 interface Props extends FieldValidateProps {
   name: string;

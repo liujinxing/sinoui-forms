@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { renderHook } from '@testing-library/react-hooks';
-import debounce from 'lodash/debounce';
 import useFormState from '../useFormState';
-
-jest.useFakeTimers();
 
 const defaultValue = {
   userName: '张三',
@@ -237,10 +234,10 @@ it('表单提交失败', async () => {
   expect(result.current.isSubmit).toBeFalsy();
 });
 
-xit('表单异步校验', async () => {
+it('表单异步校验', async () => {
   const validateFn = jest.fn();
 
-  const { result } = renderHook(() =>
+  const { result, waitForNextUpdate } = renderHook(() =>
     useFormState({}, { validate: validateFn }),
   );
 
@@ -252,11 +249,15 @@ xit('表单异步校验', async () => {
   result.current.addField({
     name: 'userId',
     validate: jest.fn(),
-    asyncValidate: debounce(() => jest.fn().mockResolvedValue(undefined), 200),
+    asyncValidate: jest.fn().mockResolvedValue(undefined),
   });
 
-  await result.current.setValue('userId', '123');
   await result.current.setValue('userName', '');
+
+  jest.runAllTimers();
+
+  await waitForNextUpdate();
+  await waitForNextUpdate();
 
   expect(result.current.asyncErrors).toEqual({ userName: '必填' });
 });

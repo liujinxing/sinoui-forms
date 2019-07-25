@@ -1,6 +1,5 @@
-// / <reference types="react-scripts" />
-
-interface FieldValidateProps {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export interface FieldValidateProps {
   /**
    * 指定表单域校验函数
    */
@@ -58,7 +57,7 @@ interface FieldValidateProps {
   title?: string;
 }
 
-interface FieldConfig {
+export interface FieldConfig {
   name: string;
   validate(value: any, values: any): string | undefined | null;
   valueExtract?: (event: any) => any;
@@ -70,19 +69,19 @@ interface FieldConfig {
   relyFn?: (values: any) => any;
 }
 
-interface FormErrors {
+export interface FormErrors {
   [fieldName: string]: string | undefined | FormErrors | FormErrors[];
 }
 
-interface FormTouched {
+export interface FormTouched {
   [fieldName: string]: boolean | undefined | FormTouched | FormTouched[];
 }
 
-interface FormPending {
+export interface FormPending {
   [fieldName: string]: boolean | undefined | FormPending | FormTouched[];
 }
 
-interface FormState<T> {
+export interface FormState<T> {
   values: T;
   errors: FormErrors;
   asyncErrors: FormErrors;

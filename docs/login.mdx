@@ -4,7 +4,7 @@ route: /login
 ---
 
 import { Playground } from 'docz';
-import useFormState, { FormItem, Label, Field, FormStateContext } from '../src';
+import Form, { useFormState, FormItem, Label, Field } from '../src';
 
 # 登录
 
@@ -13,8 +13,8 @@ import useFormState, { FormItem, Label, Field, FormStateContext } from '../src';
 代码示例：
 
 ```tsx
-import React from 'raect';
-import useFormState, { FormItem, Label, Field, FormStateContext } from '../src';
+import React from 'react';
+import Form, { useFormState, FormItem, Label, Field } from 'sinoui-forms';
 
 function LoginForm() {
   const onSubmit = (values) => {
@@ -23,25 +23,23 @@ function LoginForm() {
   const formState = useFormState({}, { onSubmit });
 
   return (
-    <FormStateContext.Provider value={formState}>
-      <div>
-        <FormItem>
-          <Label>用户名</Label>
-          <Field as="input" name="userName" required />
-        </FormItem>
+    <Form formState={formState} onSubmit={formState.onSubmit}>
+      <FormItem>
+        <Label>用户名</Label>
+        <Field as="input" name="userName" required />
+      </FormItem>
 
-        <FormItem>
-          <Label>密码</Label>
-          <Field
-            as="input"
-            name="password"
-            compProps={{ type: 'password' }}
-            required
-          />
-        </FormItem>
-        <button onClick={() => formState.onSubmit()}>登录</button>
-      </div>
-    </FormStateContext.Provider>
+      <FormItem>
+        <Label>密码</Label>
+        <Field
+          as="input"
+          name="password"
+          compProps={{ type: 'password' }}
+          required
+        />
+      </FormItem>
+      <button type="submit">登录</button>
+    </Form>
   );
 }
 ```
@@ -55,26 +53,23 @@ function LoginForm() {
     };
     const formState = useFormState({}, { onSubmit });
     return (
-      <FormStateContext.Provider value={formState}>
-        <div>
-          <FormItem>
-            <Label>用户名</Label>
-            <Field as="input" name="userName" required />
-           </FormItem>
+      <Form formState={formState} onSubmit={formState.onSubmit}>
+      <FormItem>
+        <Label>用户名</Label>
+        <Field as="input" name="userName" required />
+      </FormItem>
 
-          <FormItem>
-            <Label>密码</Label>
-            <Field
-              as="input"
-              name="password"
-              compProps={{ type: 'password' }}
-              required
-            />
-          </FormItem>
-        <button onClick={() => formState.onSubmit()}>登录</button>
-      </div>
-    </FormStateContext.Provider>
-
+      <FormItem>
+        <Label>密码</Label>
+        <Field
+          as="input"
+          name="password"
+          compProps={{ type: 'password' }}
+          required
+        />
+      </FormItem>
+      <button type="submit">登录</button>
+    </Form>
     );
 
 }}
