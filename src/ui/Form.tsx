@@ -10,10 +10,20 @@ interface Props {
 }
 
 export default function Form(props: Props) {
-  const { formState, children, ...others } = props;
+  const { formState, children, onSubmit, ...others } = props;
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (onSubmit) {
+      onSubmit(formState.values);
+    }
+  };
+
   return (
     <FormStateContext.Provider value={formState}>
-      <form {...others}>{children}</form>
+      <form onSubmit={handleSubmit} {...others}>
+        {children}
+      </form>
     </FormStateContext.Provider>
   );
 }
