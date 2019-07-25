@@ -3,6 +3,15 @@ name: 开始
 route: /
 ---
 
+import { Playground } from 'docz';
+import Form, {
+  useFormState,
+  FormItem,
+  Field,
+  Label,
+  FormStateContext,
+} from '../src';
+
 # 表单状态管理
 
 安装：
@@ -20,12 +29,7 @@ npm install --save sinoui-forms
 引用：
 
 ```ts
-import useFormState, {
-  FormItem,
-  Field,
-  Label,
-  FormStateContext,
-} from 'sinoui-forms';
+import Form, { useFormState, FormItem, Field, Label } from 'sinoui-forms';
 ```
 
 源码路径：[https://github.com/sinoui/sinoui-forms](https://github.com/sinoui/sinoui-forms)。
@@ -50,19 +54,14 @@ import useFormState, {
 
 ```tsx
 import React from 'react';
-import useFormState, {
-  FormItem,
-  Field,
-  Label,
-  FormStateContext,
-} from 'sinoui-forms';
+import Form, { useFormState, FormItem, Field, Label } from 'sinoui-forms';
 
 function FormDemo() {
   const defaultValues = {};
-  const formState = useFormState(defaultValues, {});
+  const formState = useFormState(defaultValues);
 
   return (
-    <FormStateContext.Provider value={formState}>
+    <Form formState={formState}>
       <FormItem>
         <Label>用户名</Label>
         <Field as="input" name="userName" />
@@ -72,10 +71,37 @@ function FormDemo() {
         <Field as="input" name="password" compProps={{ type: 'password' }} />
       </FormItem>
       <div>表单值：{JSON.stringify(formState.values, undefined, 2)}</div>
-    </FormStateContext.Provider>
+    </Form>
   );
 }
 ```
+
+运行效果：
+
+<Playground>
+  {
+    ()=>{
+      const defaultValues = {};
+      const formState = useFormState(defaultValues);
+
+      return (
+        <Form formState={formState}>
+          <FormItem>
+            <Label>用户名</Label>
+            <Field as="input" name="userName" />
+          </FormItem>
+          <FormItem>
+            <Label>密码</Label>
+            <Field as="input" name="password" compProps={{ type: 'password' }} />
+            </FormItem>
+          <div>表单值：{JSON.stringify(formState.values, undefined, 2)}</div>
+        </Form>
+      );
+    }
+
+}
+
+</Playground>
 
 ## 表单校验
 
@@ -96,12 +122,7 @@ function FormDemo() {
 
 ```tsx
 import React from 'react';
-import useFormState, {
-  FormItem,
-  Field,
-  Label,
-  FormStateContext,
-} from 'sinoui-forms';
+import Form, { FormItem, Field, Label, useFormState } from 'sinoui-forms';
 
 /**
  * 定义全局表单校验规则
@@ -111,8 +132,8 @@ function validate(values: any) {
   let error: any = {};
 
   if (values.userName) {
-    const start = values.userName.substring(0, 1);
-    if (typeof start === number) {
+    const arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    if (arr.findIndex((item) => values.userName.startsWith(item)) !== -1) {
       error['userName'] = '不能以数字开头';
     }
   }
@@ -125,7 +146,7 @@ function FormDemo() {
   const formState = useFormState(defaultValues, { validate });
 
   return (
-    <FormStateContext.Provider value={formState}>
+    <Form formState={formState}>
       <FormItem>
         <Label>用户名</Label>
         <Field as="input" name="userName" required />
@@ -140,10 +161,52 @@ function FormDemo() {
           compProps={{ type: 'password' }}
         />
       </FormItem>
-    </FormStateContext.Provider>
+    </Form>
   );
 }
 ```
+
+运行效果：
+
+<Playground>
+  {()=>{
+    function validate(values) {
+      let error = {};
+
+      if (values.userName) {
+        const arr = ['0','1','2','3','4','5','6','7','8','9'];
+        if (arr.findIndex(item=>values.userName.startsWith(item)) !==-1) {
+            error['userName'] = '不能以数字开头';
+        }
+      }
+      return error;
+    }
+
+    const defaultValues = {};
+    const formState = useFormState(defaultValues, { validate });
+
+    return (
+      <Form formState={formState}>
+        <FormItem>
+          <Label>用户名</Label>
+          <Field as="input" name="userName" required />
+        </FormItem>
+        <FormItem>
+          <Label>密码</Label>
+          <Field
+            as="input"
+            name="password"
+            required
+            minLength={8}
+            compProps={{ type: 'password' }}
+          />
+        </FormItem>
+      </Form>
+    );
+
+}}
+
+</Playground>
 
 ## 自定义表单域
 
@@ -173,20 +236,15 @@ export default Select;
 
 ```tsx
 import React from 'react';
-import useFormState, {
-  FormItem,
-  Field,
-  Label,
-  FormStateContext,
-} from 'sinoui-forms';
+import Form, { FormItem, Field, Label, useFormState } from 'sinoui-forms';
 import Select from './Select';
 
 function FormDemo() {
   const defaultValues = {};
-  const formState = useFormState(defaultValues, {});
+  const formState = useFormState(defaultValues);
 
   return (
-    <FormStateContext.Provider value={formState}>
+    <Form formState={formState}>
       <FormItem>
         <Label>姓名</Label>
         <Field as="input" name="userName" />
@@ -200,10 +258,38 @@ function FormDemo() {
           <option value="深圳">深圳</option>
         </Select>
       </FormItem>
-    </FormStateContext.Provider>
+    </Form>
   );
 }
 ```
+
+运行效果：
+
+<Playground>
+  {()=>{
+    const formState = useFormState({});
+
+    return (
+      <Form formState={formState}>
+        <FormItem>
+          <Label>姓名</Label>
+          <Field as="input" name="userName" />
+        </FormItem>
+        <FormItem>
+          <Label>所在城市</Label>
+          <Field as="select" name="city" compProps={{ style: { width: 160 } }}>
+            <option value="北京">北京</option>
+            <option value="上海">上海</option>
+            <option value="广州">广州</option>
+            <option value="深圳">深圳</option>
+          </Field>
+        </FormItem>
+      </Form>
+    )
+
+}}
+
+</Playground>
 
 ## 一次性设置多个表单域的值
 
@@ -214,19 +300,14 @@ function FormDemo() {
 
 ```tsx
 import React from 'react';
-import useFormState, {
-  FormItem,
-  Field,
-  Label,
-  FormStateContext,
-} from 'sinoui-forms';
+import Form, { FormItem, Field, Label, useFormState } from 'sinoui-forms';
 
 function FormDemo() {
   const defaultValues = {};
-  const formState = useFormState(defaultValues, {});
+  const formState = useFormState(defaultValues);
 
   return (
-    <FormStateContext.Provider value={formState}>
+    <Form formState={formState}>
       <FormItem>
         <Label>公文标题</Label>
         <Field as="input" name="title" />
@@ -254,10 +335,52 @@ function FormDemo() {
         />
       </FormItem>
       <div>表单值：{JSON.stringify(formState.values, undefined, 2)}</div>
-    </FormStateContext.Provider>
+    </Form>
   );
 }
 ```
+
+运行效果：
+
+<Playground>
+  {() => {
+    const formState = useFormState({});
+    return (
+      <Form formState={formState}>
+        <FormItem>
+          <Label>公文标题</Label>
+          <Field as="input" name="title" />
+        </FormItem>
+        <FormItem>
+          <Label>紧急程度</Label>
+          <Field
+            name="jjcd"
+            render={({ setFieldValue, id, name }) => {
+              return (
+                <select
+                  style={{ width: 160 }}
+                  onChange={(event) => {
+                    setFieldValue('jjcdNum', event.target.value);
+                    setFieldValue(
+                      'jjcd',
+                      event.target.selectedOptions[0].label,
+                    );
+                  }}
+                >
+                  <option value="001">急</option>
+                  <option value="002">特急</option>
+                  <option value="003">限时</option>
+                  <option value="004">特提</option>
+                </select>
+              );
+            }}
+          />
+        </FormItem>
+        <div>表单值：{JSON.stringify(formState.values, undefined, 2)}</div>
+      </Form>
+    );
+  }}
+</Playground>
 
 ## 表单域值关联
 
@@ -265,12 +388,7 @@ function FormDemo() {
 
 ```tsx
 import React from 'react';
-import useFormState, {
-  FormItem,
-  Field,
-  Label,
-  FormStateContext,
-} from 'sinoui-forms';
+import Form, { FormItem, Field, Label, useFormState } from 'sinoui-forms';
 
 function relyFn(values) {
   if (!values.firstName) {
@@ -289,7 +407,7 @@ function FormDemo() {
   const formState = useFormState(defaultValues, {});
 
   return (
-    <FormStateContext.Provider value={formState}>
+    <Form formState={formState}>
       <FormItem>
         <Label>姓氏</Label>
         <Field as="input" name="firstName" />
@@ -310,10 +428,57 @@ function FormDemo() {
         />
       </FormItem>
       <div>表单值：{JSON.stringify(formState.values, undefined, 2)}</div>
-    </FormStateContext.Provider>
+    </Form>
   );
 }
 ```
+
+运行效果：
+
+<Playground>
+  {()=>{
+    function relyFn(values) {
+      if (!values.firstName) {
+        return values.lastName || '';
+      }
+
+      if (!values.lastName) {
+        return values.firstName || '';
+      }
+
+      return `${values.firstName}${values.lastName}`;
+    }
+
+    const formState = useFormState({});
+
+    return (
+      <Form formState={formState}>
+        <FormItem>
+          <Label>姓氏</Label>
+          <Field as="input" name="firstName" />
+        </FormItem>
+        <FormItem>
+          <Label>名字</Label>
+          <Field as="input" name="lastName" />
+        </FormItem>
+
+        <FormItem>
+          <Label>用户名</Label>
+          <Field
+            as="input"
+            name="userName"
+            relyFieldsName={['firstName', 'lastName']}
+            relyFn={relyFn}
+            compProps={{ disabled: true }}
+          />
+        </FormItem>
+        <div>表单值：{JSON.stringify(formState.values, undefined, 2)}</div>
+      </Form>
+    )
+
+}}
+
+</Playground>
 
 ## 表单提交
 
@@ -323,21 +488,15 @@ function FormDemo() {
 
 ```tsx
 import React from 'react';
-import useFormState, {
-  FormItem,
-  Field,
-  Label,
-  FormStateContext,
-} from 'sinoui-forms';
-import Button from 'sinoui-components/Button';
+import Form, { FormItem, Field, Label, useFormState } from 'sinoui-forms';
 import http from '@sinoui/http';
 
 function validate(values: any) {
   let error: any = {};
 
   if (values.userName) {
-    const start = values.userName.substring(0, 1);
-    if (typeof start === number) {
+    const arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    if (arr.findIndex((item) => values.userName.startsWith(item)) !== -1) {
       error['userName'] = '不能以数字开头';
     }
   }
@@ -358,7 +517,7 @@ function FormDemo() {
   const formState = useFormState(defaultValues, { validate, onSubmit });
 
   return (
-    <FormStateContext.Provider value={formState}>
+    <Form formState={formState} onSubmit={formState.onSubmit}>
       <FormItem>
         <Label>用户名</Label>
         <Field as="input" name="userName" required />
@@ -373,11 +532,58 @@ function FormDemo() {
           compProps={{ type: 'password' }}
         />
       </FormItem>
-      <Button onClick={() => formState.onSubmit()}>登录</Button>
-    </FormStateContext.Provider>
+      <button type="submit">登录</button>
+    </Form>
   );
 }
 ```
+
+运行效果：
+
+<Playground>
+  {()=>{
+    function validate(values) {
+      let error = {};
+
+      if (values.userName) {
+        const arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        if (arr.findIndex((item) => values.userName.startsWith(item)) !== -1) {
+          error['userName'] = '不能以数字开头';
+        }
+      }
+
+      return error;
+    }
+
+    const onSubmit = (values) => {
+      alert(`要提交的表单值为：${JSON.stringify(values)}`);
+    };
+
+     const formState = useFormState({}, { validate, onSubmit });
+
+     return (
+       <Form formState={formState} onSubmit={formState.onSubmit}>
+        <FormItem>
+          <Label>用户名</Label>
+          <Field as="input" name="userName" required />
+        </FormItem>
+        <FormItem>
+          <Label>密码</Label>
+          <Field
+            as="input"
+            name="password"
+            required
+            minLength={8}
+            compProps={{ type: 'password' }}
+          />
+        </FormItem>
+        <button type="submit">登录</button>
+      </Form>
+     )
+
+}}
+
+</Playground>
 
 ## 嵌套表单
 
