@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { produce } from 'immer';
 import { get, set } from 'lodash';
+import { FormErrors, FormPending, FormTouched } from './types';
 
 export interface State<T = any> {
   values: T;
