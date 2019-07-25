@@ -126,7 +126,7 @@ export interface FieldStateModel<T = any> {
  * @export
  * @template T
  */
-export interface FormState<T> {
+export interface FormState<T = any> {
   /**
    * 表单状态
    */
