@@ -1,3 +1,4 @@
+import { FormErrors } from '../types';
 /**
  * 是否包含错误信息
  *
@@ -10,6 +11,7 @@ function isError(errors: FormErrors) {
     const error = errors[key];
     if (Array.isArray(error)) {
       if (
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         error.some((item: any) =>
           typeof item === 'string' || item != null ? isError(item) : false,
         )

@@ -1,4 +1,5 @@
 import isNaN from 'lodash/isNaN';
+import { FieldValidateProps } from '../types';
 
 function createValidateFn(props: FieldValidateProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

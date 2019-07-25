@@ -3,6 +3,7 @@ import FormItem from './ui/FormItem';
 import Field from './ui/Field';
 import Label from './ui/Label';
 import FormStateContext from './FormStateContext';
+import Form from './ui/Form';
 
-export default useFormState;
-export { FormItem, Field, Label, FormStateContext };
+export default Form;
+export { FormItem, Field, Label, FormStateContext, useFormState };

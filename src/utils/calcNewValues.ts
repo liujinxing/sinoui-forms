@@ -1,6 +1,7 @@
 /* eslint-disable no-continue */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { get, set } from 'lodash';
+import { FieldConfig } from '../types';
 
 export interface ValuesType {
   [name: string]: any;
