@@ -18,12 +18,16 @@ function useBehaviorSubjectSelect<T, U>(
   const [value, setValue] = useState(() => selector(subject.value));
 
   useEffect(() => {
-    subject
+    const subscription = subject
       .pipe(
         map(selector),
         distinctUntilChanged(isEquare),
       )
       .subscribe(setValue);
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [subject, selector]);
 
   return value;
