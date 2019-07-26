@@ -6,9 +6,9 @@ import useFormStateContext from './useFormStateContext';
  *
  * @param fieldName 表单域名称
  */
-function useFieldState(fieldName: string) {
+function useFieldState<T>(fieldName: string) {
   const formState = useFormStateContext();
-  return useBehaviorSubject(formState.getFieldState$(fieldName));
+  return useBehaviorSubject(formState.getFieldState$<T>(fieldName));
 }
 
 export default useFieldState;

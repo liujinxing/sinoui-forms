@@ -1,6 +1,67 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BehaviorSubject } from 'rxjs';
 
+/**
+ * 表单域内置校验属性
+ */
+export interface FieldValidateProps {
+  /**
+   * 指定表单域校验函数
+   */
+  validate?: (values: any) => string | undefined | null;
+
+  /**
+   * 是否必填
+   */
+  required?: boolean;
+
+  /**
+   * 不包含空白符的必填校验
+   */
+  trimRequired?: boolean;
+
+  /**
+   * 指定最小值
+   */
+  min?: number;
+
+  /**
+   * 指定最大值
+   */
+  max?: number;
+
+  /**
+   * 字符串最大长度
+   */
+  maxlength?: number;
+
+  /**
+   * 字符串最小长度
+   *
+   * @type {number}
+   * @memberof Props
+   */
+  minlength?: number;
+
+  /**
+   * 正则校验
+   *
+   * @type {string}
+   * @memberof Props
+   */
+  pattern?: string;
+
+  /**
+   * 正则校验失败的错误信息
+   */
+  patternErrorMessage?: string;
+
+  /**
+   * 标题提示语
+   */
+  title?: string;
+}
+
 export interface FieldConfig {
   /**
    * 表单域名称
@@ -20,7 +81,7 @@ export interface FieldConfig {
    * @param {*} value 表单域值
    * @param {*} values 表单值
    *
-   * @returns {(string | undefined | null | Promise<string | undefined> | Observable<string | undefined>)} 返回校验结果
+   * @returns {(string | undefined | null | Promise<string | undefined>} 返回校验结果
    */
   asyncValidate?: (value: any, values: any) => Promise<string | undefined>;
   /**
@@ -243,7 +304,9 @@ export interface FormState<T = any> {
    * @param {string} fieldName 表单域名称
    * @returns 返回表单域状态的可观察对象
    */
-  getFieldState$<M = any>(fieldName: string): BehaviorSubject<M>;
+  getFieldState$<M = any>(
+    fieldName: string,
+  ): BehaviorSubject<FieldStateModel<M>>;
 
   /**
    * 设置表单域状态
@@ -324,4 +387,23 @@ export interface FormState<T = any> {
    * @param {string} fieldName
    */
   removeField(fieldName: string): void;
+}
+
+/**
+ * 表单域模型
+ */
+export interface FieldModel<T> extends FieldStateModel<T> {
+  formState: FormState;
+  addField: FormState['addField'];
+  removeField: FormState['removeField'];
+  setFieldValue: (value: T) => void;
+  blur: () => void;
+  validateField: () => void;
+  setFieldState: (
+    producer: (draft: FieldStateModel<T>) => void,
+  ) => FieldStateModel<T>;
+  setFieldTouched: (isTouched?: boolean) => void;
+  setError: (error?: string) => void;
+  setAsyncError: (asyncError?: string) => void;
+  setFieldPending: (isPending: boolean) => void;
 }
