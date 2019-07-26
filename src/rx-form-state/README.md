@@ -73,7 +73,7 @@ interface FormState<T> {
 ```typescript
 const formState = createFormState();
 
-formState.formState.subscribe((formState) => {
+formState.formState$.subscribe((formState) => {
   console.log(formState);
 });
 
@@ -97,11 +97,32 @@ formState.setFieldTouched('address.city', true);
 formState.setFieldError('address.city', undefined);
 formState.setFieldAsyncError('address.city', undefined);
 formState.setFieldPending('address.city', true);
-formState.handleFieldBlur('adress.city');
+formState.blur('adress.city');
 
 // 表单域配置
 formState.addField({...});
 formState.removeField(fieldName);
+```
+
+```tsx
+function beginEndTimeValidate(value, values) {
+  const { startTime, endTime } = values;
+
+  if (startTime && endTime && startTime > endTime) {
+    return '开始时间不能大于结束时间';
+  }
+}
+
+function Demo() {
+  const formState = useFormState();
+
+  return (
+    <FormStateContext.Provider value={formState}>
+      <Field name="startTime" validate={beginEndTimeValidate} />
+      <Field name="endTime" validate={beginEndTimeValidate} />
+    </FormStateContext.Provider>
+  );
+}
 ```
 
 ## 关于 React 调度器优化
@@ -168,13 +189,20 @@ import { from } from 'rxjs';
 const observable = from([1, 2, 3]);
 
 // 订阅可观察对象
-observable.subscribe((value) => {
-  console.log(value);
-});
+observable.subscribe(
+  (value) => {
+    console.log(value);
+  },
+  undefined,
+  () => {
+    console.log('completed');
+  },
+);
 /* 输出：
 1
 2
 3
+completed
 */
 ```
 
