@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useCallback, useEffect } from 'react';
@@ -8,7 +9,7 @@ import { FieldValidateProps, FieldModel } from './types';
 import createValidateFn from '../utils/createValidateFn';
 import useFormStateContext from './useFormStateContext';
 
-interface Props<T = any> extends FieldValidateProps {
+interface FieldConfig<T = any> extends FieldValidateProps {
   /**
    * 表单域名称。可以指定路径。
    *
@@ -69,6 +70,15 @@ function defaultValueExtract<T>(
   return isEvent(event) ? event.target.value : event;
 }
 
+type GenericFieldHTMLAttributes =
+  | JSX.IntrinsicElements['input']
+  | JSX.IntrinsicElements['select']
+  | JSX.IntrinsicElements['textarea'];
+
+type Props<AsCompProps = {}, T = any> = FieldConfig<T> &
+  AsCompProps &
+  GenericFieldHTMLAttributes;
+
 /**
  * 设置表单域配置hook
  *
@@ -95,42 +105,72 @@ function useSetFieldConfig(props: Props) {
 /**
  * 表单域组件
  */
-function Field<T = string>(props: Props<T>) {
+const ForwardRefField = React.forwardRef(function Field<
+  AsCompProps = {},
+  T = string
+>(props: Props<AsCompProps, T>, ref: React.Ref<any>) {
   const {
     as: AsComp,
     render,
     name,
     defaultValue,
     valueExtract = defaultValueExtract,
+    asyncValidate,
+    relyFieldsName,
+    relyFn,
+    validate,
+    required,
+    onChange,
+    onBlur,
+    ...rest
   } = props;
   const field = useField<any>(name);
   const { setFieldValue, value = defaultValue, blur, isTouched, error } = field;
   const valueExtractRef = useValueRef(valueExtract);
+  const onChangeRef = useValueRef<any>(onChange);
+  const onBlurRef = useValueRef<any>(onBlur);
 
   useSetFieldConfig(props);
 
   const handleChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement> | T) => {
+    (event: React.ChangeEvent<HTMLInputElement> | T, ...args: any[]) => {
       const newValue = valueExtractRef.current(event);
 
       setFieldValue(newValue);
+
+      if (onChangeRef.current) {
+        onChangeRef.current(event as any, ...args);
+      }
     },
-    [setFieldValue, valueExtractRef],
+    [onChangeRef, setFieldValue, valueExtractRef],
+  );
+
+  const handleBlur = useCallback(
+    (event: any) => {
+      blur();
+
+      if (onBlurRef.current) {
+        onBlurRef.current(event);
+      }
+    },
+    [blur, onBlurRef],
   );
 
   if (render) {
-    return render(field);
+    return render(field) as JSX.Element;
   }
 
   if (AsComp) {
     return (
       <AsComp
+        {...rest}
         data-testid="field-comp"
         name={name}
         value={value === undefined ? defaultValue : value}
-        onBlur={blur}
+        onBlur={handleBlur}
         onChange={handleChange}
         data-error={isTouched && !!error}
+        ref={ref}
       />
     );
   }
@@ -140,6 +180,6 @@ function Field<T = string>(props: Props<T>) {
   }
 
   return null;
-}
+});
 
-export default Field;
+export default ForwardRefField;

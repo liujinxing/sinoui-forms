@@ -131,3 +131,34 @@ it('email校验', () => {
 
   expect(getByTestId('error')).toHaveTextContent('不符合邮件地址规则。');
 });
+
+it('onChange', () => {
+  const onChange = jest.fn();
+  const { getByTestId } = render(
+    <Wrapper initialValues={{ email: 'xx' }}>
+      <Field as="input" name="email" onChange={onChange} />
+    </Wrapper>,
+  );
+
+  const event = {
+    target: {
+      value: 'xx2',
+    },
+  };
+  fireEvent.change(getByTestId('field-comp'), event);
+
+  expect(onChange).toBeCalled();
+});
+
+it('onBlur', () => {
+  const onBlur = jest.fn();
+  const { getByTestId } = render(
+    <Wrapper>
+      <Field as="input" name="email" onBlur={onBlur} />
+    </Wrapper>,
+  );
+
+  fireEvent.blur(getByTestId('field-comp'));
+
+  expect(onBlur).toBeCalled();
+});
