@@ -70,7 +70,12 @@ export interface FieldConfig {
 }
 
 export interface FormErrors {
-  [fieldName: string]: string | undefined | FormErrors | FormErrors[];
+  [fieldName: string]:
+    | string
+    | undefined
+    | FormErrors
+    | FormErrors[]
+    | (string | undefined)[];
 }
 
 export interface FormTouched {
