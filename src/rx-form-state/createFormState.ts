@@ -1,7 +1,12 @@
 /* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BehaviorSubject, Subject } from 'rxjs';
-import { map, debounceTime, mergeMap } from 'rxjs/operators';
+import {
+  map,
+  debounceTime,
+  mergeMap,
+  distinctUntilChanged,
+} from 'rxjs/operators';
 import { produce } from 'immer';
 import { set, get, memoize } from 'lodash';
 import {
@@ -33,7 +38,12 @@ function createSubBehaviorSubject<T, U extends keyof FormStateModel<T>>(
     state$.value[key],
   );
 
-  state$.pipe(map((state) => state[key])).subscribe(subState$);
+  state$
+    .pipe(
+      map((state) => state[key]),
+      distinctUntilChanged(),
+    )
+    .subscribe(subState$);
 
   return subState$;
 }
