@@ -75,7 +75,7 @@ type GenericFieldHTMLAttributes =
   | JSX.IntrinsicElements['select']
   | JSX.IntrinsicElements['textarea'];
 
-type Props<AsCompProps = {}, T = any> = FieldConfig<T> &
+export type RxFieldProps<AsCompProps = {}, T = any> = FieldConfig<T> &
   AsCompProps &
   GenericFieldHTMLAttributes;
 
@@ -84,7 +84,7 @@ type Props<AsCompProps = {}, T = any> = FieldConfig<T> &
  *
  * @param props 表单域组件属性
  */
-function useSetFieldConfig(props: Props) {
+function useSetFieldConfig(props: RxFieldProps) {
   const { addField, removeField } = useFormStateContext();
   const { name } = props;
   const propsRef = useValueRef(props);
@@ -108,7 +108,7 @@ function useSetFieldConfig(props: Props) {
 const ForwardRefField = React.forwardRef(function Field<
   AsCompProps = {},
   T = string
->(props: Props<AsCompProps, T>, ref: React.Ref<any>) {
+>(props: RxFieldProps<AsCompProps, T>, ref: any) {
   const {
     as: AsComp,
     render,

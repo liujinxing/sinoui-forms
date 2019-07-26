@@ -83,7 +83,10 @@ export interface FieldConfig {
    *
    * @returns {(string | undefined | null | Promise<string | undefined>} 返回校验结果
    */
-  asyncValidate?: (value: any, values: any) => Promise<string | undefined>;
+  asyncValidate?: (
+    value: any,
+    values: any,
+  ) => Promise<string | undefined> | undefined;
   /**
    * 关联字段名
    */
