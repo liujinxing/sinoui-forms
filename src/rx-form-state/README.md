@@ -1,71 +1,7 @@
 # rx-form-state
 
 ```shell
-yarn install rx-form-state
-```
-
-## 表单状态对象
-
-```typescript
-interface FormStateErrors {
-  [fieldName: string]: string | undefined | FormStateErrors | FormStateErrors[];
-}
-
-interface FormStateTouched {
-  [fieldName: string]:
-    | boolean
-    | undefined
-    | FormStateTouched
-    | FormStateTouched[];
-}
-
-interface FormStatePending {
-  [fieldName: string]:
-    | boolean
-    | undefined
-    | FormStatePending
-    | FormStatePending[];
-}
-
-interface FieldConfig {
-  name: string;
-  validate(value: any, values: any): string | undefined | null;
-  valueExtract?: (event: any) => any;
-  asyncValidate?: (
-    value: any,
-    values: any,
-  ) => Promise<string | undefined> | undefined;
-  relyFieldsName?: string[];
-  relyFn?: (values: any) => any;
-}
-
-interface FormState<T> {
-  /**
-   * 表单值
-   */
-  values: T;
-  /**
-   * 表单域校验错误
-   */
-  errors: FormStateErrors;
-  /**
-   * 表单域异步校验错误
-   */
-  asyncErrors: FormStateErrors;
-  /**
-   * 表单域被操作的状态，一般在表单域失去焦点时设置。
-   */
-  touched: FormStateTouched;
-  /**
-   * 表单域正在执行异步校验的状态
-   */
-  pending: FormStatePending;
-
-  /**
-   * 表单域配置
-   */
-  fields: FieldConfig[];
-}
+yarn add rx-form-state
 ```
 
 ## 使用方式
@@ -461,3 +397,4 @@ observable2.subscribe((value) => {
 - [map](https://rxjs.dev/api/operators/map)
 - [mergeMap](https://rxjs.dev/api/operators/mergeMap)
 - [debounceTime](https://rxjs.dev/api/operators/debounceTime)
+- [distinctUntilChanged](https://rxjs.dev/api/operators/distinctUntilChanged)

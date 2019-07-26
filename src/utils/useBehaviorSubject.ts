@@ -2,6 +2,7 @@ import { BehaviorSubject } from 'rxjs';
 import { useState, useEffect } from 'react';
 import { get } from 'lodash';
 import isEquare from 'shallowequal';
+import { map, distinctUntilChanged } from 'rxjs/operators';
 
 /**
  * 从主题中获取状态
@@ -18,13 +19,12 @@ function useBehaviorSubject<T, U = T>(
   );
 
   useEffect(() => {
-    const subscription = subject.subscribe((item) => {
-      const newValue = path ? get(item, path) : item;
-
-      setValue((oldValue) =>
-        isEquare(oldValue, newValue) ? oldValue : newValue,
-      );
-    });
+    const subscription = subject
+      .pipe(
+        map((item) => (path ? get(item, path) : item)),
+        distinctUntilChanged(isEquare),
+      )
+      .subscribe(setValue);
 
     return () => {
       subscription.unsubscribe();
