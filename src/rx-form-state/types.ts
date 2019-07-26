@@ -407,3 +407,69 @@ export interface FieldModel<T> extends FieldStateModel<T> {
   setAsyncError: (asyncError?: string) => void;
   setFieldPending: (isPending: boolean) => void;
 }
+
+/**
+ * 数组类型表单域辅助方法
+ */
+export interface FieldArrayHelpers<T> {
+  items: T[];
+  /**
+   * 新增数据
+   *
+   * @param item 需要新增的数据项
+   */
+  push(item: T): void;
+  /**
+   * 插入数据
+   *
+   * @param index 数据插入的位置
+   * @param item 需要插入的数据项
+   */
+  insert(index: number, item: T): void;
+  /**
+   * 删除数据
+   *
+   * @param idx 需要删除数据项的索引位置
+   */
+  remove(idx: number): void;
+  /**
+   * 移动数据项
+   *
+   * @param fromIdx 数据项移动前的位置
+   * @param toIdx 数据项移动后的位置
+   */
+  move(fromIdx: number, toIdx: number): void;
+
+  /**
+   * 交换数据项
+   *
+   * @param indexA 需要交换的数据项1
+   * @param indexB 需要交换的数据项2
+   */
+  swap(indexA: number, indexB: number): void;
+
+  /**
+   * 替换数据项
+   *
+   * @param index 需要替换数据项的位置
+   * @param item 新的数据
+   */
+  replace(index: number, item: T): void;
+
+  /**
+   * 移除数组的第一个数据项
+   */
+  pop(): void;
+
+  /**
+   * 在数组的头部添加数据项
+   *
+   * @param item 新增的数据项
+   */
+  unshift(item: T): void;
+
+  /**
+   * 获取表单域名称
+   */
+  getFieldName(index: number, subFieldName?: string): string;
+}
