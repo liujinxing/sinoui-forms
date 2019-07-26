@@ -1,0 +1,279 @@
+---
+name: 新建联系人
+route: /add-contacts
+---
+
+import { Playground } from 'docz';
+import AddContactForm from './AddContactForm';
+
+## 新建联系人
+
+新建联系人的场景中，我们用到了两个嵌套表单，一个是联系电话的表单`TelephoneForm`,另一个是添加地址的子表单`AddressForm`,它们都需要借助`useFieldArrary`处理。
+
+代码示例：
+
+`TelephoneForm.tsx`
+
+```tsx
+import React from 'react';
+import { Field, FormItem, useFieldArray } from 'sinoui-forms';
+
+const types = ['家庭', '工作', 'iPhone', '手机', '主要', '工作传真', '其他'];
+
+function TelephoneForm() {
+  const {
+    getFieldName: name,
+    items,
+    insert,
+    remove,
+    push,
+    swap,
+  } = useFieldArray('telephones');
+
+  const handlePush = () => {
+    if (items.length < types.length) {
+      const idx = types.findIndex(
+        (type) => items.findIndex((item: any) => item.type === type) === -1,
+      );
+      if (idx !== -1) {
+        push({ type: types[idx] });
+      }
+    } else {
+      push({ type: '其他' });
+    }
+  };
+
+  const handleInsert = (index: number) => {
+    if (items.length < types.length) {
+      const idx = types.findIndex(
+        (type) => items.findIndex((item: any) => item.type === type) === -1,
+      );
+      if (idx !== -1) {
+        insert(index + 1, { type: types[idx] });
+      }
+    } else {
+      insert(index + 1, { type: '其他' });
+    }
+  };
+
+  return (
+    <div style={{ paddingTop: 16, paddingBottom: 16 }}>
+      <label> 添加电话</label>
+      {items.map((_telephone, index) => (
+        <div
+          // eslint-disable-next-line react/no-array-index-key
+          key={index}
+          style={{
+            display: 'flex',
+            padding: 8,
+            border: '1px solid green',
+            marginTop: 8,
+            marginBottom: 8,
+          }}
+        >
+          <FormItem>
+            <Field
+              name={name(index, 'type')}
+              as="input"
+              required
+              compProps={{
+                placeholder: '类型',
+              }}
+            />
+          </FormItem>
+          <FormItem>
+            <Field
+              name={name(index, 'telephone')}
+              as="input"
+              required
+              maxlength={11}
+              minlength={4}
+              compProps={{
+                placeholder: '电话',
+              }}
+            />
+          </FormItem>
+          <button type="button" onClick={() => handleInsert(index)}>
+            +
+          </button>
+          <button type="button" onClick={() => remove(index)}>
+            -
+          </button>
+          {index > 0 && (
+            <button type="button" onClick={() => swap(index, index - 1)}>
+              ⬆️
+            </button>
+          )}
+          {index < items.length - 1 && (
+            <button type="button" onClick={() => swap(index, index + 1)}>
+              ⬇️
+            </button>
+          )}
+        </div>
+      ))}
+      <button type="button" onClick={() => handlePush()}>
+        +
+      </button>
+    </div>
+  );
+}
+
+export default TelephoneForm;
+```
+
+`AddressForm.tsx`
+
+```tsx
+import React from 'react';
+import { Field, FormItem, useFieldArray } from 'sinoui-forms';
+
+function AddressForm() {
+  const {
+    getFieldName: name,
+    items,
+    insert,
+    remove,
+    push,
+    swap,
+  } = useFieldArray('addresses');
+
+  return (
+    <div style={{ paddingTop: 16, paddingBottom: 16 }}>
+      <label>添加地址</label>
+      {items.map((_telephone, index) => (
+        <div
+          style={{
+            display: 'flex',
+            padding: 8,
+            border: '1px solid green',
+            marginTop: 8,
+            marginBottom: 8,
+          }}
+        >
+          <FormItem>
+            <Field
+              as="select"
+              required
+              name={name(index, 'country')}
+              compProps={{ style: { width: 160 } }}
+            >
+              <option value="中国">中国</option>
+              <option value="法国">法国</option>
+              <option value="日本">日本</option>
+              <option value="韩国">韩国</option>
+            </Field>
+          </FormItem>
+          <FormItem>
+            <Field
+              name={name(index, 'city')}
+              as="input"
+              required
+              compProps={{
+                placeholder: '城市',
+              }}
+            />
+          </FormItem>
+          <FormItem>
+            <Field
+              name={name(index, 'street')}
+              as="input"
+              compProps={{
+                placeholder: '街道',
+              }}
+            />
+          </FormItem>
+          <FormItem>
+            <Field
+              name={name(index, 'postCode')}
+              as="input"
+              compProps={{
+                placeholder: '邮政编码',
+              }}
+            />
+          </FormItem>
+          <button type="button" onClick={() => insert(index + 1, {})}>
+            +
+          </button>
+          <button type="button" onClick={() => remove(index)}>
+            -
+          </button>
+          {index > 0 && (
+            <button type="button" onClick={() => swap(index, index - 1)}>
+              ⬆️
+            </button>
+          )}
+          {index < items.length - 1 && (
+            <button type="button" onClick={() => swap(index, index + 1)}>
+              ⬇️
+            </button>
+          )}
+        </div>
+      ))}
+      <button type="button" onClick={() => push({})}>
+        +
+      </button>
+    </div>
+  );
+}
+
+export default AddressForm;
+```
+
+`AddContactForm.tsx`
+
+```tsx
+import React from 'react';
+import Form, { Field, FormItem, useFormState, Label } from 'sinoui-forms';
+import TelephoneForm from './TelephoneForm';
+import AddressForm from './AddressForm';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function onSubmit(values: any) {
+  // eslint-disable-next-line no-alert
+  alert(JSON.stringify(values, undefined, 2));
+}
+
+function AddContactForm() {
+  const formState = useFormState({}, { onSubmit });
+  return (
+    <Form formState={formState} onSubmit={formState.onSubmit}>
+      <FormItem>
+        <Label>姓氏</Label>
+        <Field
+          as="input"
+          compProps={{ type: 'text' }}
+          name="firstName"
+          required
+        />
+      </FormItem>
+      <FormItem>
+        <Label>名字</Label>
+        <Field
+          as="input"
+          compProps={{ type: 'text' }}
+          name="lastName"
+          required
+        />
+      </FormItem>
+      <FormItem>
+        <Label>公司</Label>
+        <Field as="input" compProps={{ type: 'text' }} name="company" />
+      </FormItem>
+
+      <TelephoneForm />
+      <AddressForm />
+      <FormItem>
+        <Label>备注</Label>
+        <Field as="input" name="note" />
+      </FormItem>
+      <button style={{ marginTop: 8, marginBottom: 8 }} type="submit">
+        提交
+      </button>
+    </Form>
+  );
+}
+```
+
+运行效果：
+
+<Playground>{() => <AddContactForm />}</Playground>
