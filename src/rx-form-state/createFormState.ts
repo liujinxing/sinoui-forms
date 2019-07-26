@@ -378,7 +378,7 @@ function createFormState<T = any>(
   };
 
   /**
-   * 设置异步校验错误
+   * 设置表单域的异步校验错误
    */
   const setFieldAsyncError = (fieldName: string, asyncError?: string) => {
     updateState((draft) => {

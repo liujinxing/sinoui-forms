@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import useFormStateContext from './useFormStateContext';
 import useBehaviorSubject from '../utils/useBehaviorSubject';
-import { FieldStateModel } from './types';
+import { FieldStateModel, FieldModel } from './types';
 
 /**
  * 使用表单域
@@ -10,7 +10,7 @@ import { FieldStateModel } from './types';
  * @param {string} fieldName
  * @returns
  */
-function useField<T>(fieldName: string) {
+function useField<T>(fieldName: string): FieldModel<T> {
   const formState = useFormStateContext();
   const fieldState = useBehaviorSubject<FieldStateModel<T>>(
     formState.getFieldState$(fieldName),

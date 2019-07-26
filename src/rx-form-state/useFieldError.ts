@@ -1,17 +1,17 @@
 import { memoize } from 'lodash';
 import { FormStateModel } from './types';
-import useBehaviorSubject from '../utils/useBehaviorSubject';
 import useFormStateContext from './useFormStateContext';
+import useBehaviorSubjectSelect from '../utils/useBehaviorSubjectSelect';
 
 const getFieldError = memoize(
   (fieldName: string) => (formState: FormStateModel) => {
     if (fieldName && formState.errors[fieldName]) {
-      return formState.errors[fieldName];
+      return formState.errors[fieldName] as (string | undefined);
     }
     if (fieldName) {
-      return formState.asyncErrors[fieldName];
+      return formState.asyncErrors[fieldName] as (string | undefined);
     }
-    return null;
+    return undefined;
   },
 );
 
@@ -20,10 +20,9 @@ const getFieldError = memoize(
  */
 function useFieldError(fieldName: string) {
   const formState = useFormStateContext();
-  return useBehaviorSubject<FormStateModel, string>(
+  return useBehaviorSubjectSelect<FormStateModel, string | undefined>(
     formState.formState$,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (getFieldError as any)(fieldName),
+    getFieldError(fieldName),
   );
 }
 
