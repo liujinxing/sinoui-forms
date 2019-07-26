@@ -71,37 +71,37 @@ interface FormState<T> {
 ## 使用方式
 
 ```typescript
-const formState$ = createFormState();
+const formState = createFormState();
 
-formState$.subscribe((formState) => {
+formState.formState.subscribe((formState) => {
   console.log(formState);
 });
 
 // 更新整个表单
-formState$.updateState((draft) => {
+formState.updateState((draft) => {
   set(draft.values, 'address.city', 'Beijing');
 });
 
 // 表单级别的操作
-formState$.setErrors();
-formState$.setTouched();
-formState$.setAsyncErrors();
-formState$.setPending();
-formState$.reset();
-formState$.submit();
+formState.setErrors();
+formState.setTouched();
+formState.setAsyncErrors();
+formState.setPending();
+formState.reset();
+formState.submit();
 
 // 表单域级别的操作
-formState$.setFieldValue('address.city', 'Beijing');
-formState$.setFieldValue('address.street', 'No.9');
-formState$.setFieldTouched('address.city', true);
-formState$.setFieldError('address.city', undefined);
-formState$.setFieldAsyncError('address.city', undefined);
-formState$.setFieldPending('address.city', true);
-formState$.handleFieldBlur('adress.city');
+formState.setFieldValue('address.city', 'Beijing');
+formState.setFieldValue('address.street', 'No.9');
+formState.setFieldTouched('address.city', true);
+formState.setFieldError('address.city', undefined);
+formState.setFieldAsyncError('address.city', undefined);
+formState.setFieldPending('address.city', true);
+formState.handleFieldBlur('adress.city');
 
 // 表单域配置
-formState$.addField({...});
-formState$.removeField(fieldName);
+formState.addField({...});
+formState.removeField(fieldName);
 ```
 
 ## 关于 React 调度器优化
@@ -314,7 +314,7 @@ observable.subscribe(
 在 RxJS 中，主题是一种特殊类型的可观察对象——允许将值发送给多个观察者。从形态上看，它既是可观察对象，又是观察者。
 
 ```ts
-import { Subject, from } from 'rxjs';
+import { Subject } from 'rxjs';
 
 const subject = new Subject<number>();
 
@@ -334,6 +334,72 @@ subject.next(2);
 观察者B: 1
 观察者A: 2
 观察者B: 2
+*/
+```
+
+注意：对[Subject](https://rxjs.dev/api/index/class/Subject)的订阅，只能监听到订阅之后产生的值，不能订阅到产生前的值，如下所示：
+
+```ts
+import { Subject } from 'rxjs';
+
+const subject = new Subject<number>();
+
+subject.next(0);
+subject.next(1);
+
+subject.subscribe((value) => {
+  console.log(`观察者A：${value}`);
+});
+
+subject.subscribe((value) => {
+  console.log(`观察者B：${value}`);
+});
+
+subject.next(2);
+subject.next(3);
+
+/* 输出：
+观察者A: 2
+观察者B: 2
+观察者A: 3
+观察者B: 3
+*/
+```
+
+上面的例子中，并不会输出`0`和`1`。如果需要订阅到之前产生的值，可以用：
+
+- [BehaviorSubject](https://rxjs.dev/api/index/class/BehaviorSubject) - 保留并直接获取最新值的 Subject，它需要一个初始化值。
+- [ReplaySubject](https://rxjs.dev/api/index/class/ReplaySubject) - 可以订阅到所有之前产生的值。
+
+[BehaviorSubject](https://rxjs.dev/api/index/class/BehaviorSubject)是经常用到的主题，示例如下：
+
+```typescript
+import { BehaviorSubject } from 'rxjs';
+
+const subject = new BehaviorSubject(0);
+
+console.log(subject.value);
+
+subject.next(1);
+subject.next(2);
+
+subject.subscribe((value) => {
+  console.log(`观察者：${value}`);
+});
+
+subject.next(3);
+console.log(subject.value);
+
+subject.next(4);
+console.log(subject.value);
+
+/* 输出：
+0
+观察者：2
+观察者：3
+3
+观察者：4
+4
 */
 ```
 
@@ -361,3 +427,9 @@ observable2.subscribe((value) => {
 ```
 
 有很多操作数据流的方法。
+
+项目中用到的操作如下：
+
+- [map](https://rxjs.dev/api/operators/map)
+- [mergeMap](https://rxjs.dev/api/operators/mergeMap)
+- [debounceTime](https://rxjs.dev/api/operators/debounceTime)
