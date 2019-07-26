@@ -4,7 +4,7 @@ import useFormStateContext from './useFormStateContext';
 import useBehaviorSubjectSelect from '../utils/useBehaviorSubjectSelect';
 
 const getFieldError = memoize(
-  (fieldName: string) => (formState: FormStateModel) => {
+  (fieldName?: string) => (formState: FormStateModel) => {
     if (fieldName && formState.errors[fieldName]) {
       return formState.errors[fieldName] as (string | undefined);
     }
@@ -18,7 +18,7 @@ const getFieldError = memoize(
 /**
  * 获取表单域校验错误
  */
-function useFieldError(fieldName: string) {
+function useFieldError(fieldName?: string) {
   const formState = useFormStateContext();
   return useBehaviorSubjectSelect<FormStateModel, string | undefined>(
     formState.formState$,
