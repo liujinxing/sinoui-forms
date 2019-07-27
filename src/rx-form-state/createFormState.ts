@@ -175,13 +175,17 @@ function createFormState<T = any>(
       setSubmitting(true);
       try {
         const result = await options.onSubmit(values$.value);
-        updateState((draft) => {
-          draft.isSubmitting = false;
-          draft.isTouched = {};
+        unstable_runWithPriority(unstable_NormalPriority, () => {
+          updateState((draft) => {
+            draft.isSubmitting = false;
+            draft.isTouched = {};
+          });
         });
         return result;
       } catch (e) {
-        setSubmitting(false);
+        unstable_runWithPriority(unstable_NormalPriority, () => {
+          setSubmitting(false);
+        });
         throw e;
       }
     }
