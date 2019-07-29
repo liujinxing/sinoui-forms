@@ -10,6 +10,7 @@ import Form, {
   Field,
   Label,
   FormStateContext,
+  useBehaviorSubject,
 } from '../src';
 
 # 表单状态管理
@@ -54,11 +55,18 @@ import Form, { useFormState, FormItem, Field, Label } from 'sinoui-forms';
 
 ```tsx
 import React from 'react';
-import Form, { useFormState, FormItem, Field, Label } from 'sinoui-forms';
+import Form, {
+  useFormState,
+  FormItem,
+  Field,
+  Label,
+  useBehaviorSubject,
+} from 'sinoui-forms';
 
 function FormDemo() {
   const defaultValues = {};
   const formState = useFormState(defaultValues);
+  const values = useBehaviorSubject(formState.values$);
 
   return (
     <Form formState={formState}>
@@ -68,9 +76,9 @@ function FormDemo() {
       </FormItem>
       <FormItem>
         <Label>密码</Label>
-        <Field as="input" name="password" compProps={{ type: 'password' }} />
+        <Field as="input" name="password" type="password" />
       </FormItem>
-      <div>表单值：{JSON.stringify(formState.values, undefined, 2)}</div>
+      <div>表单值：{JSON.stringify(values, undefined, 2)}</div>
     </Form>
   );
 }
@@ -83,6 +91,7 @@ function FormDemo() {
     ()=>{
       const defaultValues = {};
       const formState = useFormState(defaultValues);
+      const values = useBehaviorSubject(formState.values$);
 
       return (
         <Form formState={formState}>
@@ -92,9 +101,9 @@ function FormDemo() {
           </FormItem>
           <FormItem>
             <Label>密码</Label>
-            <Field as="input" name="password" compProps={{ type: 'password' }} />
+            <Field as="input" name="password" type='password' />
             </FormItem>
-          <div>表单值：{JSON.stringify(formState.values, undefined, 2)}</div>
+          <div>表单值：{JSON.stringify(values, undefined, 2)}</div>
         </Form>
       );
     }
@@ -137,7 +146,6 @@ function validate(values: any) {
       error['userName'] = '不能以数字开头';
     }
   }
-
   return error;
 }
 
@@ -156,9 +164,9 @@ function FormDemo() {
         <Field
           as="input"
           name="password"
+          type="password"
           required
           minLength={8}
-          compProps={{ type: 'password' }}
         />
       </FormItem>
     </Form>
@@ -196,9 +204,9 @@ function FormDemo() {
           <Field
             as="input"
             name="password"
+            type="password"
             required
             minLength={8}
-            compProps={{ type: 'password' }}
           />
         </FormItem>
       </Form>
@@ -210,8 +218,7 @@ function FormDemo() {
 
 ## 自定义表单域
 
-在自定义表单域时，如果表单域有子节点，我们可以给`Field`组件指定`children`,
-同时我们还能给`Field`组件指定一个`compProps`的对象属性，来指定表单域组件的其它属性。
+在自定义表单域时，如果表单域有子节点，我们可以给`Field`组件指定`children`。
 
 基本用法：
 
@@ -251,7 +258,7 @@ function FormDemo() {
       </FormItem>
       <FormItem>
         <Label>所在城市</Label>
-        <Select name="city" compProps={{ style: { width: 160 } }}>
+        <Select name="city" style={{ width: 160 }}>
           <option value="北京">北京</option>
           <option value="上海">上海</option>
           <option value="广州">广州</option>
@@ -277,7 +284,7 @@ function FormDemo() {
         </FormItem>
         <FormItem>
           <Label>所在城市</Label>
-          <Field as="select" name="city" compProps={{ style: { width: 160 } }}>
+          <Field as="select" name="city"  style={{ width: 160 }}>
             <option value="北京">北京</option>
             <option value="上海">上海</option>
             <option value="广州">广州</option>
@@ -300,12 +307,17 @@ function FormDemo() {
 
 ```tsx
 import React from 'react';
-import Form, { FormItem, Field, Label, useFormState } from 'sinoui-forms';
+import Form, {
+  FormItem,
+  Field,
+  Label,
+  useFormState,
+  useBehaviorSubject,
+} from 'sinoui-forms';
 
 function FormDemo() {
-  const defaultValues = {};
-  const formState = useFormState(defaultValues);
-
+  const formState = useFormState({});
+  const values = useBehaviorSubject(formState.values$);
   return (
     <Form formState={formState}>
       <FormItem>
@@ -316,13 +328,16 @@ function FormDemo() {
         <Label>紧急程度</Label>
         <Field
           name="jjcd"
-          render={({ setFieldValue, id, name }) => {
+          render={({ formState }) => {
             return (
               <select
                 style={{ width: 160 }}
                 onChange={(event) => {
-                  setFieldValue('jjcdNum', event.target.value);
-                  setFieldValue('jjcd', event.target.selectedOptions[0].label);
+                  formState.setFieldValue('jjcdNum', event.target.value);
+                  formState.setFieldValue(
+                    'jjcd',
+                    event.target.selectedOptions[0].label,
+                  );
                 }}
               >
                 <option value="001">急</option>
@@ -334,7 +349,7 @@ function FormDemo() {
           }}
         />
       </FormItem>
-      <div>表单值：{JSON.stringify(formState.values, undefined, 2)}</div>
+      <div>表单值：{JSON.stringify(values, undefined, 2)}</div>
     </Form>
   );
 }
@@ -345,6 +360,7 @@ function FormDemo() {
 <Playground>
   {() => {
     const formState = useFormState({});
+    const values = useBehaviorSubject(formState.values$);
     return (
       <Form formState={formState}>
         <FormItem>
@@ -355,13 +371,13 @@ function FormDemo() {
           <Label>紧急程度</Label>
           <Field
             name="jjcd"
-            render={({ setFieldValue, id, name }) => {
+            render={({ formState }) => {
               return (
                 <select
                   style={{ width: 160 }}
                   onChange={(event) => {
-                    setFieldValue('jjcdNum', event.target.value);
-                    setFieldValue(
+                    formState.setFieldValue('jjcdNum', event.target.value);
+                    formState.setFieldValue(
                       'jjcd',
                       event.target.selectedOptions[0].label,
                     );
@@ -376,7 +392,7 @@ function FormDemo() {
             }}
           />
         </FormItem>
-        <div>表单值：{JSON.stringify(formState.values, undefined, 2)}</div>
+        <div>表单值：{JSON.stringify(values, undefined, 2)}</div>
       </Form>
     );
   }}
@@ -388,7 +404,13 @@ function FormDemo() {
 
 ```tsx
 import React from 'react';
-import Form, { FormItem, Field, Label, useFormState } from 'sinoui-forms';
+import Form, {
+  FormItem,
+  Field,
+  Label,
+  useFormState,
+  useBehaviorSubject,
+} from 'sinoui-forms';
 
 function relyFn(values) {
   if (!values.firstName) {
@@ -405,6 +427,7 @@ function relyFn(values) {
 function FormDemo() {
   const defaultValues = {};
   const formState = useFormState(defaultValues, {});
+  const values = useBehaviorSubject(formState.values$);
 
   return (
     <Form formState={formState}>
@@ -427,7 +450,7 @@ function FormDemo() {
           compProps={{ disabled: true }}
         />
       </FormItem>
-      <div>表单值：{JSON.stringify(formState.values, undefined, 2)}</div>
+      <div>表单值：{JSON.stringify(values, undefined, 2)}</div>
     </Form>
   );
 }
@@ -450,6 +473,7 @@ function FormDemo() {
     }
 
     const formState = useFormState({});
+    const values = useBehaviorSubject(formState.values$);
 
     return (
       <Form formState={formState}>
@@ -472,7 +496,7 @@ function FormDemo() {
             compProps={{ disabled: true }}
           />
         </FormItem>
-        <div>表单值：{JSON.stringify(formState.values, undefined, 2)}</div>
+        <div>表单值：{JSON.stringify(values, undefined, 2)}</div>
       </Form>
     )
 
@@ -482,7 +506,7 @@ function FormDemo() {
 
 ## 表单提交
 
-调用`formState.onSubmit()`方法实现表单提交。
+指定一个`onSubmit`方法实现表单提交。
 
 基本用法：
 
@@ -517,7 +541,7 @@ function FormDemo() {
   const formState = useFormState(defaultValues, { validate, onSubmit });
 
   return (
-    <Form formState={formState} onSubmit={formState.onSubmit}>
+    <Form formState={formState}>
       <FormItem>
         <Label>用户名</Label>
         <Field as="input" name="userName" required />
@@ -527,9 +551,9 @@ function FormDemo() {
         <Field
           as="input"
           name="password"
+          type="password"
           required
           minLength={8}
-          compProps={{ type: 'password' }}
         />
       </FormItem>
       <button type="submit">登录</button>
@@ -562,7 +586,7 @@ function FormDemo() {
      const formState = useFormState({}, { validate, onSubmit });
 
      return (
-       <Form formState={formState} onSubmit={formState.onSubmit}>
+       <Form formState={formState}>
         <FormItem>
           <Label>用户名</Label>
           <Field as="input" name="userName" required />
@@ -572,9 +596,9 @@ function FormDemo() {
           <Field
             as="input"
             name="password"
+            type="password"
             required
             minLength={8}
-            compProps={{ type: 'password' }}
           />
         </FormItem>
         <button type="submit">登录</button>

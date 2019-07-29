@@ -8,7 +8,7 @@ import Form, { useFormState, FormItem, Label, Field } from '../src';
 
 # 登录
 
-登录是表单状态管理相对简单的一种场景，我们只需要指定一个`onSubmit`方法，在点击登录按钮时，调用一下`formState.onSubmit()`方法即可。
+登录是表单状态管理相对简单的一种场景，我们只需要指定一个`onSubmit`方法，在表单内部放置一个`type="submit"`的按钮即可。
 
 代码示例：
 
@@ -23,7 +23,7 @@ function LoginForm() {
   const formState = useFormState({}, { onSubmit });
 
   return (
-    <Form formState={formState} onSubmit={formState.onSubmit}>
+    <Form formState={formState}>
       <FormItem>
         <Label>用户名</Label>
         <Field as="input" name="userName" required />
@@ -31,12 +31,7 @@ function LoginForm() {
 
       <FormItem>
         <Label>密码</Label>
-        <Field
-          as="input"
-          name="password"
-          compProps={{ type: 'password' }}
-          required
-        />
+        <Field as="input" name="password" type="password" required />
       </FormItem>
       <button type="submit">登录</button>
     </Form>
@@ -53,7 +48,7 @@ function LoginForm() {
     };
     const formState = useFormState({}, { onSubmit });
     return (
-      <Form formState={formState} onSubmit={formState.onSubmit}>
+      <Form formState={formState} >
       <FormItem>
         <Label>用户名</Label>
         <Field as="input" name="userName" required />
@@ -64,7 +59,7 @@ function LoginForm() {
         <Field
           as="input"
           name="password"
-          compProps={{ type: 'password' }}
+          type="password"
           required
         />
       </FormItem>

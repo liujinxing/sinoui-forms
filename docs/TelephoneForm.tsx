@@ -62,9 +62,7 @@ function TelephoneForm() {
               name={name(index, 'type')}
               as="input"
               required
-              compProps={{
-                placeholder: '类型',
-              }}
+              placeholder="类型"
             />
           </FormItem>
           <FormItem>
@@ -74,9 +72,7 @@ function TelephoneForm() {
               required
               maxlength={11}
               minlength={4}
-              compProps={{
-                placeholder: '电话',
-              }}
+              placeholder="电话"
             />
           </FormItem>
           <button type="button" onClick={() => handleInsert(index)}>

@@ -41,25 +41,15 @@ export default function RegisterForm() {
   };
 
   return (
-    <Form onSubmit={formState.onSubmit} formState={formState}>
+    <Form formState={formState}>
       <FormItem>
         <Label>用户名</Label>
-        <Field
-          name="userName"
-          as="input"
-          required
-          compProps={{ placeholder: '用户名' }}
-        />
+        <Field name="userName" as="input" required placeholder="用户名" />
       </FormItem>
 
       <FormItem>
         <Label>电子邮件</Label>
-        <Field
-          name="email"
-          as="input"
-          required
-          compProps={{ placeholder: '电子邮箱' }}
-        />
+        <Field name="email" as="input" required placeholder="电子邮箱" />
       </FormItem>
 
       <FormItem>
@@ -69,7 +59,8 @@ export default function RegisterForm() {
           as="input"
           required
           minlength={6}
-          compProps={{ placeholder: '密码', type: 'password' }}
+          placeholder="密码"
+          type="password"
         />
       </FormItem>
       <FormItem>
@@ -77,8 +68,9 @@ export default function RegisterForm() {
         <Field
           name="confirmPassword"
           as="input"
+          type="password"
           required
-          compProps={{ placeholder: '确认密码', type: 'password' }}
+          placeholder="确认密码"
           validate={validatePassword}
         />
       </FormItem>
@@ -95,18 +87,15 @@ export default function RegisterForm() {
         <Field
           as="input"
           name="telephone"
+          type="number"
+          placeholder="电话号码"
           minlength={4}
           maxlength={11}
-          compProps={{ type: 'number', placeholder: '电话号码' }}
         />
       </FormItem>
       <FormItem>
         <Label>简介</Label>
-        <Field
-          name="note"
-          as="input"
-          compProps={{ placeholder: '请用一句话介绍自己' }}
-        />
+        <Field name="note" as="input" placeholder="请用一句话介绍自己" />
       </FormItem>
       <button type="submit">注册</button>
     </Form>

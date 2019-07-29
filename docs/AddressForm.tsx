@@ -32,7 +32,7 @@ function AddressForm() {
               as="select"
               required
               name={name(index, 'country')}
-              compProps={{ style: { width: 160 } }}
+              style={{ width: 160 }}
             >
               <option value="中国">中国</option>
               <option value="法国">法国</option>
@@ -45,27 +45,17 @@ function AddressForm() {
               name={name(index, 'city')}
               as="input"
               required
-              compProps={{
-                placeholder: '城市',
-              }}
+              placeholder="城市"
             />
           </FormItem>
           <FormItem>
-            <Field
-              name={name(index, 'street')}
-              as="input"
-              compProps={{
-                placeholder: '街道',
-              }}
-            />
+            <Field name={name(index, 'street')} as="input" placeholder="街道" />
           </FormItem>
           <FormItem>
             <Field
               name={name(index, 'postCode')}
               as="input"
-              compProps={{
-                placeholder: '邮政编码',
-              }}
+              placeholder="邮政编码"
             />
           </FormItem>
           <button type="button" onClick={() => insert(index + 1, {})}>

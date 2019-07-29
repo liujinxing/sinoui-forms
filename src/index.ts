@@ -1,10 +1,11 @@
-import useFormState from './useFormState';
-import FormItem from './ui/FormItem';
-import Field from './ui/Field';
-import Label from './ui/Label';
 import FormStateContext from './FormStateContext';
-import Form from './ui/Form';
-import useFieldArray from './useFieldArray';
+import useFieldArray from './rx-form-state/useFieldArray';
+import Form from './rx-form-state-ui/Form';
+import useFormState from './rx-form-state/useFormState';
+import FormItem from './rx-form-state-ui/FormItem';
+import Label from './rx-form-state-ui/Label';
+import Field from './rx-form-state-ui/Field';
+import useBehaviorSubject from './utils/useBehaviorSubject';
 
 export default Form;
 export {
@@ -14,4 +15,5 @@ export {
   FormStateContext,
   useFormState,
   useFieldArray,
+  useBehaviorSubject,
 };

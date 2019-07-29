@@ -12,28 +12,18 @@ function onSubmit(values: any) {
 function AddContactForm() {
   const formState = useFormState({}, { onSubmit });
   return (
-    <Form formState={formState} onSubmit={formState.onSubmit}>
+    <Form formState={formState}>
       <FormItem>
         <Label>姓氏</Label>
-        <Field
-          as="input"
-          compProps={{ type: 'text' }}
-          name="firstName"
-          required
-        />
+        <Field as="input" type="text" name="firstName" required />
       </FormItem>
       <FormItem>
         <Label>名字</Label>
-        <Field
-          as="input"
-          compProps={{ type: 'text' }}
-          name="lastName"
-          required
-        />
+        <Field as="input" type="text" name="lastName" required />
       </FormItem>
       <FormItem>
         <Label>公司</Label>
-        <Field as="input" compProps={{ type: 'text' }} name="company" />
+        <Field as="input" type="text" name="company" />
       </FormItem>
 
       <TelephoneForm />

@@ -115,9 +115,9 @@ function createFormState<T = any>(
 
     fields.forEach((field) => {
       if (field.validate) {
-        const fieldError = field.validate((values as any)[field.name], values);
+        const fieldError = field.validate(get(values, field.name), values);
         if (fieldError) {
-          errors[field.name] = fieldError;
+          set(errors, field.name, fieldError);
         }
       }
     });
