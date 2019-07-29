@@ -1,0 +1,521 @@
+---
+name: 值处理
+route: /form-values
+menu: 教程
+---
+
+import { Playground } from 'docz';
+import Form, {
+  useFormState,
+  FormItem,
+  Label,
+  Field,
+  FormValueMonitor,
+} from '../src';
+
+# 表单值处理
+
+@sinoui/rx-form-state 的核心作用就是用来处理表单值的。本篇教程将会从以下方面一一介绍如何采用本库处理表单的值：
+
+- 表单域值绑定
+- 展现表单值
+- 表单域值关联
+- 全局值关联
+- 设置表单域的值
+
+## 创建表单状态上下文
+
+无论我们要收集表单值、表单验证还是提交表单，我们都需要先创建表单状态的上下文。通过[useFormState](api-use-form-state)可创建表单状态，并将它指定给[Form](api-form-component)组件，建立表单状态上下文。如下所示：
+
+```tsx
+import Form, { useFormState } from '@sinoui/web-forms';
+
+function FormDemo() {
+  const formState = useFormState();
+  return <Form formState={formState}></Form>;
+}
+```
+
+`useFormState`可以接收一个参数，作为表单的初始值，如下所示：
+
+```tsx
+function FormDemo() {
+  const initialValues = {
+    userName: '紫诺',
+  };
+  const formState = useFormState(initialValues);
+
+  return <Form formState={formState}></Form>;
+}
+```
+
+## 表单域值绑定
+
+对于一个表单来说，它的值是对象结构的。如：
+
+```json
+{
+  "userName": "紫诺",
+  "sex": "女"
+}
+```
+
+如果我们要维护姓名和性别这两个字段，可以使用[Field](api-field-component)组件定义表单域。**通过`Field`组件的`name`属性，可以将表单域组件和表单状态中的值进行绑定。**如下所示，我们定义一个维护姓名字段值的表单域：
+
+> 通过`Field`组件的`name`属性，可以将表单域组件和表单状态中的值进行绑定。
+
+```tsx
+import React from 'react';
+import Form, { useFormState, Field } from '@sinoui/web-forms';
+
+function FormDemo() {
+  const initialValues = {
+    userName: '紫诺',
+    sex: '女',
+  };
+  const formState = useFormState(initialValues);
+
+  return (
+    <Form formState={formState}>
+      姓名：
+      <Field as="input" name="userName" />
+      复制的姓名：
+      <Field as="input" name="userName" />
+    </Form>
+  );
+}
+```
+
+效果如下：
+
+<Playground>
+  {() => {
+    const initialValues = {
+        userName: '紫诺',
+        sex: '女',
+    };
+    const formState = useFormState(initialValues);
+
+    return (
+        <Form formState={formState}>
+            姓名：
+            <Field as="input" name="userName" />
+            复制的姓名：
+            <Field as="input" name="userName" />
+        </Form>
+    );
+
+}}
+
+</Playground>
+
+`name`属性可以指定任意深度的对象路径。例如，如果我们的表单值的结构如下：
+
+```json
+{
+  "userName": "紫诺",
+  "address": {
+    "city": "北京",
+    "region": "海淀"
+  }
+}
+```
+
+那么关于地址的两个表单域的`name`可以如下表示：
+
+```tsx
+<Form formState={formState}>
+  城市：
+  <Field as="input" name="address.city" />
+  区/县：
+  <Field as="input" name="address.region" />
+</Form>
+```
+
+效果如下：
+
+<Playground>
+    {() => {
+        const initialValues = {
+            "userName": "紫诺",
+            "address": {
+                "city": "北京",
+                "region": "海淀"
+            }
+        };
+        const formState = useFormState(initialValues);
+
+        return (
+            <Form formState={formState}>
+                姓名：
+                <Field as="input" name="userName" />
+                城市：
+                <Field as="input" name="address.city" />
+                区/县：
+                <Field as="input" name="address.region" />
+                <div>表单值：
+                <FormValueMonitor>{values => JSON.stringify(values, undefined, 2)}</FormValueMonitor>
+                </div>
+            </Form>
+        );
+    }}
+
+</Playground>
+
+注意：为了直观的看到表单值变化，使用了[FormValueMonitor](api-form-value-minitor-component)组件来监听表单值并以 JSON 格式展现出来。
+
+## 展现表单值
+
+上一小节的示例中已经演示了采用[FormValueMonitor](api-form-value-minitor-component)组件来展现表单值。这一小节详细介绍用[FormValueMonitor](api-form-value-minitor-component)组件展现表单值。
+
+`FormValueMonitor`组件会监控表单的值变化，一旦值发生变化，就会获取到新的表单值，并用新表单值作为参数调用`children`属性指定的渲染函数，展现出表单值。如下所示：
+
+```tsx
+import React from 'react';
+import Form, { useFormState, Field, FormValueMonitor } from '@sinoui/web-forms';
+
+function FormDemo() {
+  const initialValues = { userName: '紫诺', address: { city: '北京' } };
+  const formState = useFormState(initialValues);
+  return (
+    <Form formState={formState}>
+      姓名：
+      <Field as="input" name="userName" />
+      所在城市：
+      <Field as="input" name="address.city" />
+      <FormValueMonitor>
+        {(values) => (
+          <div>
+            填写的信息：{values.userName}@
+            {values.address && values.address.city}
+          </div>
+        )}
+      </FormValueMonitor>
+    </Form>
+  );
+}
+```
+
+效果如下：
+
+<Playground>
+  {() => {
+    const initialValues = { userName: '紫诺', address: { city: '北京' } };
+    const formState = useFormState(initialValues);
+    return (
+      <Form formState={formState}>
+        姓名：
+        <Field as="input" name="userName" />
+        所在城市：
+        <Field as="input" name="address.city" />
+        <FormValueMonitor>
+          {(values) => (
+            <div>
+              填写的信息：{values.userName}@
+              {values.address && values.address.city}
+            </div>
+          )}
+        </FormValueMonitor>
+      </Form>
+    );
+  }}
+</Playground>
+
+我们可以指定一个`selector`属性，定义值监控的范围和返回结果，如下所示：
+
+```tsx
+import React from 'react';
+import Form, { useFormState, Field, FormValueMonitor } from '@sinoui/web-forms';
+
+const userInfoSelector = (values: any) =>
+  `${values.userName || ''}@${(values.address && values.address.city) || ''}`;
+
+function FormDemo() {
+  const initialValues = { userName: '紫诺', address: { city: '北京' } };
+  const formState = useFormState(initialValues);
+
+  return (
+    <Form formState={formState}>
+      姓名：
+      <Field as="input" name="userName" />
+      所在城市：
+      <Field as="input" name="address.city" />
+      <FormValueMonitor selector={userInfoSelector}>
+        {(value) => <div>填写的信息：{value}</div>}
+      </FormValueMonitor>
+    </Form>
+  );
+}
+```
+
+效果如下：
+
+<Playground>
+  {() => {
+    const initialValues = { userName: '紫诺', address: { city: '北京' } };
+    const formState = useFormState(initialValues);
+
+    const userInfoSelector = (values) =>
+      `${values.userName || ''}@${(values.address && values.address.city) || ''}`;
+
+    return (
+      <Form formState={formState}>
+        姓名：
+        <Field as="input" name="userName" />
+        所在城市：
+        <Field as="input" name="address.city" />
+        <FormValueMonitor selector={userInfoSelector}>
+          {(value) => (
+            <div>
+              填写的信息：{value}
+            </div>
+          )}
+        </FormValueMonitor>
+      </Form>
+    );
+
+}}
+
+</Playground>
+
+我们还可以指定`path`属性，只监听某个表单字段的值，如下所示：
+
+```tsx
+import React from 'react';
+import Form, { useFormState, Field, FormValueMonitor } from '@sinoui/web-forms';
+
+function FormDemo() {
+  const initialValues = { userName: '紫诺' };
+  const formState = useFormState(initialValues);
+
+  return (
+    <Form formState={formState}>
+      姓名：
+      <Field as="input" name="userName" />
+      <FormValueMonitor path="userName">
+        {(value) => <div>填写的姓名是：{value}</div>}
+      </FormValueMonitor>
+    </Form>
+  );
+}
+```
+
+效果如下：
+
+<Playground>
+  {() => {
+    const initialValues = { userName: '紫诺' };
+    const formState = useFormState(initialValues);
+
+    return (
+      <Form formState={formState}>
+        姓名：
+        <Field as="input" name="userName" />
+        <FormValueMonitor path="userName">
+          {(value) => <div>填写的姓名是：{value}</div>}
+        </FormValueMonitor>
+      </Form>
+    );
+
+}}
+
+</Playground>
+
+`FormValueMonitor`有多个用途，比如：
+
+- 控制表单元素的只读
+- 展现统计信息
+- 控制 UI 元素的可见性
+
+### 示例：控制表单元素的只读
+
+<Playground>
+  {() => {
+    const formState = useFormState();
+    return (
+      <Form formState={formState}>
+        是否可编辑：
+        <Field as="select" name="editable">
+          <option value="1">是</option>
+          <option value="0">否</option>
+        </Field>
+
+        姓名：
+        <FormValueMonitor path="editable">
+          {editable =>
+            <Field as="input" name="userNmae" readOnly={editable === '0'} />
+          }
+        </FormValueMonitor>
+      </Form>
+    );
+
+}}
+
+</Playground>
+
+### 示例：展现统计信息
+
+<Playground>
+  {() => {
+    const formState = useFormState();
+    const parseScore = (score) => score && !isNaN(parseInt(score)) ? parseInt(score) : 0;
+    const countSelector = (value) => parseScore(value.chinese) + parseScore(value.math) + parseScore(value.english);
+    return (
+      <Form formState={formState}>
+        <h3>期末考试成绩</h3>
+        语文：
+        <Field as="input" type="number" name="chinese" />
+        数学：
+        <Field as="input" type="number" name="math" />
+        英语：
+        <Field as="input" type="number" name="english" />
+        <FormValueMonitor selector={countSelector}>
+          {(value) => <div>总分：{value}</div>}
+        </FormValueMonitor>
+      </Form>
+    );
+
+}}
+
+</Playground>
+
+### 示例：控制 UI 元素的可见性
+
+<Playground>
+  {() => {
+    const formState = useFormState();
+    return (
+      <Form formState={formState}>
+        是否可见：
+        <Field as="select" name="visibility">
+          <option value="1">是</option>
+          <option value="0">否</option>
+        </Field>
+
+        姓名：
+        <FormValueMonitor path="visibility">
+          {visibility => visibility !== '0' ? <Field as="input" name="userNmae" /> : null}
+        </FormValueMonitor>
+      </Form>
+    );
+
+}}
+
+</Playground>
+
+## 表单域值关联
+
+上一节介绍的`FormValueMonitor`能展现表单的统计信息，但是如果需要将展现的表单统计信息也存储到表单值对象中，就可以采用表单域值关联。[Field](api-field-component)有两个属性：
+
+- `relyFields` - 定义表单域值关联计算逻辑依赖的其他表单域名称
+- `relyFn` - 定义表单域值关联计算的逻辑。它是一个接收整个表单值的函数，它的返回值将会作为该表单域的值。
+
+例如：`A = B + C`这样的一个表单域值关联关系，首先我们需要在表单域 A 上定义`relyFields`为`['B', 'C']`，这样当`B`或者`C`表单域值发生变更时，就会调用`A`表单域的`relyFn`属性。
+
+```tsx
+function parseNumber(str) {
+  return str && !isNaN(parseInt(str)) ? parseInt(str) : 0;
+}
+
+function countA(values) {
+  const { B, C } = values;
+
+  return parseNumber(B) + parseNumber(C);
+}
+
+<Field name="A" as="input" type="number" relyFieldsName={["B", "C"]} relyFn={countA} />
+<Field name="B" as="input" type="number" />
+<Field name="C" as="input" type="number" />
+```
+
+演示效果如下：
+
+<Playground>
+{() => {
+    const formState = useFormState();
+
+    function parseNumber(str) {
+
+      return str && !isNaN(parseInt(str)) ? parseInt(str) : 0;
+    }
+
+    function countA(values) {
+      const { B, C } = values;
+
+      return parseNumber(B) + parseNumber(C);
+    }
+
+    return (
+      <Form formState={formState}>
+        <h3>表单域值关联：A = B + C</h3>
+        A：
+        <Field name="A" as="input" type="number" relyFieldsName={["B", "C"]} relyFn={countA} />
+        B：
+        <Field name="B" as="input" type="number" />
+        C：
+        <Field name="C" as="input" type="number" />
+      </Form>
+    );
+
+}}
+
+</Playground>
+
+## 全局值关联
+
+## 设置表单域的值
+
+当你需要在`Field`组件之外设置个别表单域的值，你可以调用`formState.setFieldValue`函数。如下所示：
+
+```tsx
+import React from 'react';
+import Form, { useFormState, Field, FormValueMonitor } from '@sinoui/web-forms';
+
+function FormDemo() {
+  const initialValues = { userName: '紫诺' };
+  const formState = useFormState(initialValues);
+
+  const handleClick = () => {
+    formState.setFieldValue('userName', '张三');
+  };
+
+  return (
+    <Form formState={formState}>
+      姓名：
+      <Field as="input" name="userName" />
+      <button onClick={handleClick}>将姓名变更为张三</button>
+    </Form>
+  );
+}
+```
+
+## 设置整个表单值
+
+表单的初始值有可能需要通过 Ajax 从服务器端加载到。这种情况下，我们可以调用`formState.setValues`函数，来设定整个表单值。例如：
+
+```tsx
+import React from 'react';
+import Form, { useFormState, Field, FormValueMonitor } from '@sinoui/web-forms';
+import useRestItemApi from '@sinoui/use-rest-item-api';
+
+function FormDemo() {
+  const dataSource = useRestItemApi('/users', '1');
+  const formState = useFormState();
+
+  useEffect(() => {
+    formState.setValues(dataSource.data);
+  }, [dataSource.data]);
+
+  const handleClick = () => {
+    formState.setFieldValue('userName', '张三');
+  };
+
+  return (
+    <Form formState={formState}>
+      姓名：
+      <Field as="input" name="userName" />
+      <button onClick={handleClick}>将姓名变更为张三</button>
+    </Form>
+  );
+}
+```
