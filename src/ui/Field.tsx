@@ -21,7 +21,7 @@ interface Props extends FieldValidateProps {
     value: any,
     values: any,
   ) => Promise<string | undefined> | undefined;
-  relyFieldsName?: string[];
+  relyFields?: string[];
   relyFn?: (values: any) => any;
   onChange?: (value: any) => any;
   compProps?: { [name: string]: any };
@@ -52,7 +52,7 @@ function useFieldConfigSync(props: Props) {
       name: propsRef.current.name,
       validate: createValidateFn(propsRef.current),
       asyncValidate: propsRef.current.asyncValidate,
-      relyFieldsName: propsRef.current.relyFieldsName,
+      relyFields: propsRef.current.relyFields,
       relyFn: propsRef.current.relyFn,
     });
 

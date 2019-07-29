@@ -423,7 +423,7 @@ function countA(values) {
   return parseNumber(B) + parseNumber(C);
 }
 
-<Field name="A" as="input" type="number" relyFieldsName={["B", "C"]} relyFn={countA} />
+<Field name="A" as="input" type="number" relyFields={["B", "C"]} relyFn={countA} />
 <Field name="B" as="input" type="number" />
 <Field name="C" as="input" type="number" />
 ```
@@ -449,7 +449,7 @@ function countA(values) {
       <Form formState={formState}>
         <h3>表单域值关联：A = B + C</h3>
         A：
-        <Field name="A" as="input" type="number" relyFieldsName={["B", "C"]} relyFn={countA} />
+        <Field name="A" as="input" type="number" relyFields={["B", "C"]} relyFn={countA} />
         B：
         <Field name="B" as="input" type="number" />
         C：

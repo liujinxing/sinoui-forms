@@ -4,7 +4,7 @@ import { get, set } from 'lodash';
 
 export interface FieldConfig {
   name: string;
-  relyFieldsName?: string[];
+  relyFields?: string[];
   relyFn?: (values: any) => any;
 }
 
@@ -18,10 +18,10 @@ export interface ValuesType {
  * @param fieldName 发生值变更的表单域名称
  */
 export function getFields(fields: FieldConfig[], fieldName: string) {
-  const hasRelyFields = fields.filter((field) => field.relyFieldsName);
+  const hasRelyFields = fields.filter((field) => field.relyFields);
 
   return hasRelyFields.filter(
-    (field) => field.relyFieldsName && field.relyFieldsName.includes(fieldName),
+    (field) => field.relyFields && field.relyFields.includes(fieldName),
   );
 }
 

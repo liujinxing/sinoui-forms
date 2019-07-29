@@ -425,7 +425,7 @@ function FormDemo() {
 
 ## 表单域值关联
 
-我们可以给`Field`组件指定`relyFieldsName`属性表示跟哪个表单域关联，同时指定`relyFn`函数属性定义依赖规则。
+我们可以给`Field`组件指定`relyFields`属性表示跟哪个表单域关联，同时指定`relyFn`函数属性定义依赖规则。
 
 ```tsx
 import React from 'react';
@@ -469,7 +469,7 @@ function FormDemo() {
         <Field
           as="input"
           name="userName"
-          relyFieldsName={['firstName', 'lastName']}
+          relyFields={['firstName', 'lastName']}
           relyFn={relyFn}
           disabled
         />
@@ -517,7 +517,7 @@ function FormDemo() {
           <Field
             as="input"
             name="userName"
-            relyFieldsName={['firstName', 'lastName']}
+            relyFields={['firstName', 'lastName']}
             relyFn={relyFn}
             disabled
           />

@@ -58,7 +58,7 @@ const relyFn4 = (values: any) => {
 
 it('A=B+C', () => {
   const fields = [
-    { name: 'A', relyFieldsName: ['C', 'B'], relyFn: relyFn1 },
+    { name: 'A', relyFields: ['C', 'B'], relyFn: relyFn1 },
     { name: 'B' },
     { name: 'C' },
   ];
@@ -72,7 +72,7 @@ it('A=B+C', () => {
 
 it('不指定relyFn,值不会发生改变', () => {
   const fields = [
-    { name: 'A', relyFieldsName: ['C', 'B'] },
+    { name: 'A', relyFields: ['C', 'B'] },
     { name: 'B' },
     { name: 'C' },
   ];
@@ -86,10 +86,10 @@ it('不指定relyFn,值不会发生改变', () => {
 
 it('D = A+ E', () => {
   const fields = [
-    { name: 'A', relyFieldsName: ['C', 'B'], relyFn: relyFn1 },
+    { name: 'A', relyFields: ['C', 'B'], relyFn: relyFn1 },
     { name: 'B' },
     { name: 'C' },
-    { name: 'D', relyFieldsName: ['A', 'E'], relyFn: relyFn2 },
+    { name: 'D', relyFields: ['A', 'E'], relyFn: relyFn2 },
     { name: 'E' },
   ];
 
@@ -102,10 +102,10 @@ it('D = A+ E', () => {
 
 it('表单域值为数组时值的重新计算', () => {
   const fields = [
-    { name: 'A', relyFieldsName: ['C', 'B'], relyFn: relyFn4 },
+    { name: 'A', relyFields: ['C', 'B'], relyFn: relyFn4 },
     { name: 'B' },
     { name: 'C' },
-    { name: 'D', relyFieldsName: ['A'], relyFn: (values: any) => values.A },
+    { name: 'D', relyFields: ['A'], relyFn: (values: any) => values.A },
   ];
 
   const values = { A: ['1'], B: ['1', '2'] };
@@ -117,10 +117,10 @@ it('表单域值为数组时值的重新计算', () => {
 
 it('死循环', () => {
   const fields = [
-    { name: 'A', relyFieldsName: ['C', 'B', 'D'], relyFn: relyFn3 },
+    { name: 'A', relyFields: ['C', 'B', 'D'], relyFn: relyFn3 },
     { name: 'B' },
     { name: 'C' },
-    { name: 'D', relyFieldsName: ['A', 'E'], relyFn: relyFn2 },
+    { name: 'D', relyFields: ['A', 'E'], relyFn: relyFn2 },
     { name: 'E' },
   ];
 

@@ -90,7 +90,7 @@ export interface FieldConfig {
   /**
    * 关联字段名
    */
-  relyFieldsName?: string[];
+  relyFields?: string[];
   /**
    * 值关联计算方法
    */

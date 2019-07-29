@@ -46,7 +46,7 @@ interface FieldConfig<T = any> extends FieldValidateProps {
   /**
    * 关联字段名
    */
-  relyFieldsName?: string[];
+  relyFields?: string[];
 
   /**
    * 值关联计算方法
@@ -89,12 +89,12 @@ function useSetFieldConfig(props: RxFieldProps) {
   const { name } = props;
   const propsRef = useValueRef(props);
   useEffect(() => {
-    const { asyncValidate, relyFieldsName, relyFn } = propsRef.current;
+    const { asyncValidate, relyFields, relyFn } = propsRef.current;
     const fieldConfig = {
       name,
       validate: createValidateFn(propsRef.current),
       asyncValidate,
-      relyFieldsName,
+      relyFields,
       relyFn,
     };
     addField(fieldConfig);
@@ -116,7 +116,7 @@ const ForwardRefField = React.forwardRef(function Field<
     defaultValue,
     valueExtract = defaultValueExtract,
     asyncValidate,
-    relyFieldsName,
+    relyFields,
     relyFn,
     validate,
     required,

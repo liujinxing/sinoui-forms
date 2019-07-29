@@ -65,7 +65,7 @@ export interface FieldConfig {
     value: any,
     values: any,
   ) => Promise<string | undefined> | undefined;
-  relyFieldsName?: string[];
+  relyFields?: string[];
   relyFn?: (values: any) => any;
 }
 

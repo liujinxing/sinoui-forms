@@ -352,7 +352,7 @@ it('设置表单值', async () => {
   formState.addField({
     name: 'userNameCopy',
     validate: () => undefined,
-    relyFieldsName: ['userName'],
+    relyFields: ['userName'],
     relyFn: (values: any) => values.userName,
   });
 
