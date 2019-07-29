@@ -163,8 +163,8 @@ const ForwardRefField = React.forwardRef(function Field<
   if (AsComp) {
     return (
       <AsComp
-        {...rest}
         data-testid="field-comp"
+        {...rest}
         name={name}
         value={value === undefined ? defaultValue : value}
         onBlur={handleBlur}
