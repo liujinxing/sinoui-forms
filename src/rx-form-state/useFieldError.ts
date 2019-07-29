@@ -1,15 +1,20 @@
-import { memoize } from 'lodash';
+import { memoize, get } from 'lodash';
 import { FormStateModel } from './types';
 import useFormStateContext from './useFormStateContext';
 import useBehaviorSubjectSelect from '../utils/useBehaviorSubjectSelect';
 
 const getFieldError = memoize(
   (fieldName?: string) => (formState: FormStateModel) => {
-    if (fieldName && formState.errors[fieldName]) {
-      return formState.errors[fieldName] as (string | undefined);
+    if (fieldName) {
+      const fieldError = get(formState.errors, fieldName) as (
+        | string
+        | undefined);
+      if (fieldError) {
+        return fieldError;
+      }
     }
     if (fieldName) {
-      return formState.asyncErrors[fieldName] as (string | undefined);
+      return get(formState.asyncErrors, fieldName) as (string | undefined);
     }
     return undefined;
   },
