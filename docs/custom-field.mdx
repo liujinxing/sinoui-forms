@@ -50,7 +50,7 @@ import Form, {
 } from '@sinoui/rx-form-state';
 
 function FormDemo() {
-  const formState = useFormState();
+  const formState = useFormState({ city: '北京' });
 
   return (
     <Form formState={formState}>
@@ -76,7 +76,7 @@ function FormDemo() {
 
 <Playground>
 {()=>{
-    const formState = useFormState();
+    const formState = useFormState({ city: '北京' });
 
     return (
         <Form formState={formState}>
