@@ -1,4 +1,4 @@
-import reducer from '../reducer';
+import reducer from '../hook-form-state/reducer';
 
 const defaultState = {
   values: { userName: '张三' },

@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from 'react';
-import useFieldError from '../useFieldError';
+import useFieldError from '../hook-form-state/useFieldError';
 import FormItemContext from '../FormItemContext';
-import useFieldTouched from '../useFieldTouched';
+import useFieldTouched from '../hook-form-state/useFieldTouched';
 
 /**
  * 渲染表单域错误信息

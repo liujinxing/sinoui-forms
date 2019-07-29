@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from 'react';
 import FormItemContext from '../FormItemContext';
-import useFieldError from '../useFieldError';
-import useFieldTouched from '../useFieldTouched';
+import useFieldError from '../hook-form-state/useFieldError';
+import useFieldTouched from '../hook-form-state/useFieldTouched';
 
 interface Props {
   id: number;
