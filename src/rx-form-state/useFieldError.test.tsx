@@ -85,3 +85,26 @@ it('既有表单校验错误，又有异步校验错误时，获取到的表单�
 
   expect(result.current).toBe('必填');
 });
+
+it('获取嵌套表单的验证错误', () => {
+  const Wrapper = ({ children }: { children?: React.ReactNode }) => {
+    const formState = useFormState();
+
+    formState.setErrors({
+      address: {
+        city: '必填',
+      },
+    });
+
+    return (
+      <FormStateContext.Provider value={formState}>
+        {children}
+      </FormStateContext.Provider>
+    );
+  };
+  const { result } = renderHook(() => useFieldError('address.city'), {
+    wrapper: Wrapper,
+  });
+
+  expect(result.current).toBe('必填');
+});

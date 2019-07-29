@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import classNames from 'classnames';
 import FormItemContext from '../FormItemContext';
 import FieldError from './FieldError';
-import useFieldError from '../useFieldError';
+import useFieldError from '../hook-form-state/useFieldError';
 import useFormItemState from '../useFormItemState';
 
 interface Props {

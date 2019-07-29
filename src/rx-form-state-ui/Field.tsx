@@ -11,11 +11,14 @@ function Field(props: RxFieldProps) {
   const { id, addField, removeField } = useContext(FormItemContext);
 
   useEffect(() => {
-    addField(name);
+    if (addField) {
+      addField(name);
 
-    return () => {
-      removeField(name);
-    };
+      return () => {
+        removeField(name);
+      };
+    }
+    return undefined;
   }, [name, addField, removeField]);
 
   return (

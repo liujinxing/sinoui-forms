@@ -9,9 +9,9 @@ import React, {
 } from 'react';
 import { get } from 'lodash';
 import FormItemContext from '../FormItemContext';
-import FormStateContext from '../FormStateContext';
+import FormStateContext from '../hook-form-state/FormStateContext';
 import createValidateFn from '../utils/createValidateFn';
-import { FieldValidateProps } from '../types';
+import { FieldValidateProps } from '../hook-form-state/types';
 
 interface Props extends FieldValidateProps {
   name: string;

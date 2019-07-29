@@ -3,9 +3,9 @@ import { useCallback, useRef, useEffect, useReducer } from 'react';
 import { produce } from 'immer';
 import debounce from 'lodash/debounce';
 import { get, set } from 'lodash';
-import calcNewValues from './utils/calcNewValues';
+import calcNewValues from '../utils/calcNewValues';
 import reducer, { Reducer, State } from './reducer';
-import isError from './utils/isError';
+import isError from '../utils/isError';
 import { FieldConfig, FormErrors, FormPending, FormTouched } from './types';
 
 interface Options {

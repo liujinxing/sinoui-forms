@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import { FormState } from '../types';
-import FormStateContext from '../FormStateContext';
+import { FormState } from '../hook-form-state/types';
+import FormStateContext from '../hook-form-state/FormStateContext';
 
 interface Props {
   formState: FormState<any>;
