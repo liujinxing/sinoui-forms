@@ -1,0 +1,276 @@
+---
+name: 自定义表单域
+route: /custom-field
+menu: 教程
+---
+
+import { Playground } from 'docz';
+import Form, {
+  useFormState,
+  FormItem,
+  Label,
+  Field,
+  FormValueMonitor,
+  useField,
+} from '../src';
+import { TextInputFieldDemo } from './CustomFieldDemo';
+
+# 自定义表单域
+
+我们可以通过以下三种方式自定义表单域：
+
+- 使用`Field`组件的`as`属性
+- 使用`Field`组件的`render`属性
+- 使用`useField`的 hook
+
+## 使用 Field 的 as 属性自定义表单域
+
+基本用法:
+
+`Select.tsx`
+
+```tsx
+import React from 'react';
+import { Field } from '@sinoui/rx-form-state';
+
+export default function Select(props) {
+  return <Field as="select" {...props} />;
+}
+```
+
+`FormDemo.tsx`
+
+```tsx
+import React from 'react';
+import Form, {
+  useFormState,
+  FormItem,
+  Label,
+  Field,
+} from '@sinoui/rx-form-state';
+
+function FormDemo() {
+  const formState = useFormState();
+
+  return (
+    <Form formState={formState}>
+      <FormItem>
+        <Label>用户名</Label>
+        <Field name="userName" as="input" required />
+      </FormItem>
+      <FormItem>
+        <Label>所在城市</Label>
+        <Select name="city" required style={{ width: 160 }}>
+          <option value="北京">北京</option>
+          <option value="上海">上海</option>
+          <option value="广州">广州</option>
+          <option value="深圳">深圳</option>
+        </Select>
+      </FormItem>
+    </Form>
+  );
+}
+```
+
+运行效果：
+
+<Playground>
+{()=>{
+    const formState = useFormState();
+
+    return (
+        <Form formState={formState}>
+        <FormItem>
+            <Label>用户名</Label>
+            <Field name="userName" as="input" required />
+        </FormItem>
+        <FormItem>
+            <Label>所在城市</Label>
+            <Field name="city" as="select" required style={{ width: 160 }}>
+            <option value="北京">北京</option>
+            <option value="上海">上海</option>
+            <option value="广州">广州</option>
+            <option value="深圳">深圳</option>
+            </Field>
+        </FormItem>
+        </Form>
+    );
+
+}}
+
+</Playground>
+
+如果我们用来渲染的表单域组件值变化时对外抛出的是表单域对应的值而不是`event`事件，我们需要给`Field`指定`valueExtract`属性做值处理。例如：
+
+`TextInput.tsx`
+
+```tsx
+import React from 'react';
+
+export default function TextInput(props) {
+  return (
+    <input
+      {...props}
+      value={props.value}
+      onChange={(event) => props.onChange(event.target.value)}
+    />
+  );
+}
+```
+
+`TextInputField.tsx`
+
+```tsx
+import React from 'react';
+import TextInput from './TextInput';
+
+export default function TextInputField(props) {
+  return <Field {...props} as={TextInput} valueExtract={(value) => value} />;
+}
+```
+
+`FormDemo.tsx`
+
+```tsx
+import React from 'react';
+import Form, {
+  useFormState,
+  FormItem,
+  Label,
+  Field,
+} from '@sinoui/rx-form-state';
+import TextInputField from './TextInputField';
+
+function FormDemo() {
+  const formState = useFormState();
+
+  return (
+    <Form formState={formState}>
+      <FormItem>
+        <Label>用户名</Label>
+        <TextInputField name="userName" type="text" />
+      </FormItem>
+      <FormItem>
+        <Label>年龄</Label>
+        <TextInputField name="age" type="number" />
+      </FormItem>
+      <FormValueMonitor>
+        {(values) => <div>表单值：{JSON.stringfy(values)}</div>}
+      </FormValueMonitor>
+    </Form>
+  );
+}
+```
+
+运行效果：
+
+<Playground>{() => <TextInputFieldDemo />}</Playground>
+
+使用`as`属性有局限性。它不适用于以下两个场景：
+
+- 一次性设置多个表单域的值
+- 自定义的表单域值依赖于多个表单域的值
+
+以上两个场景可以通过`Field`的`render`属性自定义表单域实现。
+
+## 使用 Field 的 render 属性自定义表单域
+
+我们使用`Field`组件的`render`属性自定义一个可以同时设置多个表单域值的表单域，`render`方法中有一个`formState`对象，当表单域值发生变化时，依次调用`formState.setFieldValue()`方法可以设置多个表单域的值。
+
+基本用法：
+
+```tsx
+import React from 'react';
+import Form, {
+  FormItem,
+  Field,
+  Label,
+  useFormState,
+  FormValueMonitor,
+} from '@sinoui/rx-form-state';
+
+function FormDemo() {
+  const formState = useFormState({});
+
+  return (
+    <Form formState={formState}>
+      <FormItem>
+        <Label>公文标题</Label>
+        <Field as="input" name="title" />
+      </FormItem>
+      <FormItem>
+        <Label>紧急程度</Label>
+        <Field
+          name="jjcd"
+          render={({ formState }) => {
+            return (
+              <select
+                style={{ width: 160 }}
+                onChange={(event) => {
+                  formState.setFieldValue('jjcdNum', event.target.value);
+                  formState.setFieldValue(
+                    'jjcd',
+                    event.target.selectedOptions[0].label,
+                  );
+                }}
+              >
+                <option value="001">急</option>
+                <option value="002">特急</option>
+                <option value="003">限时</option>
+                <option value="004">特提</option>
+              </select>
+            );
+          }}
+        />
+      </FormItem>
+      <FormValueMonitor>
+        {(values) => <div>表单值：{JSON.stringify(values, undefined, 2)}</div>}
+      </FormValueMonitor>
+    </Form>
+  );
+}
+```
+
+运行效果：
+
+<Playground>
+  {()=>{
+    const formState = useFormState({});
+
+    return (
+      <Form formState={formState}>
+        <FormItem>
+          <Label>公文标题</Label>
+          <Field as="input" name="title" />
+        </FormItem>
+        <FormItem>
+          <Label>紧急程度</Label>
+          <Field
+            name="jjcd"
+            render={({ formState }) => {
+              return (
+                <select
+                  style={{ width: 160 }}
+                  onChange={(event) => {
+                    formState.setFieldValue('jjcdNum', event.target.value);
+                    formState.setFieldValue('jjcd',event.target.selectedOptions[0].label);
+                  }}
+                >
+                  <option value="001">急</option>
+                  <option value="002">特急</option>
+                  <option value="003">限时</option>
+                  <option value="004">特提</option>
+                </select>
+              );
+            }}
+          />
+        </FormItem>
+        <FormValueMonitor>
+          {(values) => <div>表单值：{JSON.stringify(values, undefined, 2)}</div>}
+        </FormValueMonitor>
+      </Form>
+    );
+
+}}
+
+</Playground>
