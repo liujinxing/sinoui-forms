@@ -12,25 +12,31 @@ import Form, {
   FormStateContext,
   useBehaviorSubject,
 } from '../src';
+import TelephoneForm from './TelephoneForm';
 
 # 表单状态管理
 
 安装：
 
 ```shell
-yarn add sinoui-forms
+yarn add @sinoui/rx-form-state
 ```
 
 或
 
 ```shell
-npm install --save sinoui-forms
+npm install --save @sinoui/rx-form-state
 ```
 
 引用：
 
 ```ts
-import Form, { useFormState, FormItem, Field, Label } from 'sinoui-forms';
+import Form, {
+  useFormState,
+  FormItem,
+  Field,
+  Label,
+} from '@sinoui/rx-form-state';
 ```
 
 源码路径：[https://github.com/sinoui/sinoui-forms](https://github.com/sinoui/sinoui-forms)。
@@ -61,7 +67,7 @@ import Form, {
   Field,
   Label,
   useBehaviorSubject,
-} from 'sinoui-forms';
+} from '@sinoui/rx-form-state';
 
 function FormDemo() {
   const defaultValues = {};
@@ -131,7 +137,12 @@ function FormDemo() {
 
 ```tsx
 import React from 'react';
-import Form, { FormItem, Field, Label, useFormState } from 'sinoui-forms';
+import Form, {
+  FormItem,
+  Field,
+  Label,
+  useFormState,
+} from '@sinoui/rx-form-state';
 
 /**
  * 定义全局表单校验规则
@@ -226,7 +237,7 @@ function FormDemo() {
 
 ```tsx
 import React from 'react';
-import { Field } from 'sinoui-forms';
+import { Field } from '@sinoui/rx-form-state';
 
 function Select(props) {
   return (
@@ -243,7 +254,12 @@ export default Select;
 
 ```tsx
 import React from 'react';
-import Form, { FormItem, Field, Label, useFormState } from 'sinoui-forms';
+import Form, {
+  FormItem,
+  Field,
+  Label,
+  useFormState,
+} from '@sinoui/rx-form-state';
 import Select from './Select';
 
 function FormDemo() {
@@ -313,7 +329,7 @@ import Form, {
   Label,
   useFormState,
   useBehaviorSubject,
-} from 'sinoui-forms';
+} from '@sinoui/rx-form-state';
 
 function FormDemo() {
   const formState = useFormState({});
@@ -410,7 +426,7 @@ import Form, {
   Label,
   useFormState,
   useBehaviorSubject,
-} from 'sinoui-forms';
+} from '@sinoui/rx-form-state';
 
 function relyFn(values) {
   if (!values.firstName) {
@@ -447,7 +463,7 @@ function FormDemo() {
           name="userName"
           relyFieldsName={['firstName', 'lastName']}
           relyFn={relyFn}
-          compProps={{ disabled: true }}
+          disabled
         />
       </FormItem>
       <div>表单值：{JSON.stringify(values, undefined, 2)}</div>
@@ -493,7 +509,7 @@ function FormDemo() {
             name="userName"
             relyFieldsName={['firstName', 'lastName']}
             relyFn={relyFn}
-            compProps={{ disabled: true }}
+            disabled
           />
         </FormItem>
         <div>表单值：{JSON.stringify(values, undefined, 2)}</div>
@@ -512,7 +528,12 @@ function FormDemo() {
 
 ```tsx
 import React from 'react';
-import Form, { FormItem, Field, Label, useFormState } from 'sinoui-forms';
+import Form, {
+  FormItem,
+  Field,
+  Label,
+  useFormState,
+} from '@sinoui/rx-form-state';
 import http from '@sinoui/http';
 
 function validate(values: any) {
@@ -617,7 +638,7 @@ function FormDemo() {
 
 ```tsx
 import React from 'react';
-import { Field, FormItem, useFieldArray } from 'sinoui-forms';
+import { Field, FormItem, useFieldArray } from '@sinoui/rx-form-state';
 
 function TelephoneForm() {
   const {
@@ -648,9 +669,7 @@ function TelephoneForm() {
               name={name(index, 'type')}
               as="input"
               required
-              compProps={{
-                placeholder: '电话类型',
-              }}
+              placeholder="类型"
             />
           </FormItem>
           <FormItem>
@@ -659,9 +678,7 @@ function TelephoneForm() {
               as="input"
               required
               minlength={4}
-              compProps={{
-                placeholder: '电话号码',
-              }}
+              placeholder="电话号码"
             />
           </FormItem>
           <button onClick={() => insert(index + 1, {})}>+</button>
@@ -686,20 +703,19 @@ export default TelephoneForm;
 
 ```tsx
 import React from 'react';
-import useFormState, {
+import Form, {
   FormItem,
   Field,
   Label,
-  FormStateContext,
-} from 'sinoui-forms';
+  useFormState,
+} from '@sinoui/rx-form-state';
 import TelephoneForm from './TelephoneForm';
 
 function FormDemo() {
-  const defaultValues = {};
-  const formState = useFormState(defaultValues, {});
-
+  const formState = useFormState({});
+  const formValues = useBehaviorSubject(formState.values$);
   return (
-    <FormStateContext.Provider value={formState}>
+    <Form formState={formState}>
       <FormItem>
         <Label>姓名</Label>
         <Field as="input" name="userName" />
@@ -708,11 +724,7 @@ function FormDemo() {
         <label>地址</label>
         <FormItem>
           <Label>城市</Label>
-          <Field
-            as="select"
-            name="address.city"
-            compProps={{ style: { width: 160 } }}
-          >
+          <Field as="select" name="address.city" style={{ width: 160 }}>
             <option value="北京">北京</option>
             <option value="上海">上海</option>
             <option value="广州">广州</option>
@@ -724,9 +736,45 @@ function FormDemo() {
           <Field as="input" name="address.street" required />
         </FormItem>
       </div>
-      <TelePhoneForm />
+      <TelephoneForm />
       <div>表单值：{JSON.stringify(formState.values, undefined, 2)}</div>
-    </FormStateContext.Provider>
+    </Form>
   );
 }
 ```
+
+运行效果：
+
+<Playground>
+  {() => {
+    const formState = useFormState({});
+    const formValues = useBehaviorSubject(formState.values$);
+    return (
+      <Form formState={formState}>
+        <FormItem>
+          <Label>姓名</Label>
+          <Field as="input" name="userName" />
+        </FormItem>
+        <div>
+          <label>地址</label>
+          <FormItem>
+            <Label>城市</Label>
+            <Field as="select" name="address.city" style={{ width: 160 }}>
+              <option value="北京">北京</option>
+              <option value="上海">上海</option>
+              <option value="广州">广州</option>
+              <option value="深圳">深圳</option>
+            </Field>
+          </FormItem>
+          <FormItem>
+            <Label>街道</Label>
+            <Field as="input" name="address.street" required />
+          </FormItem>
+        </div>
+        <TelephoneForm />
+        <div>表单值：{JSON.stringify(formValues, undefined, 2)}</div>
+      </Form>
+    );
+}}
+
+</Playground>

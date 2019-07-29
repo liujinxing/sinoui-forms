@@ -16,7 +16,7 @@ import AddContactForm from './AddContactForm';
 
 ```tsx
 import React from 'react';
-import { Field, FormItem, useFieldArray } from 'sinoui-forms';
+import { Field, FormItem, useFieldArray } from '@sinoui/rx-form-state';
 
 const types = ['家庭', '工作', 'iPhone', '手机', '主要', '工作传真', '其他'];
 
@@ -121,7 +121,7 @@ export default TelephoneForm;
 
 ```tsx
 import React from 'react';
-import { Field, FormItem, useFieldArray } from 'sinoui-forms';
+import { Field, FormItem, useFieldArray } from '@sinoui/rx-form-state';
 
 function AddressForm() {
   const {
@@ -209,7 +209,12 @@ export default AddressForm;
 
 ```tsx
 import React from 'react';
-import Form, { Field, FormItem, useFormState, Label } from 'sinoui-forms';
+import Form, {
+  Field,
+  FormItem,
+  useFormState,
+  Label,
+} from '@sinoui/rx-form-state';
 import TelephoneForm from './TelephoneForm';
 import AddressForm from './AddressForm';
 
