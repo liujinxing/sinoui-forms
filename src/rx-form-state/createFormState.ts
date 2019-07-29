@@ -17,18 +17,14 @@ import {
 import {
   FormStateModel,
   FieldConfig,
-  FormStateErrors,
   FieldStateModel,
   FormState,
+  FormStateOptions,
 } from './types';
 import isError from '../utils/isError';
 import isFunction from '../utils/isFunction';
 import calcNewValues from '../utils/calcNewValues';
-
-interface Options<T> {
-  validate?: (values: T) => FormStateErrors | undefined;
-  onSubmit?: (values: T) => Promise<any> | void;
-}
+import applyGlobalRelyRules from '../utils/applyGlobalRelyRules';
 
 function createSubBehaviorSubject<T, U extends keyof FormStateModel<T>>(
   state$: BehaviorSubject<FormStateModel<T>>,
@@ -65,7 +61,7 @@ const fieldAndFormStateNames: {
  */
 function createFormState<T = any>(
   intialValues: T = {} as any,
-  options: Options<T> = {},
+  options: FormStateOptions<T> = {},
 ): FormState<T> {
   const fields: FieldConfig[] = [];
   const formState$ = new BehaviorSubject<FormStateModel<T>>({
@@ -108,6 +104,8 @@ function createFormState<T = any>(
 
     formState$.next(newFormState);
   };
+
+  const setValues = createUpdateSubStateFn('values');
 
   const validateForm = () => {
     const { values } = formState$.value;
@@ -345,6 +343,12 @@ function createFormState<T = any>(
         calcNewValues(draft.values, fields as any, fieldName);
       });
 
+      if (options.relys && options.relys.length > 0) {
+        setValues(
+          applyGlobalRelyRules(options.relys, fieldName, values$.value),
+        );
+      }
+
       unstable_runWithPriority(unstable_LowPriority, () => {
         validateField(fieldName);
       });
@@ -434,7 +438,7 @@ function createFormState<T = any>(
 
     updateState,
     validate,
-    setValues: createUpdateSubStateFn('values'),
+    setValues,
     setTouched: createUpdateSubStateFn('isTouched'),
     setErrors: createUpdateSubStateFn('errors'),
     setPending: createUpdateSubStateFn('isPending'),

@@ -463,6 +463,98 @@ function countA(values) {
 
 ## 全局值关联
 
+有时候，表单域值关联无法满足值关联的需求，比如`A = B + C`，而`A`不是一个可见的表单域元素。这时可以用一下全局值关联
+
+```tsx
+import React from 'react';
+import Form, { useFormState, Field, FormValueMonitor } from '@sinoui/web-forms';
+
+// A = B + C
+const abcRely = [
+  'B',
+  'C',
+  (draft) => {
+    if (draft.B && draft.C) {
+      draft.A = draft.B + draft.C;
+    }
+  },
+];
+
+// E = D
+const deRely = [
+  'D',
+  (draft) => {
+    draft.E = draft.D;
+  },
+];
+
+function FormDemo() {
+  const initialValues = { userName: '紫诺' };
+  const formState = useFormState(initialValues, {
+    relys: [abcRely, deRely],
+  });
+
+  return (
+    <Form formState={formState}>
+      A：
+      <Field as="input" name="A" />
+      B：
+      <Field as="input" name="B" />
+      C：
+      <Field as="input" name="C" />
+      D:
+      <Field as="input" name="D" />
+      E:
+      <Field as="input" name="E" />
+    </Form>
+  );
+}
+```
+
+效果如下：
+
+<Playground>
+  {() => {
+    // A = B + C
+    const abcRely = [
+      'B',
+      'C',
+      (draft) => {
+        if (draft.B && draft.C) {
+          draft.A = draft.B + draft.C;
+        }
+      },
+    ];
+
+    // E = D
+    const deRely = [
+      'D',
+      (draft) => {
+        draft.E = draft.D;
+      },
+    ];
+
+    const formState = useFormState({}, {
+      relys: [abcRely, deRely],
+    });
+
+    return <Form formState={formState}>
+      A：
+      <Field as="input" name="A" />
+      B：
+      <Field as="input" name="B" />
+      C：
+      <Field as="input" name="C" />
+      D:
+      <Field as="input" name="D" />
+      E:
+      <Field as="input" name="E" />
+    </Form>;
+
+}}
+
+</Playground>
+
 ## 设置表单域的值
 
 当你需要在`Field`组件之外设置个别表单域的值，你可以调用`formState.setFieldValue`函数。如下所示：

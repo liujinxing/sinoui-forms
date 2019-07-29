@@ -462,3 +462,77 @@ it('表单域失去焦点', () => {
   expect(formState.isTouched$.value.userName).toBe(true);
   expect(formState.errors$.value.userName).toBe('必填');
 });
+
+it('全局值关联', () => {
+  // A = B + C
+  const abcRely = [
+    'B',
+    'C',
+    (draft: any) => {
+      if (draft.B && draft.C) {
+        draft.A = `${draft.B} ${draft.C}`;
+      }
+    },
+  ];
+
+  // E = D
+  const deRely = [
+    'D',
+    (draft: any) => {
+      draft.E = draft.D;
+    },
+  ];
+
+  const formState = createFormState(
+    {},
+    {
+      relys: [abcRely, deRely],
+    },
+  );
+
+  formState.setFieldValue('B', 'Jacking');
+  formState.setFieldValue('C', 'Liu');
+
+  expect(formState.values$.value.A).toBe('Jacking Liu');
+
+  formState.setFieldValue('D', '123456');
+
+  expect(formState.values$.value.E).toBe('123456');
+});
+
+it('全局深度值关联', () => {
+  // A = B + C
+  const abcRely = [
+    'B',
+    'C',
+    (draft: any) => {
+      if (draft.B && draft.C) {
+        draft.A = `${draft.B} ${draft.C}`;
+      }
+    },
+  ];
+
+  // B = D + E
+  const deRely = [
+    'D',
+    'E',
+    (draft: any) => {
+      if (draft.D && draft.E) {
+        draft.B = `${draft.D} ${draft.E}`;
+      }
+    },
+  ];
+
+  const formState = createFormState(
+    {},
+    {
+      relys: [abcRely, deRely],
+    },
+  );
+
+  formState.setFieldValue('D', 'Jacking');
+  formState.setFieldValue('E', 'And');
+  formState.setFieldValue('C', 'zinuo');
+
+  expect(formState.values$.value.A).toBe('Jacking And zinuo');
+});

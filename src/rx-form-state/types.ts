@@ -1,6 +1,64 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BehaviorSubject } from 'rxjs';
 
+export type RelyRule<T> =
+  | [string, (draft: T) => void]
+  | [string, string, (draft: T) => void]
+  | [string, string, string, (draft: T) => void]
+  | [string, string, string, string, (draft: T) => void]
+  | [string, string, string, string, string, (draft: T) => void]
+  | [string, string, string, string, string, string, (draft: T) => void]
+  | [string, string, string, string, string, string, string, (draft: T) => void]
+  | [
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      (draft: T) => void,
+    ]
+  | [
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      (draft: T) => void,
+    ]
+  | [
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      (draft: T) => void,
+    ]
+  | (string | ((draft: T) => void))[];
+
+/**
+ * 创建表单状态的配置
+ */
+export interface FormStateOptions<T> {
+  validate?: (values: T) => FormStateErrors | undefined;
+  onSubmit?: (values: T) => Promise<any> | void;
+  /**
+   * 指定全局值关联规则
+   */
+  relys?: RelyRule<T>[];
+}
+
 /**
  * 表单域内置校验属性
  */
