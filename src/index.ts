@@ -6,6 +6,7 @@ import FormItem from './rx-form-state-ui/FormItem';
 import Label from './rx-form-state-ui/Label';
 import Field from './rx-form-state-ui/Field';
 import useBehaviorSubject from './utils/useBehaviorSubject';
+import FormValueMonitor from './rx-form-state/FormValueMonitor';
 
 export default Form;
 export {
@@ -16,4 +17,5 @@ export {
   useFormState,
   useFieldArray,
   useBehaviorSubject,
+  FormValueMonitor,
 };

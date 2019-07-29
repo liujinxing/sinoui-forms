@@ -10,7 +10,7 @@ import Form, {
   Field,
   Label,
   FormStateContext,
-  useBehaviorSubject,
+  FormValueMonitor,
 } from '../src';
 import TelephoneForm from './TelephoneForm';
 
@@ -66,13 +66,12 @@ import Form, {
   FormItem,
   Field,
   Label,
-  useBehaviorSubject,
+  FormValueMonitor,
 } from '@sinoui/rx-form-state';
 
 function FormDemo() {
   const defaultValues = {};
   const formState = useFormState(defaultValues);
-  const values = useBehaviorSubject(formState.values$);
 
   return (
     <Form formState={formState}>
@@ -84,7 +83,9 @@ function FormDemo() {
         <Label>密码</Label>
         <Field as="input" name="password" type="password" />
       </FormItem>
-      <div>表单值：{JSON.stringify(values, undefined, 2)}</div>
+      <FormValueMonitor>
+        {(values) => <div>表单值：{JSON.stringify(values, undefined, 2)}</div>}
+      </FormValueMonitor>
     </Form>
   );
 }
@@ -97,7 +98,6 @@ function FormDemo() {
     ()=>{
       const defaultValues = {};
       const formState = useFormState(defaultValues);
-      const values = useBehaviorSubject(formState.values$);
 
       return (
         <Form formState={formState}>
@@ -109,7 +109,9 @@ function FormDemo() {
             <Label>密码</Label>
             <Field as="input" name="password" type='password' />
             </FormItem>
-          <div>表单值：{JSON.stringify(values, undefined, 2)}</div>
+          <FormValueMonitor>
+            {(values) => <div>表单值：{JSON.stringify(values, undefined, 2)}</div>}
+          </FormValueMonitor>
         </Form>
       );
     }
@@ -227,7 +229,7 @@ function FormDemo() {
 
 </Playground>
 
-## 自定义表单域
+## 自定义表单
 
 在自定义表单域时，如果表单域有子节点，我们可以给`Field`组件指定`children`。
 
@@ -328,12 +330,12 @@ import Form, {
   Field,
   Label,
   useFormState,
-  useBehaviorSubject,
+  FormValueMonitor,
 } from '@sinoui/rx-form-state';
 
 function FormDemo() {
   const formState = useFormState({});
-  const values = useBehaviorSubject(formState.values$);
+
   return (
     <Form formState={formState}>
       <FormItem>
@@ -365,7 +367,9 @@ function FormDemo() {
           }}
         />
       </FormItem>
-      <div>表单值：{JSON.stringify(values, undefined, 2)}</div>
+      <FormValueMonitor>
+        {(values) => <div>表单值：{JSON.stringify(values, undefined, 2)}</div>}
+      </FormValueMonitor>
     </Form>
   );
 }
@@ -376,7 +380,7 @@ function FormDemo() {
 <Playground>
   {() => {
     const formState = useFormState({});
-    const values = useBehaviorSubject(formState.values$);
+
     return (
       <Form formState={formState}>
         <FormItem>
@@ -408,10 +412,16 @@ function FormDemo() {
             }}
           />
         </FormItem>
-        <div>表单值：{JSON.stringify(values, undefined, 2)}</div>
+        <FormValueMonitor>
+          {(values) => (
+            <div>表单值：{JSON.stringify(values, undefined, 2)}</div>
+          )}
+        </FormValueMonitor>
       </Form>
     );
-  }}
+
+}}
+
 </Playground>
 
 ## 表单域值关联
@@ -425,7 +435,7 @@ import Form, {
   Field,
   Label,
   useFormState,
-  useBehaviorSubject,
+  FormValueMonitor,
 } from '@sinoui/rx-form-state';
 
 function relyFn(values) {
@@ -443,7 +453,6 @@ function relyFn(values) {
 function FormDemo() {
   const defaultValues = {};
   const formState = useFormState(defaultValues, {});
-  const values = useBehaviorSubject(formState.values$);
 
   return (
     <Form formState={formState}>
@@ -466,7 +475,9 @@ function FormDemo() {
           disabled
         />
       </FormItem>
-      <div>表单值：{JSON.stringify(values, undefined, 2)}</div>
+      <FormValueMonitor>
+        {(values) => <div>表单值：{JSON.stringify(values, undefined, 2)}</div>}
+      </FormValueMonitor>
     </Form>
   );
 }
@@ -489,7 +500,7 @@ function FormDemo() {
     }
 
     const formState = useFormState({});
-    const values = useBehaviorSubject(formState.values$);
+
 
     return (
       <Form formState={formState}>
@@ -512,7 +523,9 @@ function FormDemo() {
             disabled
           />
         </FormItem>
-        <div>表单值：{JSON.stringify(values, undefined, 2)}</div>
+        <FormValueMonitor>
+          {(values) => <div>表单值：{JSON.stringify(values, undefined, 2)}</div>}
+        </FormValueMonitor>
       </Form>
     )
 
@@ -713,7 +726,7 @@ import TelephoneForm from './TelephoneForm';
 
 function FormDemo() {
   const formState = useFormState({});
-  const formValues = useBehaviorSubject(formState.values$);
+
   return (
     <Form formState={formState}>
       <FormItem>
@@ -737,7 +750,9 @@ function FormDemo() {
         </FormItem>
       </div>
       <TelephoneForm />
-      <div>表单值：{JSON.stringify(formState.values, undefined, 2)}</div>
+      <FormValueMonitor>
+        {(values) => <div>表单值：{JSON.stringify(values, undefined, 2)}</div>}
+      </FormValueMonitor>
     </Form>
   );
 }
@@ -748,7 +763,7 @@ function FormDemo() {
 <Playground>
   {() => {
     const formState = useFormState({});
-    const formValues = useBehaviorSubject(formState.values$);
+    
     return (
       <Form formState={formState}>
         <FormItem>
@@ -772,7 +787,9 @@ function FormDemo() {
           </FormItem>
         </div>
         <TelephoneForm />
-        <div>表单值：{JSON.stringify(formValues, undefined, 2)}</div>
+        <FormValueMonitor>
+          {(values) => <div>表单值：{JSON.stringify(values, undefined, 2)}</div>}
+        </FormValueMonitor>
       </Form>
     );
 }}
