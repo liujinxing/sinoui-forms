@@ -129,8 +129,8 @@ function FormDemo() {
 - trimRequired 去掉首尾空白符之后的必填校验
 - min 指定数值，做最小值校验
 - max 指定数值，做最大值校验
-- maxLength 指定数值，做字符串最大长度校验
-- minLength 指定数值，做字符串最小长度校验
+- maxlength 指定数值，做字符串最大长度校验
+- minlength 指定数值，做字符串最小长度校验
 - pattern 正则校验
 - patternErrorMessage 正则校验失败的错误信息
 
@@ -178,7 +178,7 @@ function FormDemo() {
           name="password"
           type="password"
           required
-          minLength={8}
+          minlength={8}
         />
       </FormItem>
     </Form>
@@ -218,7 +218,7 @@ function FormDemo() {
             name="password"
             type="password"
             required
-            minLength={8}
+            minlength={8}
           />
         </FormItem>
       </Form>
@@ -586,7 +586,7 @@ function FormDemo() {
           name="password"
           type="password"
           required
-          minLength={8}
+          minlength={8}
         />
       </FormItem>
       <button type="submit">登录</button>
@@ -631,7 +631,7 @@ function FormDemo() {
             name="password"
             type="password"
             required
-            minLength={8}
+            minlength={8}
           />
         </FormItem>
         <button type="submit">登录</button>

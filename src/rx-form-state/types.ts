@@ -421,7 +421,7 @@ export interface FormState<T = any> {
   setFieldPending(fieldName: string, isPending: boolean): void;
 
   /**
-   * 设置表单与的异步错误
+   * 设置表单域的异步错误
    *
    * @param fieldName 表单域名称
    * @param asyncError 表单域的异步错误

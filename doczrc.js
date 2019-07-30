@@ -2,6 +2,7 @@
 /* eslint-disable global-require */
 import url from 'url';
 import packageInfo from './package.json';
+import proxyPlugin from './scripts/proxy-plugin';
 
 /**
  * 获取基本URL
@@ -87,6 +88,7 @@ export default {
   wrapper: 'docs/Wrapper.tsx',
   indexHtml: 'docs/index.html',
   base: getBaseUrl(),
+  plugins: [proxyPlugin()],
   onCreateWebpackChain: (config) => {
     // 配置webpack的方式：[webpack-chain](https://github.com/neutrinojs/webpack-chain)
 

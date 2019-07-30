@@ -1,0 +1,450 @@
+---
+name: 表单校验
+route: /form-validate
+menu: 教程
+---
+
+import { Playground } from 'docz';
+import http from '@sinoui/http';
+import Form, {
+  useFormState,
+  FormItem,
+  Label,
+  Field,
+  FormValueMonitor,
+  useField,
+} from '../src';
+import TelephoneForm from './TelephoneForm';
+
+# 表单校验
+
+表单校验是[@sinoui/rx-form-state](https://github.com/sinoui/sinoui-forms)一个很重要的功能。这里我们将从以下几个方面来探讨表单校验的使用：
+
+- 内置校验(针对表单域)
+- 自定义表单域校验
+  - 同步校验
+  - 异步校验
+- 全局表单校验(表单级别校验)
+- 嵌套表单校验
+- 自定义校验错误
+
+表单校验的时机为：
+
+- 表单域值发生改变时
+- 表单域失去焦点时
+- 表单提交之前
+
+注意：异步校验只会在相同的表单域同步校验没有错误时才会触发。
+
+## 内置校验
+
+针对表单域的校验，我们内部实现了一些校验规则，在使用时只需指定对应的属性即可。内置校验主要有以下几个：
+
+- required 必填校验
+- trimRequired 去掉首尾空白符之后的必填校验
+- min 指定数值，做最小值校验
+- max 指定数值，做最大值校验
+- maxlength 指定数值，做字符串最大长度校验
+- minlength 指定数值，做字符串最小长度校验
+- pattern 正则校验
+- patternErrorMessage 正则校验失败的错误信息
+
+使用方式：
+
+```tsx
+<Field as="input" name="userName" required />
+<Field as="input" name="password" type="password" minlength={8}/>
+<Field as="input" name="telephone" type="number" maxlength={11}/>
+<Field as="imput" name="email" pattern="[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+" patternErrorMessage="不符合邮箱校验规则"/>
+```
+
+运行效果：
+
+<Playground>
+  {() => {
+    const formState = useFormState();
+
+    return (
+      <Form formState={formState}>
+        <FormItem>
+          <Label>用户名</Label>
+          <Field as="input" name="userName" required />
+        </FormItem>
+        <FormItem>
+          <Label>密码</Label>
+          <Field as="input" name="password" type="password" minlength={8}/>
+        </FormItem>
+        <FormItem>
+          <Label>联系方式</Label>
+          <Field as="input" name="telephone" type="number" maxlength={11}/>
+        </FormItem>
+        <FormItem>
+          <Label>邮箱</Label>
+          <Field as="input" name="email" pattern="[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+" patternErrorMessage="不符合邮箱校验规则"/>
+        </FormItem>
+      </Form>
+    )
+
+}}
+
+</Playground>
+
+注意：由于校验信息的显示是由错误状态和`isTouched`同时控制的，因此要想正常显示表单域的校验信息，必须通过表单域本身改变它的值。
+
+## 表单域校验
+
+### 自定义表单域校验(同步校验)
+
+当内置校验不满足需求时，我们可以给`Field`组件指定一个`validate`属性做表单同步校验。例如：
+
+```tsx
+function validate(values) {
+  if (values.userName) {
+    const arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    if (arr.findIndex((item) => values.userName.startsWith(item)) !== -1) {
+      return '不能以数字开头';
+    }
+  }
+}
+
+<Field as="input" name="userName" required validate={validate} />;
+```
+
+运行效果：
+
+<Playground>
+  {() => {
+
+    function validate(values) {
+      if(values.userName){
+        const arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        if (arr.findIndex((item) => values.userName.startsWith(item)) !== -1) {
+          return '不能以数字开头';
+        }
+      }
+    }
+    const formState = useFormState();
+
+    return (
+      <Form formState={formState}>
+        <FormItem>
+          <Label>用户名</Label>
+          <Field as="input" name="userName" required validate={validate} />
+        </FormItem>
+      </Form>
+    )
+
+}}
+
+</Playground>
+
+### 自定义表单域校验（异步校验）
+
+异步校验只适用于表单域校验，在表单校验时，同一个表单域只有同步校验没有错误时才会触发该表单域的异步校验。
+自定义表单域的异步校验只需要给`Field`组件指定`asyncValidate`属性即可。例如：
+
+```tsx
+import http from '@sinoui/http';
+
+function asyncValidateFn(fieldName, value) {
+  return http.get(`/test/validate/${fieldName}`, { params: { value } });
+}
+```
+
+运行效果：
+
+<Playground>
+  {() => {
+
+    function asyncValidateFn(fieldName, value) {
+      return http.get(`/api/test/validate/${fieldName}`, { params: { value } });
+    }
+    const formState = useFormState();
+
+    return (
+      <Form formState={formState}>
+        <FormItem>
+          <Label>用户名</Label>
+          <Field as="input" name="userName" required asyncValidate={(value,values)=>asyncValidateFn('userName',value)} />
+        </FormItem>
+      </Form>
+    )
+
+}}
+
+</Playground>
+
+## 全局校验(表单级别的校验)
+
+所谓全局校验，就是在表单级别对整个表单进行校验。我们只需要在使用`useFormState`时，给第二个参数对象指定`validate`方法即可。
+
+使用方式：
+
+```tsx
+import React from 'react';
+import Form, {
+  useFormState,
+  FormItem,
+  Label,
+  Field,
+} from '@sinoui/rx-form-state';
+
+function validate(values) {
+  let error: any = {};
+
+  if (values.userName) {
+    const arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    if (arr.findIndex((item) => values.userName.startsWith(item)) !== -1) {
+      error['userName'] = '不能以数字开头';
+    }
+  }
+
+  if (values.password && values.password.length < 8) {
+    error['password'] = '至少为8个字符';
+  }
+  return error;
+}
+
+function FormDemo() {
+  const formState = useFormState({}, { validate });
+
+  return (
+    <Form formState={formState}>
+      <FormItem>
+        <Label>用户名</Label>
+        <Field as="input" name="userName" required />
+      </FormItem>
+      <FormItem>
+        <Label>密码</Label>
+        <Field as="input" name="password" type="password" required />
+      </FormItem>
+    </Form>
+  );
+}
+```
+
+运行效果：
+
+<Playground>
+{()=>{
+  function validate(values) {
+    let error = {};
+
+    if (values.userName) {
+      const arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+      if (arr.findIndex((item) => values.userName.startsWith(item)) !== -1) {
+        error['userName'] = '不能以数字开头';
+      }
+    }
+
+    if (values.password && values.password.length < 8) {
+      error['password'] = '至少为8个字符';
+    }
+    return error;
+
+}
+const formState = useFormState({}, { validate });
+
+return (
+
+  <Form formState={formState}>
+    <FormItem>
+      <Label>用户名</Label>
+      <Field as="input" name="userName" required />
+    </FormItem>
+    <FormItem>
+      <Label>密码</Label>
+      <Field as="input" name="password" type="password" required />
+    </FormItem>
+  </Form>
+);
+
+}}
+
+</Playground>
+
+## 嵌套表单校验
+
+嵌套表单的表单域校验方式跟上述提到的[内置校验](#内置校验)和[表单域校验](#表单域校验)的校验方式和用法一致，这里不再重复描述。
+
+嵌套表单的全局校验需要特别注意返回值的数据结构。
+
+基本用法：
+
+```tsx
+import React from 'react';
+import Form, {
+  useFormState,
+  FormItem,
+  Label,
+  Field,
+} from '@sinoui/rx-form-state';
+
+function validate(values) {
+  let error: any = { address: {} };
+
+  if (values.address && values.address.city) {
+    const arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    if (arr.findIndex((item) => values.address.city.startsWith(item)) !== -1) {
+      error.address['city'] = '不能以数字开头';
+    }
+  }
+
+  if (values.address && values.address.street) {
+    if (!values.address.street.endsWith('号')) {
+      error.address['street'] = '请具体到街道编号';
+    }
+  }
+  return error;
+}
+
+function FormDemo() {
+  const formState = useFormState({}, { validate });
+
+  return (
+    <Form formState={formState}>
+      <label>地址</label>
+      <FormItem>
+        <Label>城市</Label>
+        <Field as="input" name="address.city" required />
+      </FormItem>
+      <FormItem>
+        <Label>街道</Label>
+        <Field as="input" name="address.street" required />
+      </FormItem>
+    </Form>
+  );
+}
+```
+
+运行效果：
+
+<Playground>
+{()=>{
+
+function validate(values) {
+let error = {address:{}};
+
+    if (values.address && values.address.city) {
+      const arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+      if (arr.findIndex((item) => values.address.city.startsWith(item)) !== -1) {
+        error.address['city'] = '不能以数字开头';
+      }
+    }
+
+    if (values.address && values.address.street) {
+      if (!values.address.street.endsWith('号')) {
+        error.address['street'] = '请具体到街道编号';
+      }
+    }
+    return error;
+
+}
+
+const formState = useFormState({}, { validate });
+
+return (
+
+  <Form formState={formState}>
+    <label>地址</label>
+    <FormItem>
+      <Label>城市</Label>
+      <Field as="input" name="address.city" required />
+    </FormItem>
+    <FormItem>
+      <Label>街道</Label>
+      <Field as="input" name="address.street" required />
+    </FormItem>
+  </Form>
+);
+
+}}
+
+</Playground>
+
+## 自定义校验错误
+
+`formState`中主要提供四个设置校验错误的方法：
+
+- setFieldError 设置表单域错误
+- setFieldAsyncError 设置表单域的异步错误
+- setErrors 设置表单校验错误
+- setAsyncErrors 设置异步校验错误
+
+我们以表单提交时返回的验证错误需要反写在表单域上为例，简单说明自定义校验错误的使用方式。
+
+```tsx
+import React from 'react';
+import Form, {
+  useFormState,
+  FormItem,
+  Label,
+  Field,
+} from '@sinoui/rx-form-state';
+import http from '@sinoui/http';
+
+function FormDemo() {
+  const onSubmit = (values) => {
+    http.post('/api/test/form', values).then((result) => {
+      if (result.code === '501') {
+        let isTouched = {};
+        const keys = Object.keys(result.msg);
+        keys.forEach((key) => (isTouched[key] = true));
+        formState.setAsyncErrors(result.msg);
+        formState.setTouched(isTouched);
+      }
+    });
+  };
+  const formState = useFormState({}, { onSubmit });
+  return (
+    <Form formState={formState}>
+      <FormItem>
+        <Label>用户名</Label>
+        <Field as="input" name="userName" required />
+      </FormItem>
+      <FormItem>
+        <Label>密码</Label>
+        <Field as="input" name="password" type="password" required />
+      </FormItem>
+      <button type="submit">登录</button>
+    </Form>
+  );
+}
+```
+
+运行效果：
+
+<Playground>
+  {() => {
+    const onSubmit = (values) => {
+       http.post('/api/test/form', values).then(result=>{
+           if(result.code==='501'){
+               let isTouched ={};
+               const keys = Object.keys(result.msg);
+               keys.forEach(key=>isTouched[key] = true);
+               formState.setAsyncErrors(result.msg);
+               formState.setTouched(isTouched)
+           }
+       })
+    };
+    const formState = useFormState({}, { onSubmit });
+
+    return (
+        <Form formState={formState}>
+            <FormItem>
+                <Label>用户名</Label>
+                <Field as="input" name="userName" required />
+            </FormItem>
+            <FormItem>
+                <Label>密码</Label>
+                <Field as="input" name="password" type="password" required />
+            </FormItem>
+            <button type="submit">登录</button>
+        </Form>
+    )
+
+}}
+
+</Playground>
+
+特别注意：这里我们不建议使用`setErrors`方法设置表单校验错误，因为只要我们再次触发表单校验，自定义的表单校验错误就会被覆盖。
