@@ -153,8 +153,7 @@ function validate(values: any) {
   let error: any = {};
 
   if (values.userName) {
-    const arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-    if (arr.findIndex((item) => values.userName.startsWith(item)) !== -1) {
+    if (/^\d/.test(values.userName)) {
       error['userName'] = '不能以数字开头';
     }
   }
@@ -194,8 +193,7 @@ function FormDemo() {
       let error = {};
 
       if (values.userName) {
-        const arr = ['0','1','2','3','4','5','6','7','8','9'];
-        if (arr.findIndex(item=>values.userName.startsWith(item)) !==-1) {
+        if (/^\d/.test(values.userName)) {
             error['userName'] = '不能以数字开头';
         }
       }
@@ -552,8 +550,7 @@ function validate(values: any) {
   let error: any = {};
 
   if (values.userName) {
-    const arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-    if (arr.findIndex((item) => values.userName.startsWith(item)) !== -1) {
+    if (/^\d/.test(values.userName)) {
       error['userName'] = '不能以数字开头';
     }
   }
@@ -603,8 +600,7 @@ function FormDemo() {
       let error = {};
 
       if (values.userName) {
-        const arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-        if (arr.findIndex((item) => values.userName.startsWith(item)) !== -1) {
+        if (/^\d/.test(values.userName)) {
           error['userName'] = '不能以数字开头';
         }
       }

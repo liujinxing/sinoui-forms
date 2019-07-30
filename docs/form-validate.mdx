@@ -6,6 +6,7 @@ menu: 教程
 
 import { Playground } from 'docz';
 import http from '@sinoui/http';
+import { set } from 'lodash';
 import Form, {
   useFormState,
   FormItem,
@@ -34,7 +35,14 @@ import TelephoneForm from './TelephoneForm';
 - 表单域失去焦点时
 - 表单提交之前
 
-注意：异步校验只会在相同的表单域同步校验没有错误时才会触发。
+注意：表单域的异步校验只会在表单域同步校验没有错误时才触发。
+
+表单校验的显示时机为：
+
+- 表单校验错误存在
+- 表单域的`isTouched`状态为`true`
+
+必须同时满足上述两个条件，页面才能正确显示表单校验信息。
 
 ## 内置校验
 
@@ -55,7 +63,7 @@ import TelephoneForm from './TelephoneForm';
 <Field as="input" name="userName" required />
 <Field as="input" name="password" type="password" minlength={8}/>
 <Field as="input" name="telephone" type="number" maxlength={11}/>
-<Field as="imput" name="email" pattern="[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+" patternErrorMessage="不符合邮箱校验规则"/>
+<Field as="input" name="email" pattern="[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+" patternErrorMessage="邮箱格式不正确"/>
 ```
 
 运行效果：
@@ -80,7 +88,7 @@ import TelephoneForm from './TelephoneForm';
         </FormItem>
         <FormItem>
           <Label>邮箱</Label>
-          <Field as="input" name="email" pattern="[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+" patternErrorMessage="不符合邮箱校验规则"/>
+          <Field as="input" name="email" pattern="[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+" patternErrorMessage="邮箱格式不正确"/>
         </FormItem>
       </Form>
     )
@@ -88,8 +96,6 @@ import TelephoneForm from './TelephoneForm';
 }}
 
 </Playground>
-
-注意：由于校验信息的显示是由错误状态和`isTouched`同时控制的，因此要想正常显示表单域的校验信息，必须通过表单域本身改变它的值。
 
 ## 表单域校验
 
@@ -100,8 +106,7 @@ import TelephoneForm from './TelephoneForm';
 ```tsx
 function validate(values) {
   if (values.userName) {
-    const arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-    if (arr.findIndex((item) => values.userName.startsWith(item)) !== -1) {
+    if (/^\d/.test(values.userName)) {
       return '不能以数字开头';
     }
   }
@@ -116,9 +121,8 @@ function validate(values) {
   {() => {
 
     function validate(values) {
-      if(values.userName){
-        const arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-        if (arr.findIndex((item) => values.userName.startsWith(item)) !== -1) {
+      if (values.userName) {
+        if (/^\d/.test(values.userName)) {
           return '不能以数字开头';
         }
       }
@@ -146,18 +150,22 @@ function validate(values) {
 ```tsx
 import http from '@sinoui/http';
 
-function asyncValidateFn(fieldName, value) {
-  return http.get(`/test/validate/${fieldName}`, { params: { value } });
+function asyncValidateFn(value, values) {
+  return http.get(`/test/validate/`, { params: { value, values } });
 }
+
+<Field as="input" name="userName" required asyncValidate={asyncValidateFn} />;
 ```
 
-运行效果：
+运行效果(使用 setTimeout 模拟异步校验)：
 
 <Playground>
   {() => {
 
-    function asyncValidateFn(fieldName, value) {
-      return http.get(`/api/test/validate/${fieldName}`, { params: { value } });
+    function asyncValidateFn(value, values) {
+     return new Promise((resolve) => {
+          setTimeout(() => resolve('该用户已被注销'), 1000);
+        })
     }
     const formState = useFormState();
 
@@ -165,7 +173,7 @@ function asyncValidateFn(fieldName, value) {
       <Form formState={formState}>
         <FormItem>
           <Label>用户名</Label>
-          <Field as="input" name="userName" required asyncValidate={(value,values)=>asyncValidateFn('userName',value)} />
+          <Field as="input" name="userName" required asyncValidate={asyncValidateFn} />
         </FormItem>
       </Form>
     )
@@ -187,14 +195,14 @@ import Form, {
   FormItem,
   Label,
   Field,
+  FormStateErrors,
 } from '@sinoui/rx-form-state';
 
 function validate(values) {
-  let error: any = {};
+  let error: FormStateErrors = {};
 
   if (values.userName) {
-    const arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-    if (arr.findIndex((item) => values.userName.startsWith(item)) !== -1) {
+    if (/^\d/.test(values.userName)) {
       error['userName'] = '不能以数字开头';
     }
   }
@@ -231,8 +239,7 @@ function FormDemo() {
     let error = {};
 
     if (values.userName) {
-      const arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-      if (arr.findIndex((item) => values.userName.startsWith(item)) !== -1) {
+      if (/^\d/.test(values.userName)) {
         error['userName'] = '不能以数字开头';
       }
     }
@@ -278,14 +285,14 @@ import Form, {
   FormItem,
   Label,
   Field,
+  FormStateErrors,
 } from '@sinoui/rx-form-state';
 
 function validate(values) {
-  let error: any = { address: {} };
+  let error: FormStateErrors = { address: {} };
 
   if (values.address && values.address.city) {
-    const arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-    if (arr.findIndex((item) => values.address.city.startsWith(item)) !== -1) {
+    if (/^\d/.test(values.address.city)) {
       error.address['city'] = '不能以数字开头';
     }
   }
@@ -317,24 +324,46 @@ function FormDemo() {
 }
 ```
 
+上述校验方法设置错误状态时，可以借助[lodash | set](https://www.lodashjs.com/docs/latest#_setobject-path-value)实现,例如：
+
+```tsx
+import { set } from 'lodash';
+
+function validate(values) {
+  let error = {};
+
+  if (values.address && values.address.city) {
+    if (/^\d/.test(values.address.city)) {
+      set(error, ['address', 'city'], '不能以数字开头');
+    }
+  }
+
+  if (values.address && values.address.street) {
+    if (!values.address.street.endsWith('号')) {
+      set(error, ['address', 'street'], '请具体到街道编号');
+    }
+  }
+  return error;
+}
+```
+
 运行效果：
 
 <Playground>
 {()=>{
 
 function validate(values) {
-let error = {address:{}};
+let error = {};
 
     if (values.address && values.address.city) {
-      const arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-      if (arr.findIndex((item) => values.address.city.startsWith(item)) !== -1) {
-        error.address['city'] = '不能以数字开头';
+      if (/^\d/.test(values.address.city)) {
+        set(error,['address','city'],'不能以数字开头')
       }
     }
 
     if (values.address && values.address.street) {
       if (!values.address.street.endsWith('号')) {
-        error.address['street'] = '请具体到街道编号';
+          set(error,['address','street'],'请具体到街道编号')
       }
     }
     return error;
@@ -362,7 +391,7 @@ return (
 
 </Playground>
 
-## 自定义校验错误
+## 设置校验错误
 
 `formState`中主要提供四个设置校验错误的方法：
 
