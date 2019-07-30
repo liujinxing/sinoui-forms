@@ -1,0 +1,302 @@
+---
+name: 嵌套表单
+route: /nest-form
+menu: 教程
+---
+
+import { Playground } from 'docz';
+import Form, {
+  useFormState,
+  FormItem,
+  Label,
+  Field,
+  FormValueMonitor,
+} from '../src';
+import TelephoneForm from './TelephoneForm';
+
+# 嵌套表单
+
+`@sinoui/rx-form-state`实现嵌套表单的思路主要是从表单域的`name`入手，使用`JsonPath`的方式解析`name`,从而进行表单状态管理。
+本篇教程我们主要以以下三种嵌套表单为例，阐述不同场景嵌套表单的实现方式：
+
+- 简单的嵌套表单 -- 填写地址
+- 列表类型的嵌套 -- 添加联系人
+- 深层嵌套 -- 添加常用联系人
+
+## 简单的嵌套表单
+
+简单的嵌套表单不需要过多复杂的处理，只需要指定正确的`name`值即可。
+
+基本用法：
+
+```tsx
+import React from 'react';
+import Form, {
+  useFormState,
+  FormItem,
+  Label,
+  Field,
+  FormValueMonitor,
+} from '@sinoui/rx-form-state';
+
+function FormDemo() {
+  const formState = useFormState();
+  return (
+    <Form formState={formState}>
+      <FormItem>
+        <Label>用户名</Label>
+        <Field as="input" name="userName" required />
+      </FormItem>
+      <label>地址：</label>
+      <FormItem>
+        <Label>城市</Label>
+        <Field as="input" name="address.city" required />
+      </FormItem>
+      <FormItem>
+        <Label>区/县</Label>
+        <Field as="input" name="address.region" required />
+      </FormItem>
+      <FormItem>
+        <Label>街道</Label>
+        <Field as="input" name="address.street" required />
+      </FormItem>
+      <FormValueMonitor>
+        {(values) => <div>表单值：{JSON.stringify(values, undefined, 2)}</div>}
+      </FormValueMonitor>
+    </Form>
+  );
+}
+```
+
+运行效果：
+
+<Playground>
+  {() => {
+    const formState = useFormState();
+    return (
+      <Form formState={formState}>
+        <FormItem>
+          <Label>用户名</Label>
+          <Field as="input" name="userName" required />
+        </FormItem>
+        <label>地址：</label>
+        <FormItem>
+          <Label>城市</Label>
+          <Field as="input" name="address.city" required />
+        </FormItem>
+        <FormItem>
+          <Label>区/县</Label>
+          <Field as="input" name="address.region" required />
+        </FormItem>
+        <FormItem>
+          <Label>街道</Label>
+          <Field as="input" name="address.street" required />
+        </FormItem>
+        <FormValueMonitor>
+          {(values) => (
+            <div>表单值：{JSON.stringify(values, undefined, 2)}</div>
+          )}
+        </FormValueMonitor>
+      </Form>
+    );
+  }}
+</Playground>
+
+## 列表类型的嵌套表单
+
+列表类型的嵌套表单需要借助`useFieldArray`实现，我们以添加联系方式为例来说明列表类型的嵌套列表应该如何实现：
+
+`Telephone.tsx`
+
+```tsx
+import React from 'react';
+import { Field, FormItem, useFieldArray } from '@sinoui/rx-form-state';
+
+const types = ['家庭', '工作', 'iPhone', '手机', '主要', '工作传真', '其他'];
+
+function TelephoneForm() {
+  const {
+    getFieldName: name, // 获取表单域名称
+    items, // 列表数据项
+    insert, // 插入一条新的数据
+    remove, // 移除一条数据
+    push, // 在数据项最后新增一条数据
+    swap, // 移动数据项
+  } = useFieldArray('telephones');
+
+  const handlePush = () => {
+    if (items.length < types.length) {
+      const idx = types.findIndex(
+        (type) => items.findIndex((item: any) => item.type === type) === -1,
+      );
+      if (idx !== -1) {
+        push({ type: types[idx] });
+      }
+    } else {
+      push({ type: '其他' });
+    }
+  };
+
+  const handleInsert = (index: number) => {
+    if (items.length < types.length) {
+      const idx = types.findIndex(
+        (type) => items.findIndex((item: any) => item.type === type) === -1,
+      );
+      if (idx !== -1) {
+        insert(index + 1, { type: types[idx] });
+      }
+    } else {
+      insert(index + 1, { type: '其他' });
+    }
+  };
+
+  return (
+    <div style={{ paddingTop: 16, paddingBottom: 16 }}>
+      <label> 添加电话</label>
+      {items.map((_telephone, index) => (
+        <div
+          // eslint-disable-next-line react/no-array-index-key
+          key={index}
+          style={{
+            display: 'flex',
+            padding: 8,
+            border: '1px solid green',
+            marginTop: 8,
+            marginBottom: 8,
+          }}
+        >
+          <FormItem>
+            <Field
+              name={name(index, 'type')}
+              as="input"
+              required
+              placeholder="类型"
+            />
+          </FormItem>
+          <FormItem>
+            <Field
+              name={name(index, 'telephone')}
+              as="input"
+              required
+              maxlength={11}
+              minlength={4}
+              placeholder="电话"
+            />
+          </FormItem>
+          <button type="button" onClick={() => handleInsert(index)}>
+            +
+          </button>
+          <button type="button" onClick={() => remove(index)}>
+            -
+          </button>
+          {index > 0 && (
+            <button type="button" onClick={() => swap(index, index - 1)}>
+              ⬆️
+            </button>
+          )}
+          {index < items.length - 1 && (
+            <button type="button" onClick={() => swap(index, index + 1)}>
+              ⬇️
+            </button>
+          )}
+        </div>
+      ))}
+      <button type="button" onClick={() => handlePush()}>
+        +
+      </button>
+    </div>
+  );
+}
+
+export default TelephoneForm;
+```
+
+`FormDemo.tsx`
+
+```tsx
+import React from 'react';
+import Form, {
+  Field,
+  FormItem,
+  useFormState,
+  Label,
+} from '@sinoui/rx-form-state';
+import TelephoneForm from './TelephoneForm';
+
+function FormDemo() {
+  const formState = useFormState();
+  return (
+    <Form formState={formState}>
+      <FormItem>
+        <Label>姓氏</Label>
+        <Field as="input" type="text" name="firstName" required />
+      </FormItem>
+      <FormItem>
+        <Label>名字</Label>
+        <Field as="input" type="text" name="lastName" required />
+      </FormItem>
+      <FormItem>
+        <Label>公司</Label>
+        <Field as="input" type="text" name="company" />
+      </FormItem>
+
+      <TelephoneForm />
+      <FormItem>
+        <Label>备注</Label>
+        <Field as="input" name="note" />
+      </FormItem>
+    </Form>
+  );
+}
+```
+
+上述示例的数据结构为：
+
+```json
+{
+  "firstName": "",
+  "lastName": "",
+  "company": "",
+  "telephones": [{ "type": "", "telephone": "" }],
+  "note": ""
+}
+```
+
+运行效果：
+
+<Playground>
+  {() => {
+    const formState = useFormState();
+    return (
+      <Form formState={formState}>
+        <FormItem>
+            <Label>姓氏</Label>
+            <Field as="input" type="text" name="firstName" required />
+        </FormItem>
+        <FormItem>
+            <Label>名字</Label>
+            <Field as="input" type="text" name="lastName" required />
+        </FormItem>
+        <FormItem>
+            <Label>公司</Label>
+            <Field as="input" type="text" name="company" />
+        </FormItem>
+
+        <TelephoneForm />
+        <FormItem>
+            <Label>备注</Label>
+            <Field as="input" name="note" />
+        </FormItem>
+        <FormValueMonitor>
+          {(values) => (
+            <div>表单值：{JSON.stringify(values, undefined, 2)}</div>
+          )}
+        </FormValueMonitor>
+      </Form>
+    )
+
+}}
+
+</Playground>
+
+## 深层嵌套

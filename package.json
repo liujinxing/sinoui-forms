@@ -59,7 +59,8 @@
     "lodash": "^4.17.15",
     "rxjs": "^6.5.2",
     "scheduler": "^0.14.0",
-    "shallowequal": "^1.1.0"
+    "shallowequal": "^1.1.0",
+    "yup": "^0.27.0"
   },
   "devDependencies": {
     "@sinoui/http": "^0.2.2",
