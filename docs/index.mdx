@@ -4,14 +4,9 @@ route: /
 ---
 
 import { Playground } from 'docz';
-import Form, {
-  useFormState,
-  FormItem,
-  Field,
-  Label,
-  FormValueMonitor,
-} from '../src';
-import TelephoneForm from './TelephoneForm';
+import Form, { FormItem, Field, Label } from '@sinoui/web-forms';
+import { useFormState, FormValueMonitor } from '@sinoui/rx-form-state';
+import TelephoneForm from './src/TelephoneForm';
 
 # 表单状态管理
 

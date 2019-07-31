@@ -1,30 +1,8 @@
----
-name: 注册
-route: /register
-menu: 案例分析
----
-
-import { Playground } from 'docz';
-import RegisterForm from './src/RegisterForm';
-
-# 注册
-
-注册场景主要需要注意以下几点：
-
-- 表单域的必填校验
-- 密码确认框值的校对，只需要给相应的表单域指定一个`validate`属性即可
-
-代码示例：
-
-```tsx
+/* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import Radio, { RadioGroup } from 'sinoui-components/Radio';
-import Form, {
-  useFormState,
-  FormItem,
-  Label,
-  Field,
-} from '@sinoui/rx-form-state';
+import Form, { FormItem, Label, Field } from '@sinoui/web-forms';
+import { useFormState } from '@sinoui/rx-form-state';
 
 const onSubmit = (values) => {
   // eslint-disable-next-line no-alert
@@ -107,10 +85,3 @@ export default function RegisterForm() {
     </Form>
   );
 }
-```
-
-运行效果：
-
-<Playground>
-  <RegisterForm />
-</Playground>

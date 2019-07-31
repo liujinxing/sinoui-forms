@@ -5,15 +5,13 @@ menu: 教程
 ---
 
 import { Playground } from 'docz';
-import Form, {
+import {
   useFormState,
-  FormItem,
-  Label,
-  Field,
   FormValueMonitor,
   useField,
-} from '../src';
-import { TextInputFieldDemo } from './CustomFieldDemo';
+} from '@sinoui/rx-form-state';
+import Form, { FormItem, Label, Field } from '@sinoui/web-forms';
+import { TextInputFieldDemo } from './src/CustomFieldDemo';
 
 # 自定义表单域
 
@@ -26,7 +24,7 @@ import { TextInputFieldDemo } from './CustomFieldDemo';
 ## 使用 Field 的 as 属性自定义表单域
 
 1. `as`属性可以接收多种类型的组件，如`select`、`TextInput`、`Datepicker`等
-2. `Field`组件可以接收`as`对应组件的属性，并传递给as属性对应的组件，比如`readOnly`、`disabled`等
+2. `Field`组件可以接收`as`对应组件的属性，并传递给 as 属性对应的组件，比如`readOnly`、`disabled`等
 
 基本用法:
 

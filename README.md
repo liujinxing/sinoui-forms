@@ -101,3 +101,37 @@ function FormDemo() {
 `yarn test`以监听模式启动 jest，运行单元测试。
 
 开启 vscode 的 jest 插件，会在文件变化时自动运行单元测试。
+
+### 添加模块
+
+```shell
+yarn gen my-ts-module
+```
+
+### 预览文档
+
+```shell
+yarn doc:dev
+```
+
+### 编译并打包文档
+
+```shell
+yarn doc:publish
+```
+
+### 发布文档
+
+在发布文档之前，在`package.json`中配置好`homepage`，如下所示：
+
+```json
+{
+  "homepage": "https://sinouiincubator.github.io/editable-data-table"
+}
+```
+
+配置完之后就可以执行下面的命令行发布文档：
+
+```shell
+yarn doc:publish
+```

@@ -6,16 +6,11 @@ menu: 教程
 
 import { Playground } from 'docz';
 import { set } from 'lodash';
-import Form, {
-  useFormState,
-  FormItem,
-  Label,
-  Field,
-  FormValueMonitor,
-} from '../src';
-import TelephoneForm from './TelephoneForm';
-import TopContactsForm from './TopContactsForm';
-import RelyFieldsInNestForm from './RelyFieldsInNestForm';
+import Form, { FormItem, Label, Field } from '@sinoui/web-forms';
+import { useFormState, FormValueMonitor } from '@sinoui/rx-form-state';
+import TelephoneForm from './src/TelephoneForm';
+import TopContactsForm from './src/TopContactsForm';
+import RelyFieldsInNestForm from './src/RelyFieldsInNestForm';
 
 # 嵌套表单
 

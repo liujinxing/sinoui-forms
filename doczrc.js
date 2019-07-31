@@ -1,8 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable global-require */
 import url from 'url';
+import { resolve } from 'path';
 import packageInfo from './package.json';
-import proxyPlugin from './scripts/proxy-plugin';
 
 /**
  * 获取基本URL
@@ -23,7 +23,7 @@ function getBaseUrl() {
 }
 
 export default {
-  title: 'sinoui-forms',
+  title: 'sinoui-forms-library',
   codeSandbox: false,
   typescript: true,
   files: ['**/*.mdx'],
@@ -85,10 +85,9 @@ export default {
       menu: ['登录', '注册', '新建联系人'],
     },
   ],
-  wrapper: 'docs/Wrapper.tsx',
+  wrapper: 'docs/src/Wrapper.tsx',
   indexHtml: 'docs/index.html',
   base: getBaseUrl(),
-  plugins: [proxyPlugin()],
   onCreateWebpackChain: (config) => {
     // 配置webpack的方式：[webpack-chain](https://github.com/neutrinojs/webpack-chain)
 
@@ -117,6 +116,14 @@ export default {
       .end();
 
     config.plugin('ghpages').use(require('webpack-docz-ghpages-plugin'));
+
+    config.resolve.alias
+      .set(
+        '@sinoui/rx-form-state',
+        resolve('./packages/rx-form-state/src/index.ts'),
+      )
+      .set('@sinoui/web-forms', resolve('./packages/web-forms/src/index.ts'))
+      .end();
 
     return config;
   },

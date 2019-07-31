@@ -1,0 +1,7 @@
+{
+  "name": "@sinoui/sinoui-form-library-doc",
+  "dependencies": {
+    "react": "^16.8.0",
+    "sinoui-components": "^0.1.27"
+  }
+}
