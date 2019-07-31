@@ -1,0 +1,389 @@
+---
+name: useFormState
+route: /api-use-form-state
+menu: API
+---
+
+import { Playground } from 'docz';
+import { useFormState, FormStateContext, Field } from '@sinoui/rx-form-state';
+
+# useFormState
+
+`useFormState`是用来产生表单状态管理器的自定义 React Hook。通过表单状态管理器，我们可以轻松管理与表单相关的状态，包括：
+
+- 表单值
+- 表单校验状态
+- 表单提交状态
+
+引用：
+
+```ts
+import { useFormState } from '@sinoui/rx-form-state';
+```
+
+为了方便使用，[@sinoui/web-forms]()和[@sinoui/sinoui-components-forms]()也提供了`useFormState`。
+
+## 使用方式
+
+注意：因为`useFormState`是 React Hook，所以必须在 React 函数组件中使用。
+
+```tsx
+import { useFormState } from '@sinoui/rx-form-state';
+
+function FormDemo() {
+  const initialValue = {}; // 表单默认值
+  const options = {}; // 创建表单状态管理器的配置
+  const formState = useFormState(initialValue, options);
+}
+```
+
+通过`useFormState()`产生的`formState`往往会与[FormStateContext](api-form-state-context-component)结合在一起使用，将`formState`通过 React 上下文的方式共享到子组件：
+
+```tsx
+import React from 'react';
+import { useFormState, FormStateContext, Field } from '@sinoui/rx-form-state';
+
+function FormDemo() {
+  const initialValue = {}; // 表单默认值
+  const options = {}; // 创建表单状态管理器的配置
+  const formState = useFormState(initialValue, options);
+
+  return (
+    <FormStateContext.Provider value={formState}>
+      <form>
+        <label>
+          姓名:
+          <Field as="input" name="userName" required />
+        </label>
+        <label>
+          年龄：
+          <Field as="input" name="age" required />
+        </label>
+      </form>
+    </FormStateContext.Provider>
+  );
+}
+```
+
+看一下演示效果：
+
+<Playground>
+  {() => {
+    const formState = useFormState();
+
+    return (<FormStateContext.Provider value={formState}>
+      <form>
+          <div>
+            <label>姓名：
+                <Field as="input" name="userName" required />
+            </label>
+          </div>
+          <div>
+            <label>年龄：
+                <Field as="input" name="age" required />
+            </label>
+          </div>
+
+      </form>
+    </FormStateContext.Provider>);
+
+}}
+
+</Playground>
+
+## 方法参数
+
+`useFormState`方法声明如下：
+
+```ts
+useFormState<T>(initialValues: T = {}, options?: FormStateOptions<T>): FormState;
+```
+
+方法的第一个参数`initialValues`是初始的表单值，可以不指定，默认为`{}`。方法的第二个参数`options`是表单状态管理器的配置，有如下配置选项：
+
+| 配置项   | 类型                                                       | 描述                                                                  |
+| -------- | ---------------------------------------------------------- | --------------------------------------------------------------------- |
+| validate | `(values: T) => FormStateErrors | undefined`               | 指定表单校验逻辑方法。方法接收表单值`values`。                        |
+| onSubmit | `(values: T, formState: FormState) => Promise<any> | void` | 指定表单提交方法。方法接收表单值`values`和表单状态管理器`formState`。 |
+| relys    | `RelyRule<T>[]`                                            | 指定表单域值关联逻辑。                                                |
+
+`relys`是用来指定一组定义表单域值关联计算的规则，例如：
+
+```ts
+const relys = [
+  // 规则1：A = B + C
+  [
+    'B',
+    'C',
+    (draft) => {
+      draft.A = draft.B + draft.C;
+    },
+  ],
+  // 规则2：E = D
+  [
+    'D',
+    (draft) => {
+      draft.E = draft.D;
+    },
+  ],
+  // 规则3：F = A * E
+  [
+    'A',
+    'E',
+    (draft) => {
+      draft.F = draft.A * draft.E;
+    },
+  ],
+];
+```
+
+## 表单状态管理器`formState`
+
+`useFormState()`的返回值`formState`就是表单状态管理。通过`formState`，可以获取表单状态，也可以更新表单状态。
+
+## 获取表单状态
+
+`formState`有以下属性可用来获取不同的表单状态：
+
+| 属性名         | 类型                                 | 描述                                                                      |
+| -------------- | ------------------------------------ | ------------------------------------------------------------------------- |
+| `formState$`   | `BehaviorSubject<FormStateModel<T>>` | 表单状态的[可观察对象](https://rxjs.dev/guide/observable)。               |
+| `values$`      | `BehaviorSubject<T>`                 | 表单值的[可观察对象](https://rxjs.dev/guide/observable)。                 |
+| `errors$`      | `BehaviorSubject<FormStateErrors>`   | 表单同步验证错误状态的[可观察对象](https://rxjs.dev/guide/observable)。   |
+| `isTouched$`   | `BehaviorSubject<FormStateTouched>`  | 表单域被操作状态的[可观察对象](https://rxjs.dev/guide/observable)。       |
+| `asyncErrors$` | `BehaviorSubject<FormStateErrors>`   | 表单异步校验错误状态的[可观察对象](https://rxjs.dev/guide/observable)。   |
+| `isPending$`   | `BehaviorSubject<FormStatePending>`  | 执行异步校验的过程状态的[可观察对象](https://rxjs.dev/guide/observable)。 |
+
+`formState`提供的属性都是[可观察对象](https://rxjs.dev/guide/observable)类型。我们可以通过下面的方式获取到当前的值：
+
+```ts
+const formStateModel = formState.formState$.value;
+const values = formState.values$.value;
+const errors = formState.values$.value;
+const isTouched = formState.isTouched$.value;
+const asyncErrors = formState.asyncErrors$.value;
+const isPending = formState.isPending$.value;
+```
+
+如果我们要获取变化的数据，可以使用`useBehaviorSubject`：
+
+```ts
+import { useBehaviorSubject } from '@sinoui/rx-form-state';
+
+const values = useBehaviorSubject(formState.values$);
+```
+
+`values`相当于 React 组件的状态，一旦有新的表单值，则会更新`values`这个 React 组件状态。
+
+到底用哪一种方式获取状态，需要看你使用的场景是否满足下面的规则：
+
+- 如果你的 UI 需要在表单状态发生变化时同步做更新，那么就采用`useBehaviorSubject()`方式。
+- 否则，采用第一种方式。
+
+`formState$`包含的数据是整个表单状态，它的类型`FormStateModel`是：
+
+```ts
+/**
+ * 表单状态模型
+ */
+interface FormStateModel<T extends {} = any> {
+  /**
+   * 表单值
+   */
+  values: T;
+  /**
+   * 表单域校验错误
+   */
+  errors: FormStateErrors;
+  /**
+   * 表单域异步校验错误
+   */
+  asyncErrors: FormStateErrors;
+  /**
+   * 表单域被操作的状态，一般在表单域失去焦点时设置。
+   */
+  isTouched: FormStateTouched;
+  /**
+   * 表单域正在执行异步校验的状态
+   */
+  isPending: FormStatePending;
+  /**
+   * 表单提交中状态
+   */
+  isSubmitting: boolean;
+}
+```
+
+`useBehaviorSubject()`方法的第二个参数可以是一个对象路径，如我们要获取表单提交状态`isSubmitting`:
+
+```ts
+const isSubmitting = useBehaviorSubject(formState$, 'isSubmitting');
+```
+
+我们要获取下面的表单值中的街道信息：
+
+数据：
+
+```json
+{
+  "userName": "张三",
+  "address": {
+    "city": "北京",
+    "street": "梧桐里"
+  }
+}
+```
+
+代码：
+
+```ts
+const street = useBehaviorSubject(formState.values$, 'address.street');
+```
+
+或者：
+
+```ts
+const street = useBehaviorSubject(
+  formState.formState$,
+  'values.address.street',
+);
+```
+
+## 获取表单域状态
+
+`formState`提供了两个方法，用来直接获取表单域状态的：
+
+| 方法             | 类型                                                    | 描述                                                                      |
+| ---------------- | ------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `getFieldState`  | `(fieldName: string): FieldStateModel`                  | 获取一个表单域状态的方法。                                                |
+| `getFieldState$` | `(fieldName: string): BehaviorSubject<FieldStateModel>` | 获取一个表单域状态的[可观察对象](https://rxjs.dev/guide/observable)的方法 |
+
+获取到的状态有：
+
+```ts
+interface FieldStateModel {
+  /**
+   * 表单域名称
+   */
+  name: string;
+  /**
+   * 表单域值
+   */
+  value: any;
+  /**
+   * 表单错误
+   */
+  error?: string | null;
+  /**
+   * 表单异步错误
+   */
+  asyncError?: string | null;
+  /**
+   * 被操作状态
+   */
+  isTouched: boolean;
+  /**
+   * 异步校验过程状态
+   */
+  isPending: boolean;
+}
+```
+
+我们还可以通过以下自定义 hook，在组件内获取表单域状态：
+
+- [useFieldState](api-use-field-state) - 获取单个表单域的状态
+- [useFieldValue](api-use-field-value) - 获取单个表单域的值
+- [useFieldError](api-use-field-error) - 获取表单域的验证错误
+- [useFieldTouhed](api-use-field-touched) - 获取表单域是否被点击过的状态
+
+## 更新表单状态
+
+`formState`提供了一些方法，用来更新表单状态：
+
+| 方法           | 类型                                                                | 描述                                                                    |
+| -------------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| updateState    | `(producer: (draft: FormStateModel<T>) => void): FormStateModel<T>` | 更新表单状态。                                                          |
+| setValues      | `(values: T) => void`                                               | 更新表单值。                                                            |
+| validate       | `() => boolean`                                                     | 验证表单。返回验证结果。如果有校验错误，则返回`false`，否则返回`true`。 |
+| setErrors      | `(errors: FormStateErrors) => void`                                 | 设置表单校验错误                                                        |
+| setTouched     | `(touched: FormStateTouched) => void`                               | 设置所有表单域的点击状态                                                |
+| setAsyncErrors | `(asyncErrors: FormStateErrors) => void`                            | 设置异步校验错误                                                        |
+| setPending     | `(isPending: FormStatePending): void`                               | 设置表单异步校验的过程状态                                              |
+| reset          | `(defaultValues?: T): void`                                         | 重置表单                                                                |
+| submit         | `(event?: React.FormEvent<HTMLFormElement>): Promise<any>`          | 提交表单                                                                |
+| setSubmitting  | `(submiting: boolean): void`                                        | 设置提交中状态                                                          |
+
+特别说明一下`updateState()`方法。此方法可以设置表单状态的任何地方，采用的是[immer](https://github.com/immerjs/immer)的方法更新表单状态，例如：
+
+```ts
+formState.updateState((draft) => {
+  draft.values.A = '1';
+  draft.touched.A = true;
+  draft.errors.A = '必须大于2';
+});
+```
+
+## 更新表单域状态
+
+`formState`提供了一些直接操作表单域状态的方法：
+
+| 方法               | 类型                                                                               | 描述                         |
+| ------------------ | ---------------------------------------------------------------------------------- | ---------------------------- |
+| setFieldState      | `(fieldName: string, producer: (draft: FieldStateModel) => void): FieldStateModel` | 设置表单域状态               |
+| setFieldValue      | `(fieldName: string, value: any): void`                                            | 设置表单域的值。             |
+| validateField      | `(fieldName: string): void`                                                        | 校验表单域                   |
+| setFieldTouched    | `(fieldName: string, isTouched?: boolean): void`                                   | 设置表单域的被操作状态       |
+| setFieldError      | `(fieldName: string, error?: string): void`                                        | 设置表单域错误               |
+| setFieldPending    | `(fieldName: string, isPending: boolean): void`                                    | 设置表单域的异步校验过程状态 |
+| setFieldAsyncError | `(fieldName: string, asyncError?: string): void`                                   | 设置表单域的异步错误         |
+| blur               | `(fieldName: string): void`                                                        | 处理表单域失去焦点事件       |
+
+除了这些方法，还可以使用[useField](api-use-field)来获取一些更新表单域的方法。
+
+## 表单域配置
+
+通过表单域配置，可以为表单域指定校验、异步校验、值关联规则。`formState`提供了更新表单域配置的方法：
+
+| 方法        | 类型                         | 描述           |
+| ----------- | ---------------------------- | -------------- |
+| addField    | `(field: FieldConfig): void` | 添加表单域配置 |
+| removeField | `(fieldName: string): void`  | 删除表单域配置 |
+
+表单域配置类型`FielConfig`如下：
+
+```ts
+export interface FieldConfig {
+  /**
+   * 表单域名称
+   */
+  name: string;
+  /**
+   * 表单域校验方法
+   *
+   * @param {*} value 表单域值
+   * @param {*} values 表单值
+   * @returns {(string | undefined | null)}
+   */
+  validate(value: any, values: any): string | undefined | null;
+  /**
+   * 表单域异步校验方法
+   *
+   * @param {*} value 表单域值
+   * @param {*} values 表单值
+   *
+   * @returns {(string | undefined | null | Promise<string | undefined>} 返回校验结果
+   */
+  asyncValidate?: (
+    value: any,
+    values: any,
+  ) => Promise<string | undefined> | undefined;
+  /**
+   * 关联字段名
+   */
+  relyFields?: string[];
+  /**
+   * 值关联计算方法
+   */
+  relyFn?: (values: any) => any;
+}
+```
