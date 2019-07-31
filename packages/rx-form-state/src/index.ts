@@ -10,6 +10,7 @@ import useFieldValue from './useFieldValue';
 import useFieldError from './useFieldError';
 import useFieldTouched from './useFieldTouched';
 import useFormStateContext from './useFormStateContext';
+import useBehaviorSubject from './utils/useBehaviorSubject';
 
 export * from './types';
 
@@ -27,4 +28,5 @@ export {
   useFieldTouched,
   useFormStateContext,
   FieldProps,
+  useBehaviorSubject,
 };

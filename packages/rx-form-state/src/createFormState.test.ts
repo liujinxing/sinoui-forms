@@ -249,7 +249,10 @@ it('提交表单', async () => {
   const promise = formState.submit({ preventDefault, stopPropagation } as any);
 
   expect(formState.formState$.value.isSubmitting).toBe(true);
-  expect(onSubmit).toHaveBeenCalledWith(formState.values$.value);
+  expect(onSubmit).toHaveBeenCalledWith(
+    formState.values$.value,
+    expect.anything(),
+  );
   expect(preventDefault).toHaveBeenCalled();
   expect(stopPropagation).toHaveBeenCalled();
 

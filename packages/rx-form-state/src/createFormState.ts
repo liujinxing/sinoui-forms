@@ -172,7 +172,8 @@ function createFormState<T = any>(
     if (isValid && options.onSubmit) {
       setSubmitting(true);
       try {
-        const result = await options.onSubmit(values$.value);
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
+        const result = await options.onSubmit(values$.value, formState);
         unstable_runWithPriority(unstable_NormalPriority, () => {
           updateState((draft) => {
             draft.isSubmitting = false;
@@ -428,7 +429,7 @@ function createFormState<T = any>(
     }
   };
 
-  return {
+  const formState = {
     formState$,
     values$,
     errors$,
@@ -461,6 +462,8 @@ function createFormState<T = any>(
     addField,
     removeField,
   };
+
+  return formState;
 }
 
 export default createFormState;
