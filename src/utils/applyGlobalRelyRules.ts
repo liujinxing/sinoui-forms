@@ -24,7 +24,11 @@ function findRelativeRuleFns<T>(
   return rules
     .filter((rule) =>
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      rule.some((item: any) => valueChangedFields.indexOf(item) !== -1),
+      rule.some(
+        (item: any) =>
+          valueChangedFields.indexOf(item) !== -1 ||
+          valueChangedFields.some((field) => field.startsWith(item)),
+      ),
     )
     .map((rule) => rule[rule.length - 1] as (draft: T) => void);
 }

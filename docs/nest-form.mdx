@@ -323,7 +323,7 @@ function FormDemo() {
 
 ```tsx
 import React from 'react';
-import { Field, FormItem, useFieldArray } from '../src';
+import { Field, FormItem, useFieldArray } from '@sinoui/rx-form-state';
 import TelephoneForm from './TelephoneForm';
 
 function FormInner(props: any) {
@@ -406,7 +406,7 @@ export default TopContactsForm;
 
 ```tsx
 import React, { useCallback, useRef, useEffect } from 'react';
-import { Field, FormItem, useFieldArray } from '../src';
+import { Field, FormItem, useFieldArray } from '@sinoui/rx-state-form';
 
 const types = ['家庭', '工作', 'iPhone', '手机', '主要', '工作传真', '其他'];
 
@@ -732,7 +732,7 @@ import Form, {
   useFormState,
   Label,
   FormValueMonitor,
-} from '../src';
+} from '@sinoui/rx-form-state';
 import TelephoneForm from './TelephoneForm';
 /**
  * 计算值的依赖函数  这里需要也别注意值处理，如果层次特别深的话，建议使用lodash的get方法
@@ -871,3 +871,131 @@ function FormDemo() {
 运行效果：
 
 <Playground>{() => <RelyFieldsInNestForm />}</Playground>
+
+## 全局值关联
+
+这里我们依旧采用深层嵌套表单的示例来说明全局值关联的使用。
+
+假设现在我们需要存储一个字段来表示常用联系人总数,此时我们需要定义一个全局依赖规则，并将这个依赖规则作为`useFormState`的第二个参数对象的`relys`属性。具体实现如下：
+
+```tsx
+const countRely = [
+  'topContacts',
+  (draft) => {
+    if (draft.topContacts) {
+      draft.count = draft.topContacts.length;
+    }
+  },
+];
+
+function FormDemo() {
+  const formState = useFormState({}, { relys: [countRely] });
+  return (
+    <Form formState={formState}>
+      <FormItem>
+        <Label>用户名</Label>
+        <Field as="input" type="text" name="userName" />
+      </FormItem>
+      <TopContactsForm />
+      <FormItem>
+        <Label>常用联系人总数</Label>
+        <Field
+          as="input"
+          type="number"
+          name="count"
+          placeholder="常用联系人总数"
+        />
+      </FormItem>
+      <FormValueMonitor>
+        {(values) => <div>表单值：{JSON.stringify(values, undefined, 2)}</div>}
+      </FormValueMonitor>
+    </Form>
+  );
+}
+```
+
+运行效果：
+
+<Playground>
+  {() => {
+    const countRely = [
+      'topContacts',
+      (draft) => {
+        if (draft.topContacts) {
+          draft.count = draft.topContacts.length;
+        }
+      },
+    ];
+    const formState = useFormState({}, { relys: [countRely] });
+    return (
+      <Form formState={formState}>
+        <FormItem>
+          <Label>用户名</Label>
+          <Field as="input" type="text" name="userName" />
+        </FormItem>
+        <TopContactsForm />
+        <FormItem>
+          <Label>常用联系人总数</Label>
+          <Field
+            as="input"
+            type="number"
+            name="count"
+            placeholder="常用联系人总数"
+          />
+        </FormItem>
+        <FormValueMonitor>
+          {(values) => (
+            <div>表单值：{JSON.stringify(values, undefined, 2)}</div>
+          )}
+        </FormValueMonitor>
+      </Form>
+    );
+  }}
+</Playground>
+
+如果上述示例中的联系人总数不需要存储，只是用来展示统计结果的话，我们不需要使用全局值关联，只需要借助`FormValueMonitor`即可实现，具体如下：
+
+```tsx
+function FormDemo() {
+  const formState = useFormState();
+  return (
+    <Form formState={formState}>
+      <FormItem>
+        <Label>用户名</Label>
+        <Field as="input" type="text" name="userName" />
+      </FormItem>
+      <TopContactsForm />
+      <FormValueMonitor>
+        {(values) => (
+          <div>
+            常用联系人总数：{values.topContacts && values.topContacts.length}
+          </div>
+        )}
+      </FormValueMonitor>
+    </Form>
+  );
+}
+```
+
+运行效果：
+
+<Playground>
+  {() => {
+    const formState = useFormState();
+    return (
+      <Form formState={formState}>
+        <FormItem>
+          <Label>用户名</Label>
+          <Field as="input" type="text" name="userName" />
+        </FormItem>
+        <TopContactsForm />
+        <FormValueMonitor>
+          {(values) => (
+            <div>常用联系人总数：{ values.topContacts && values.topContacts.length}</div>
+          )}
+        </FormValueMonitor>
+      </Form>
+    );
+  }}
+
+</Playground>
