@@ -4,6 +4,7 @@ import React, { useMemo } from 'react';
 import { Field, FieldProps } from '@sinoui/web-forms';
 import Select, { SelectProps } from 'sinoui-components/Select';
 import styled from 'styled-components';
+import { useFieldError, useFieldTouched } from '@sinoui/rx-form-state';
 
 const emptyArray: string[] = [];
 
@@ -32,10 +33,12 @@ const valueExtract = (
  * 选择框表单域
  */
 function SelectField(props: SelectFieldProps) {
-  const { multiple, stringValue, children } = props;
+  const { multiple, stringValue, children, name } = props;
   const validatedChildren = useMemo(() => {
     return React.Children.toArray(children).filter(Boolean);
   }, [children]);
+  const fieldError = useFieldError(name);
+  const fieldTouched = useFieldTouched(name);
 
   return (
     <FieldWrapper
@@ -43,6 +46,7 @@ function SelectField(props: SelectFieldProps) {
       wrapperClassName="sinoui-select-field"
       defaultValue={multiple && !stringValue ? emptyArray : ''}
       valueExtract={valueExtract}
+      error={!!(fieldTouched && fieldError)}
       {...props}
     >
       {validatedChildren}

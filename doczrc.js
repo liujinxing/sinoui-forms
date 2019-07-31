@@ -122,6 +122,10 @@ export default {
         resolve('./packages/rx-form-state/src/index.ts'),
       )
       .set('@sinoui/web-forms', resolve('./packages/web-forms/src/index.ts'))
+      .set(
+        '@sinoui/sinoui-components-forms',
+        resolve('./packages/sinoui-components-forms/src/index.ts'),
+      )
       .end();
 
     return config;

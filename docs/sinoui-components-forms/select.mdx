@@ -1,0 +1,74 @@
+---
+name: Select
+route: /select
+menu: API
+---
+
+import { Props, Playground } from 'docz';
+import { useFormState, FormValueMonitor } from '@sinoui/rx-form-state';
+import Form, { FormItem, Label } from '@sinoui/web-forms';
+import { Select } from '@sinoui/sinoui-components-forms';
+import SelectField from '../src/SelectApi';
+
+# Select
+
+用来渲染选择框组件。
+
+## 属性
+
+<Props of={Select} />
+
+## 使用方式
+
+基本用法：
+
+```tsx
+import React from 'react';
+import { useFormState, FormValueMonitor } from '@sinoui/rx-form-state';
+import Form, { FormItem, Label } from '@sinoui/web-forms';
+import { Select } from '@sinoui/sinoui-components-forms';
+
+function FormDemo() {
+  const formState = useFormState();
+  return (
+    <Form formState={formState}>
+      <FormItem>
+        <Label>所在城市</Label>
+        <Select name="city" multiple>
+          <option value="北京">北京</option>
+          <option value="上海">上海</option>
+          <option value="深圳">深圳</option>
+          <option value="广州">广州</option>
+        </Select>
+      </FormItem>
+      <FormValueMonitor>
+        {(values) => <div>选中项：{values.city}</div>}
+      </FormValueMonitor>
+    </Form>
+  );
+}
+```
+
+运行效果：
+
+<Playground>
+  {() => {
+    const formState = useFormState();
+    return (
+      <Form formState={formState}>
+        <FormItem>
+          <Label>所在城市</Label>
+          <Select name="city" multiple>
+            <option value="北京">北京</option>
+            <option value="上海">上海</option>
+            <option value="深圳">深圳</option>
+            <option value="广州">广州</option>
+          </Select>
+        </FormItem>
+        <FormValueMonitor>
+          {(values) => <div>选中项：{values.city}</div>}
+        </FormValueMonitor>
+      </Form>
+    );
+  }}
+</Playground>
