@@ -1,0 +1,82 @@
+---
+name: TextInput
+route: /text-input
+menu: API
+---
+
+import { Props, Playground } from 'docz';
+import { useFormState, FormValueMonitor } from '@sinoui/rx-form-state';
+import Form, { FormItem, Label } from '@sinoui/web-forms';
+import { TextInput } from '@sinoui/sinoui-components-forms';
+import TextInputField from '../src/TextInputFieldApi';
+
+# TextInput
+
+用来渲染输入框组件，可以支持多行输入框。
+
+## 属性
+
+<Props of={TextInputField} />
+
+## 使用方式
+
+基本用法：
+
+```tsx
+import React from 'react';
+import { useFormState, FormValueMonitor } from '@sinoui/rx-form-state';
+import Form, { FormItem, Label } from '@sinoui/web-forms';
+import { TextInput } from '@sinoui/sinoui-components-forms';
+
+function FormDemo() {
+  const formState = useFormState();
+  return (
+    <Form formState={formState}>
+      <FormItem>
+        <Label>用户名</Label>
+        <TextInput name="userName" required />
+      </FormItem>
+      <FormItem>
+        <Label>备注</Label>
+        <TextInput name="note" placeholder="请在此处填写备注" multiline />
+      </FormItem>
+      <FormValueMonitor>
+        {(values) => (
+          <>
+            <div>用户名：{values.userName}</div>
+            <div>备注：{values.note}</div>
+          </>
+        )}
+      </FormValueMonitor>
+    </Form>
+  );
+}
+```
+
+运行效果：
+
+<Playground>
+  {() => {
+    const formState = useFormState();
+    return (
+      <Form formState={formState}>
+        <FormItem>
+          <Label>用户名</Label>
+          <TextInput name="userName" required />
+        </FormItem>
+        <FormItem>
+          <Label>备注</Label>
+          <TextInput name="note" placeholder="请在此处填写备注" multiline />
+        </FormItem>
+        <FormValueMonitor>
+          {(values) => (
+            <>
+              <div>用户名：{values.userName}</div>
+              <div>备注：{values.note}</div>
+            </>
+          )}
+        </FormValueMonitor>
+      </Form>
+    );
+  }}
+</Playground>
