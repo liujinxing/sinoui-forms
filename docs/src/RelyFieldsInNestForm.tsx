@@ -13,17 +13,8 @@ import TelephoneForm from './TelephoneForm';
 
 const relyFn = (values: any, index: number) => {
   if (values.topContacts) {
-    if (!values.topContacts[index].firstName) {
-      return values.topContacts[index].lastName || '';
-    }
-
-    if (!values.topContacts[index].lastName) {
-      return values.topContacts[index].firstName || '';
-    }
-
-    return (
-      values.topContacts[index].firstName + values.topContacts[index].lastName
-    );
+    const { firstName = '', lastName = '' } = values.topContacts[index];
+    return `${firstName}${lastName}`;
   }
   return '';
 };

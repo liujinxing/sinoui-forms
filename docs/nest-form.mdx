@@ -14,7 +14,59 @@ import RelyFieldsInNestForm from './src/RelyFieldsInNestForm';
 
 # 嵌套表单
 
-`@sinoui/rx-form-state`实现嵌套表单的思路主要是从表单域的`name`入手，使用`JsonPath`的方式解析`name`,从而进行表单状态管理。
+[@sinoui/rx-form-state](https://github.com/sinoui/sinoui-forms/tree/master/packages/rx-form-state)的表单域`name`属性支持
+[JsonPath](http://jsonpath.com/)形式，以支持嵌套表单的场景。如：
+
+表单值数据：
+
+```json
+{
+  "address": {
+    "city": "北京",
+    "street": "海淀"
+  }
+}
+```
+
+地址相关的两个表单项：
+
+```tsx
+<Field name="address.city" />
+<Field name="address.street" />
+```
+
+列表类型嵌套表单的数据结构：
+
+```json
+{
+  "contacts": [
+    {
+      "userName": "张三",
+      "telephone": "13443565678"
+    },
+    {
+      "userName": "李四",
+      "telephone": "13312341234"
+    }
+  ]
+}
+```
+
+我们可以这样定义表单域：
+
+```tsx
+第一个联系人：
+<Field name="contacts[0].userName" />
+<Field name="contacts[0].telephone" />
+
+第二个联系人：
+<Field name="contacts[1].userName" />
+<Field name="contacts[1].telephone" />
+```
+
+[@sinoui/rx-form-state](https://github.com/sinoui/sinoui-forms/tree/master/packages/rx-form-state)
+还提供了[useFieldArray](/use-field-array)和[FieldArray](/field-array)辅助嵌套表单的开发。
+
 本篇教程我们主要以以下三种嵌套表单为例，阐述不同场景嵌套表单的实现方式：
 
 - 简单的嵌套表单 -- 填写地址
@@ -102,9 +154,9 @@ function FormDemo() {
 
 ## 列表类型的嵌套表单
 
-列表类型的嵌套表单需要借助`useFieldArray`实现，我们以添加联系方式为例来说明列表类型的嵌套列表应该如何实现：
+可以借助[useFieldArray](/use-field-array)实现列表类型的嵌套表单，我们以添加联系方式为例来说明列表类型的嵌套列表应该如何实现：
 
-`Telephone.tsx`
+`TelephoneForm.tsx`
 
 ```tsx
 import React from 'react';
@@ -199,7 +251,7 @@ function TelephoneForm() {
           )}
         </div>
       ))}
-      <button type="button" onClick={() => handlePush()}>
+      <button type="button" onClick={handlePush}>
         +
       </button>
     </div>
@@ -299,7 +351,7 @@ function FormDemo() {
 
 ## 深层嵌套
 
-深层嵌套表单的实现过程中，我们可能需要多次使用`useFieldArray`,此时需要特别注意参数的指定。
+深层嵌套表单的实现过程中，我们可能需要多次使用`useFieldArray`，此时需要特别注意参数的指定。
 
 添加常用联系人的数据结构如下：
 
@@ -307,12 +359,16 @@ function FormDemo() {
 {
   "userName": "",
   "topContacts": [
-    { "userName": "", "telephones": [{ "type": "", "telephone": 138xxxx0015 }] }
+    {
+      "userName": "",
+      "telephones": [{ "type": "", "telephone": "138xxxx0015" }]
+    }
   ]
 }
 ```
 
-分析上述数据结构，我们需要使用两次`useFieldArray`来实现该嵌套表单。具体如下：
+分析上述数据结构，我们要维护常用联系人以及联系人的联系方式，需要创建两层嵌套表单，分别是：联系人表单（TopContactsForm）和联系方式表单（TelephoneForm）。
+我们可以使用两次`useFieldArray`来实现。具体如下：
 
 `TopContactsForm.tsx`
 
@@ -519,7 +575,7 @@ function TelephoneForm(props: { parentName: string }) {
           handleInsert={handleInsert}
         />
       ))}
-      <button type="button" onClick={() => handlePush()}>
+      <button type="button" onClick={handlePush}>
         +
       </button>
     </div>
@@ -606,7 +662,7 @@ function validateTelephone(value) {
 /**
  * 常用联系人校验
  */
-function validateContacts(topContact) {
+function validateTopContact(topContact) {
   const errors = {};
   if (!topContact.userName) {
     errors.userName = '必填';
@@ -622,11 +678,11 @@ function validateContacts(topContact) {
 function validate(values) {
   let errors = {};
   if (!values.userName) {
-    set(errors, 'userName', '必填');
+    errors.userName = '必填';
   }
 
   if (values.topContacts) {
-    errors.topContacts = values.topContacts.map(validateContacts);
+    errors.topContacts = values.topContacts.map(validateTopContact);
   }
   return errors;
 }
@@ -667,7 +723,7 @@ function FormDemo() {
     /**
     * 常用联系人校验
     */
-    function validateContacts(topContact){
+    function validateTopContact(topContact){
       const errors = {};
       if(!topContact.userName){
         errors.userName = '必填';
@@ -683,11 +739,11 @@ function FormDemo() {
     function validate(values) {
       let errors = {};
       if (!values.userName) {
-        set(errors, 'userName', '必填');
+        errors.userName = "必填";
       }
 
       if(values.topContacts){
-        errors.topContacts = values.topContacts.map(validateContacts)
+        errors.topContacts = values.topContacts.map(validateTopContact)
       }
       return errors;
     }
@@ -714,7 +770,66 @@ function FormDemo() {
 
 ## 表单域值关联
 
-嵌套表单的表单域值关联，跟普通表单的表单域值关联处理方式基本一致。只是依赖函数在处理值的时候需要特别注意一下，例如：
+嵌套表单的表单域值关联，跟普通表单的表单域值关联处理方式基本一致。
+只是依赖函数在处理值的时候需要特别注意一下，例如调整上述的联系人示例，
+有三个表单域，分别是：姓氏、名字和姓名，它们之间存在一种关系：`姓名 = 姓氏 + 名字`。
+
+数据结构：
+
+```json
+{
+  "topContacts": [
+    {
+      "firstName": "张",
+      "lastName": "三",
+      "userName": "张三"
+    }
+  ]
+}
+```
+
+表单域的定义如下：
+
+```tsx
+<Field
+    name={name(index, 'firstName')}
+    as="input"
+    required
+    placeholder="姓氏"
+/>
+<Field
+    name={name(index, 'lastName')}
+    as="input"
+    required
+    placeholder="名字"
+/>
+<Field
+    name={name(index, 'userName')}
+    as="input"
+    required
+    placeholder="姓名"
+    readOnly
+    relyFields={[name(index, 'firstName'), name(index, 'lastName')]}
+    relyFn={(values) => relyFn(values, index)}
+/>
+```
+
+`relyFn`函数的定义如下：
+
+```tsx
+/**
+ * 计算值的依赖函数  这里需要也别注意值处理，如果层次特别深的话，建议使用lodash的get方法
+ */
+const relyFn = (values, index) => {
+  if (values.topContacts) {
+    const { firstName = '', lastName = '' } = values.topContacts[index];
+    return `${firstName}${lastName}`;
+  }
+  return '';
+};
+```
+
+完整示例如下：
 
 `TopContactsForm.tsx`
 
@@ -734,17 +849,8 @@ import TelephoneForm from './TelephoneForm';
  */
 const relyFn = (values, index) => {
   if (values.topContacts) {
-    if (!values.topContacts[index].firstName) {
-      return values.topContacts[index].lastName || '';
-    }
-
-    if (!values.topContacts[index].lastName) {
-      return values.topContacts[index].firstName || '';
-    }
-
-    return (
-      values.topContacts[index].firstName + values.topContacts[index].lastName
-    );
+    const { firstName = '', lastName = '' } = values.topContacts[index];
+    return `${firstName}${lastName}`;
   }
   return '';
 };
@@ -871,7 +977,7 @@ function FormDemo() {
 
 这里我们依旧采用深层嵌套表单的示例来说明全局值关联的使用。
 
-假设现在我们需要存储一个字段来表示常用联系人总数,此时我们需要定义一个全局依赖规则，并将这个依赖规则作为`useFormState`的第二个参数对象的`relys`属性。具体实现如下：
+假设现在我们需要存储一个字段来表示常用联系人总数，此时我们需要定义一个全局依赖规则，并将这个依赖规则作为`useFormState`的第二个参数对象的`relys`属性。具体实现如下：
 
 ```tsx
 const countRely = [

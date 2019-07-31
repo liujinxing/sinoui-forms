@@ -2,7 +2,7 @@ import React from 'react';
 
 export interface Props {
   /**
-   * 是否支持多行文本 如果为true,则输入框支持换行显示
+   * 是否支持多行文本 如果为true，则输入框支持换行显示
    */
   multiline?: boolean;
   /**
