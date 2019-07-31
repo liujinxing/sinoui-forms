@@ -78,7 +78,7 @@
   },
   "jest": {
     "moduleNameMapper": {
-      "@sinoui/(.*)": "<rootDir>/packages/$1/src"
+      "@sinoui/(rx-form-state|sinoui-components-forms|web-forms)": "<rootDir>/packages/$1/src"
     }
   }
 }
