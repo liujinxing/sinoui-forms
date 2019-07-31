@@ -164,7 +164,7 @@ function asyncValidateFn(value, values) {
 
     function asyncValidateFn(value, values) {
      return new Promise((resolve) => {
-          setTimeout(() => resolve('该用户已被注销'), 1000);
+          setTimeout(() => resolve('该用户已被注销'), 500);
         })
     }
     const formState = useFormState();
@@ -441,12 +441,17 @@ function FormDemo() {
 }
 ```
 
-运行效果：
+运行效果：(使用 setTimeout 模拟表单提交的响应)
 
 <Playground>
   {() => {
+    const handleReponse = ()=> {
+      return new Promise((resolve) => {
+          setTimeout(() => resolve({code:'501',msg:{password:'密码错误'}}), 500);
+        })
+    }
     const onSubmit = (values) => {
-       http.post('/api/test/form', values).then(result=>{
+       handleReponse().then(result=>{
            if(result.code==='501'){
                let isTouched ={};
                const keys = Object.keys(result.msg);
