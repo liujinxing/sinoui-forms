@@ -95,17 +95,11 @@ export interface FieldValidateProps {
 
   /**
    * 字符串最小长度
-   *
-   * @type {number}
-   * @memberof Props
    */
   minlength?: number;
 
   /**
    * 正则校验
-   *
-   * @type {string}
-   * @memberof Props
    */
   pattern?: string;
 
