@@ -31,7 +31,7 @@ interface FieldConfig<T = any> extends FieldValidateProps {
   /**
    * 指定值提取器
    */
-  valueExtract?: (event: any) => T;
+  valueExtract?: (event: any, ...rest: any[]) => T;
 
   /**
    * 表单域异步校验方法
@@ -134,7 +134,7 @@ const ForwardRefField = React.forwardRef(function Field<
 
   const handleChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement> | T, ...args: any[]) => {
-      const newValue = valueExtractRef.current(event);
+      const newValue = valueExtractRef.current(event, ...args);
 
       setFieldValue(newValue);
 

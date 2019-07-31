@@ -162,3 +162,34 @@ it('onBlur', () => {
 
   expect(onBlur).toBeCalled();
 });
+
+it('自定义值提取器', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function TextInput(props: any) {
+    return (
+      <input
+        {...props}
+        onChange={(event) => props.onChange(null, event.target.value)}
+        data-testid="field"
+      />
+    );
+  }
+
+  const { getByTestId } = render(
+    <Wrapper>
+      <Field
+        as={TextInput}
+        name="userName"
+        valueExtract={(_event, value) => `解析出来的值:${value}`}
+      />
+    </Wrapper>,
+  );
+
+  fireEvent.change(getByTestId('field'), {
+    target: {
+      value: '紫诺',
+    },
+  });
+
+  expect(getByTestId('field')).toHaveAttribute('value', '解析出来的值:紫诺');
+});
