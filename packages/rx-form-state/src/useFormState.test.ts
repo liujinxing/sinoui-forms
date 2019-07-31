@@ -33,5 +33,8 @@ it('指定表单校验逻辑和表单提交处理', () => {
 
   result.current.submit();
 
-  expect(onSubmit).toHaveBeenCalledWith(result.current.values$.value);
+  expect(onSubmit).toHaveBeenCalledWith(
+    result.current.values$.value,
+    expect.anything(),
+  );
 });

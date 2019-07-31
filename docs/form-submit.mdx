@@ -1,0 +1,264 @@
+---
+name: 提交表单
+route: /form-submit
+menu: 教程
+---
+
+import { Playground } from 'docz';
+import Form, { FormItem, Label, Field } from '@sinoui/web-forms';
+import { useFormState, useBehaviorSubject } from '@sinoui/rx-form-state';
+
+# 提交表单
+
+当用户填写完表单后，就需要将表单数据提交到后端服务以存储表单数据。提交过程分成三部分：
+
+- 在提交表单前，我们应该先对表单数据进行校验，验证表单是否填写完整了。
+- 在提交表单过程中，应该出现提交中的提示语。而且需要防止用户重复提交。
+- 提交完成后，如果提交失败，且后端返回了表单的错误信息，我们需要在表单域上显示表单错误。
+
+接下来，我们看看如何使用[@sinoui/rx-form-state](https://github.com/sinoui/sinoui-forms)来完成表单提交。
+
+## 提交表单
+
+要想提交表单，我们需要准备两个步骤：
+
+- 在`useFormState`的配置参数中添加`onSubmit`，定义向后端提交表单值的逻辑。
+- 在`<Form />`组件中添加一个`type="submit"`的表单提交按钮。当点击这个按钮时，就会执行表单提交动作。
+
+如下所示：
+
+```tsx
+import Form, { FormItem, Label, Field } from '@sinoui/web-forms';
+import { useFormState } from '@sinoui/rx-form-state';
+
+const onSubmit = (values) => {
+  // 使用setTimeout模拟向后端提交表单。
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+      alert('提交表单成功');
+    }, 1000);
+  });
+};
+
+function FormDemo() {
+  const formState = useFormState(undefined, {
+    onSubmit,
+  });
+
+  return (
+    <Form formState={formState}>
+      <FormItem>
+        <Label>用户名</Label>
+        <Field as="input" name="userName" required />
+      </FormItem>
+      <FormItem>
+        <Label>性别</Label>
+        <Field as="select" name="sex" required>
+          <option value="">请选择</option>
+          <option value="女">女</option>
+          <option value="男">男</option>
+        </Field>
+      </FormItem>
+      <button type="submit">
+        提交表单
+      </button>
+    </button>
+  );
+}
+```
+
+可以从`formState`中获取`isSubmitting`状态，表示是否正在提交表单。我们可以通过这个状态控制“提交表单”按钮的可用性以及提交中提示语，如下所示：
+
+```tsx
+import { useBehaviorSubject } from '@sinoui/rx-form-state';
+
+function FormDemo() {
+  const isSubmitting = useBehaviorSubject(formState.formState$, 'isSubmitting');
+
+  return (
+    <button type="submit" disabled={isSubmitting}>
+      {isSubmitting ? '正在提交表单，请稍等...' : '提交表单'}
+    </button>
+  );
+}
+```
+
+演示效果如下：
+
+<Playground>
+  {() => {
+    const onSubmit = (values) => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+          alert('提交表单成功');
+        }, 1000);
+      });
+    };
+    const formState = useFormState(undefined, {
+      onSubmit,
+    });
+
+    const isSubmitting = useBehaviorSubject(formState.formState$, 'isSubmitting');
+
+    return (<Form formState={formState}>
+      <FormItem>
+        <Label>用户名</Label>
+        <Field as="input" name="userName" required />
+      </FormItem>
+      <FormItem>
+        <Label>性别</Label>
+        <Field as="select" name="sex" required>
+          <option value="">请选择</option>
+          <option value="女">女</option>
+          <option value="男">男</option>
+        </Field>
+      </FormItem>
+      <button type="submit" disabled={isSubmitting}>{isSubmitting? '正在提交表单，请稍等...' : '提交表单'}</button>
+    </Form>);
+
+}}
+
+</Playground>
+
+## 提交按钮在`<Form/>`组件外部
+
+如果提交表单的按钮在`<Form />`组件外部，我们可以在提交表单按钮点击时，调用`formState`的`submit`方法，来完成表单提交。以上一章节的例子为例：
+
+```tsx
+function FormDemo() {
+  return (
+    <div>
+      <Form>...</Form>
+      <button type="button" disabled={isSubmitting} onClick={formState.submit}>
+        {isSubmitting ? '正在提交表单，请稍等...' : '提交表单'}
+      </button>
+    </div>
+  );
+}
+```
+
+演示效果如下：
+
+<Playground>
+  {() => {
+    const onSubmit = (values) => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+          alert('提交表单成功');
+        }, 1000);
+      });
+    };
+    const formState = useFormState(undefined, {
+      onSubmit,
+    });
+
+    const isSubmitting = useBehaviorSubject(formState.formState$, 'isSubmitting');
+
+    return (<div>
+      <Form formState={formState}>
+        <FormItem>
+          <Label>用户名</Label>
+          <Field as="input" name="userName" required />
+        </FormItem>
+        <FormItem>
+          <Label>性别</Label>
+          <Field as="select" name="sex" required>
+            <option value="">请选择</option>
+            <option value="女">女</option>
+            <option value="男">男</option>
+          </Field>
+        </FormItem>
+      </Form>
+      <button disabled={isSubmitting} onClick={formState.submit}>{isSubmitting? '正在提交表单，请稍等...' : '提交表单'}</button>
+    </div>);
+
+}}
+
+</Playground>
+
+## 应用表单提交返回的验证错误
+
+如果表单提交失败，后台返回了表单验证错误，我们是需要将这些表单验证错误在表单上显示出来的。
+
+```tsx
+function submitForm(values) {
+  // 使用setTimeout模拟向后端提交表单。
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      reject({
+        userName: '用户名已存在',
+        sex: '性别不匹配',
+      });
+      alert('提交表单失败');
+    }, 1000);
+  });
+}
+
+const onSubmit = async (values, formState) => {
+  try {
+    await submitForm(values);
+  } catch (errors) {
+    console.log(errors); // { userName: '用户名已存在', sex: '性别不匹配' }
+    formState.setAsyncErrors(errors);
+    throw errors;
+  }
+};
+
+function FormDemo() {
+  const fromState = useFormState(undefined, { onSubmit });
+}
+```
+
+演示效果如下：
+
+<Playground>
+  {() => {
+    function submitForm(values) {
+      // 使用setTimeout模拟向后端提交表单。
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          reject({
+            userName: '用户名已存在',
+            sex: '性别不匹配'
+          });
+          alert('提交表单失败');
+        }, 1000);
+      });
+    }
+    const onSubmit = (values, formState) => {
+      return submitForm(values).catch((errors) => {
+        console.log(errors); // { userName: '用户名已存在', sex: '性别不匹配' }
+        formState.setAsyncErrors(errors);
+        throw errors;
+      });
+    };
+    const formState = useFormState(undefined, {
+      onSubmit,
+    });
+
+    const isSubmitting = useBehaviorSubject(formState.formState$, 'isSubmitting');
+
+    return (<div>
+      <Form formState={formState}>
+        <FormItem>
+          <Label>用户名</Label>
+          <Field as="input" name="userName" required />
+        </FormItem>
+        <FormItem>
+          <Label>性别</Label>
+          <Field as="select" name="sex" required>
+            <option value="">请选择</option>
+            <option value="女">女</option>
+            <option value="男">男</option>
+          </Field>
+        </FormItem>
+      </Form>
+      <button disabled={isSubmitting} onClick={formState.submit}>{isSubmitting? '正在提交表单，请稍等...' : '提交表单'}</button>
+    </div>);
+
+}}
+
+</Playground>

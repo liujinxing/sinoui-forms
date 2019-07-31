@@ -52,7 +52,7 @@ export type RelyRule<T> =
  */
 export interface FormStateOptions<T> {
   validate?: (values: T) => FormStateErrors | undefined;
-  onSubmit?: (values: T) => Promise<any> | void;
+  onSubmit?: (values: T, formState: FormState) => Promise<any> | void;
   /**
    * 指定全局值关联规则
    */
