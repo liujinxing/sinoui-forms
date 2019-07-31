@@ -5,14 +5,9 @@ menu: 教程
 ---
 
 import { Playground } from 'docz';
-import Form, {
-  useFormState,
-  FormItem,
-  Label,
-  Field,
-  FormValueMonitor,
-} from '../src';
-import TelephoneForm from './TelephoneForm';
+import Form, { FormItem, Label, Field } from '@sinoui/web-forms';
+import { useFormState, FormValueMonitor } from '@sinoui/rx-form-state';
+import TelephoneForm from './src/TelephoneForm';
 
 # 嵌套表单
 

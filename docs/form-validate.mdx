@@ -7,15 +7,13 @@ menu: 教程
 import { Playground } from 'docz';
 import http from '@sinoui/http';
 import { set } from 'lodash';
-import Form, {
+import Form, { FormItem, Label, Field } from '@sinoui/web-forms';
+import {
   useFormState,
-  FormItem,
-  Label,
-  Field,
   FormValueMonitor,
   useField,
-} from '../src';
-import TelephoneForm from './TelephoneForm';
+} from '@sinoui/rx-form-state';
+import TelephoneForm from './src/TelephoneForm';
 
 # 表单校验
 
