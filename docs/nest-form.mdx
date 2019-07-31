@@ -13,6 +13,7 @@ import Form, {
   FormValueMonitor,
 } from '../src';
 import TelephoneForm from './TelephoneForm';
+import TopContactsForm from './TopContactsForm';
 
 # 嵌套表单
 
@@ -300,3 +301,287 @@ function FormDemo() {
 </Playground>
 
 ## 深层嵌套
+
+深层嵌套表单的实现过程中，我们可能需要多次使用`useFieldArray`,此时需要特别注意参数的指定。
+
+添加常用联系人的数据结构如下：
+
+```json
+{
+  "userName": "",
+  "topContacts": [
+    { "userName": "", "telephones": [{ "type": "", "telephone": 138xxxx0015 }] }
+  ]
+}
+```
+
+分析上述数据结构，我们需要使用两次`useFieldArray`来实现该嵌套表单。具体如下：
+
+`TopContactsForm.tsx`
+
+```tsx
+import React from 'react';
+import { Field, FormItem, useFieldArray } from '../src';
+import TelephoneForm from './TelephoneForm';
+
+function FormInner(props: any) {
+  const { name, index, insert, remove, swap, itemsLength } = props;
+  return (
+    <div
+      style={{
+        display: 'flex',
+        padding: 8,
+        border: '1px solid green',
+        margin: 8,
+      }}
+    >
+      <FormItem>
+        <Field
+          name={name(index, 'userName')}
+          as="input"
+          required
+          placeholder="姓名"
+        />
+      </FormItem>
+      <TelephoneForm parentName={`topContacts[${index}]`} />
+      <button type="button" onClick={() => insert(index + 1, {})}>
+        +
+      </button>
+      <button type="button" onClick={() => remove(index)}>
+        -
+      </button>
+      {index > 0 && (
+        <button type="button" onClick={() => swap(index, index - 1)}>
+          ⬆️
+        </button>
+      )}
+      {index < itemsLength - 1 && (
+        <button type="button" onClick={() => swap(index, index + 1)}>
+          ⬇️
+        </button>
+      )}
+    </div>
+  );
+}
+
+const Item = React.memo(FormInner);
+
+function TopContactsForm() {
+  const {
+    getFieldName: name,
+    items,
+    insert,
+    remove,
+    push,
+    swap,
+  } = useFieldArray('topContacts');
+
+  return (
+    <div style={{ paddingTop: 16, paddingBottom: 16 }}>
+      <label>添加常用联系人</label>
+      {items.map((_telephone, index) => (
+        <Item
+          key={index}
+          index={index}
+          name={name}
+          itemsLength={items.length}
+          insert={insert}
+          remove={remove}
+          swap={swap}
+        />
+      ))}
+      <button type="button" onClick={() => push({})}>
+        +
+      </button>
+    </div>
+  );
+}
+
+export default TopContactsForm;
+```
+
+`TelephoneForm.tsx`
+
+```tsx
+import React, { useCallback, useRef, useEffect } from 'react';
+import { Field, FormItem, useFieldArray } from '../src';
+
+const types = ['家庭', '工作', 'iPhone', '手机', '主要', '工作传真', '其他'];
+
+function FormInner(props: any) {
+  const { name, index, handleInsert, remove, swap, itemsLength } = props;
+  return (
+    <div
+      style={{
+        display: 'flex',
+        padding: 8,
+        border: '1px solid green',
+        marginTop: 8,
+        marginBottom: 8,
+      }}
+    >
+      <FormItem>
+        <Field
+          name={name(index, 'type')}
+          as="input"
+          required
+          placeholder="类型"
+        />
+      </FormItem>
+      <FormItem>
+        <Field
+          name={name(index, 'telephone')}
+          as="input"
+          required
+          maxlength={11}
+          minlength={4}
+          placeholder="电话"
+        />
+      </FormItem>
+      <button type="button" onClick={() => handleInsert(index)}>
+        +
+      </button>
+      <button type="button" onClick={() => remove(index)}>
+        -
+      </button>
+      {index > 0 && (
+        <button type="button" onClick={() => swap(index, index - 1)}>
+          ⬆️
+        </button>
+      )}
+      {index < itemsLength - 1 && (
+        <button type="button" onClick={() => swap(index, index + 1)}>
+          ⬇️
+        </button>
+      )}
+    </div>
+  );
+}
+
+const Item = React.memo(FormInner);
+
+function TelephoneForm(props: { parentName: string }) {
+  const { parentName } = props;
+
+  const {
+    getFieldName: name,
+    items,
+    insert,
+    remove,
+    push,
+    swap,
+  } = useFieldArray(`${parentName}.telephones`);
+  const itemsRef = useRef(items);
+  useEffect(() => {
+    itemsRef.current = items;
+  }, [items]);
+
+  const handlePush = () => {
+    if (items.length < types.length) {
+      const idx = types.findIndex(
+        (type) => items.findIndex((item: any) => item.type === type) === -1,
+      );
+      if (idx !== -1) {
+        push({ type: types[idx] });
+      }
+    } else {
+      push({ type: '其他' });
+    }
+  };
+
+  const handleInsert = useCallback(
+    (index: number) => {
+      if (itemsRef.current.length < types.length) {
+        const idx = types.findIndex(
+          (type) =>
+            itemsRef.current.findIndex((item: any) => item.type === type) ===
+            -1,
+        );
+        if (idx !== -1) {
+          insert(index + 1, { type: types[idx] });
+        }
+      } else {
+        insert(index + 1, { type: '其他' });
+      }
+    },
+    [insert],
+  );
+
+  return (
+    <div style={{ paddingTop: 4, paddingBottom: 4 }}>
+      <label> 添加电话</label>
+      {items.map((_telephone, index) => (
+        <Item
+          // eslint-disable-next-line react/no-array-index-key
+          key={index}
+          index={index}
+          itemsLength={items.length}
+          name={name}
+          remove={remove}
+          swap={swap}
+          handleInsert={handleInsert}
+        />
+      ))}
+      <button type="button" onClick={() => handlePush()}>
+        +
+      </button>
+    </div>
+  );
+}
+
+export default TelephoneForm;
+```
+
+`FormDemo.tsx`
+
+```tsx
+import React from 'react';
+import Form, {
+  Field,
+  FormItem,
+  useFormState,
+  Label,
+} from '@sinoui/rx-form-state';
+import TopContactsForm from './TopContactsForm';
+
+function FormDemo() {
+  const formState = useFormState();
+  return (
+    <Form formState={formState}>
+      <FormItem>
+        <Label>用户名</Label>
+        <Field as="input" type="text" name="userName" required />
+      </FormItem>
+      <TopContactsForm />
+    </Form>
+  );
+}
+```
+
+运行效果：
+
+<Playground>
+  {() => {
+    const formState = useFormState();
+    return (
+      <Form formState={formState}>
+        <FormItem>
+          <Label>用户名</Label>
+          <Field as="input" type="text" name="userName" required />
+        </FormItem>
+        <TopContactsForm />
+        <FormValueMonitor>
+          {(values) => (
+            <div>表单值：{JSON.stringify(values, undefined, 2)}</div>
+          )}
+        </FormValueMonitor>
+      </Form>
+    );
+  }}
+</Playground>
+
+## 嵌套表单的性能优化建议
+
+对于复杂的嵌套表单，我们要特别注意其性能优化。比如列表类型的嵌套表单，我们在改变其中一条记录的数据时，理想状态是只有当前的这条数据记录相关组件重新渲染。
+此时，我们只需要把相关组件使用`React.memo`渲染即可。具体使用可参照[深层嵌套](#深层嵌套)。
+更多关于组件性能优化方式可参考[React 组件性能优化](https://sinoui.github.io/sinoui-guide/docs/react-performance-optimization)。
