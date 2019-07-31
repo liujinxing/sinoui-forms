@@ -5,6 +5,7 @@ menu: 教程
 ---
 
 import { Playground } from 'docz';
+import { set } from 'lodash';
 import Form, {
   useFormState,
   FormItem,
@@ -585,3 +586,72 @@ function FormDemo() {
 对于复杂的嵌套表单，我们要特别注意其性能优化。比如列表类型的嵌套表单，我们在改变其中一条记录的数据时，理想状态是只有当前的这条数据记录相关组件重新渲染。
 此时，我们只需要把相关组件使用`React.memo`渲染即可。具体使用可参照[深层嵌套](#深层嵌套)。
 更多关于组件性能优化方式可参考[React 组件性能优化](https://sinoui.github.io/sinoui-guide/docs/react-performance-optimization)。
+
+## 嵌套表单的全局校验
+
+简单嵌套表单的全局校验只需要注意其返回值的数据结构，具体事例可参考[嵌套表单校验](/form-validate#嵌套表单校验);
+列表类型的嵌套表单在做全局校验时，建议拆分校验函数，而非在一个校验函数中写大段的逻辑处理，例如上述深层嵌套表单的全局校验函数我们使用下面的方式定义：
+
+<Playground>
+  {() => {
+    /**
+    * 联系方式校验
+    */
+    function validateTelephone(value){
+      const errors = {};
+      if(value.telephone && value.telephone.length<4){
+        errors.telephone = '不能少于4位';
+      }
+
+      return errors;
+    }
+
+    /**
+    * 常用联系人校验
+    */
+    function validateContacts(topContact){
+      const errors = {};
+      if(!topContact.userName){
+        errors.userName = '必填';
+      }
+
+      if(topContact.telephones){
+        errors.telephones = topContact.telephones.map(validateTelephone)
+      }
+
+      return errors;
+    }
+
+    function validate(values) {
+      let errors = {};
+      if (!values.userName) {
+        set(errors, 'userName', '必填');
+      }
+
+      if(values.topContacts){
+        errors.topContacts = values.topContacts.map(validateContacts)
+      }
+      return errors;
+    }
+
+
+
+    const formState = useFormState({},{validate});
+    return (
+      <Form formState={formState}>
+        <FormItem>
+          <Label>用户名</Label>
+          <Field as="input" type="text" name="userName" />
+        </FormItem>
+        <TopContactsForm />
+        <FormValueMonitor>
+          {(values) => (
+            <div>表单值：{JSON.stringify(values, undefined, 2)}</div>
+          )}
+        </FormValueMonitor>
+      </Form>
+    );
+
+}}
+
+</Playground>
