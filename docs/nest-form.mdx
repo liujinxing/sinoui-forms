@@ -10,6 +10,7 @@ import Form, { FormItem, Label, Field } from '@sinoui/web-forms';
 import { useFormState, FormValueMonitor } from '@sinoui/rx-form-state';
 import TelephoneForm from './src/TelephoneForm';
 import TopContactsForm from './src/TopContactsForm';
+import RelyFieldsInNestForm from './src/RelyFieldsInNestForm';
 
 # 嵌套表单
 
@@ -317,7 +318,7 @@ function FormDemo() {
 
 ```tsx
 import React from 'react';
-import { Field, FormItem, useFieldArray } from '../src';
+import { Field, FormItem, useFieldArray } from '@sinoui/rx-form-state';
 import TelephoneForm from './TelephoneForm';
 
 function FormInner(props: any) {
@@ -400,7 +401,7 @@ export default TopContactsForm;
 
 ```tsx
 import React, { useCallback, useRef, useEffect } from 'react';
-import { Field, FormItem, useFieldArray } from '../src';
+import { Field, FormItem, useFieldArray } from '@sinoui/rx-state-form';
 
 const types = ['家庭', '工作', 'iPhone', '手机', '主要', '工作传真', '其他'];
 
@@ -585,7 +586,69 @@ function FormDemo() {
 ## 嵌套表单的全局校验
 
 简单嵌套表单的全局校验只需要注意其返回值的数据结构，具体事例可参考[嵌套表单校验](/form-validate#嵌套表单校验);
-列表类型的嵌套表单在做全局校验时，建议拆分校验函数，而非在一个校验函数中写大段的逻辑处理，例如上述深层嵌套表单的全局校验函数我们使用下面的方式定义：
+列表类型的嵌套表单在做全局校验时，建议拆分校验函数，而非在一个校验函数中写大段的逻辑处理，例如上述[深层嵌套表单](#深层嵌套)的全局校验函数我们使用下面的方式定义：
+
+`FormDemo.tsx`
+
+```tsx
+/**
+ * 联系方式校验
+ */
+function validateTelephone(value) {
+  const errors = {};
+  if (value.telephone && value.telephone.length < 4) {
+    errors.telephone = '不能少于4位';
+  }
+
+  return errors;
+}
+
+/**
+ * 常用联系人校验
+ */
+function validateContacts(topContact) {
+  const errors = {};
+  if (!topContact.userName) {
+    errors.userName = '必填';
+  }
+
+  if (topContact.telephones) {
+    errors.telephones = topContact.telephones.map(validateTelephone);
+  }
+
+  return errors;
+}
+
+function validate(values) {
+  let errors = {};
+  if (!values.userName) {
+    set(errors, 'userName', '必填');
+  }
+
+  if (values.topContacts) {
+    errors.topContacts = values.topContacts.map(validateContacts);
+  }
+  return errors;
+}
+
+function FormDemo() {
+  const formState = useFormState({}, { validate });
+  return (
+    <Form formState={formState}>
+      <FormItem>
+        <Label>用户名</Label>
+        <Field as="input" type="text" name="userName" />
+      </FormItem>
+      <TopContactsForm />
+      <FormValueMonitor>
+        {(values) => <div>表单值：{JSON.stringify(values, undefined, 2)}</div>}
+      </FormValueMonitor>
+    </Form>
+  );
+}
+```
+
+运行效果：
 
 <Playground>
   {() => {
@@ -629,8 +692,6 @@ function FormDemo() {
       return errors;
     }
 
-
-
     const formState = useFormState({},{validate});
     return (
       <Form formState={formState}>
@@ -648,5 +709,288 @@ function FormDemo() {
     );
 
 }}
+
+</Playground>
+
+## 表单域值关联
+
+嵌套表单的表单域值关联，跟普通表单的表单域值关联处理方式基本一致。只是依赖函数在处理值的时候需要特别注意一下，例如：
+
+`TopContactsForm.tsx`
+
+```tsx
+import React from 'react';
+import Form, {
+  Field,
+  FormItem,
+  useFieldArray,
+  useFormState,
+  Label,
+  FormValueMonitor,
+} from '@sinoui/rx-form-state';
+import TelephoneForm from './TelephoneForm';
+/**
+ * 计算值的依赖函数  这里需要也别注意值处理，如果层次特别深的话，建议使用lodash的get方法
+ */
+const relyFn = (values, index) => {
+  if (values.topContacts) {
+    if (!values.topContacts[index].firstName) {
+      return values.topContacts[index].lastName || '';
+    }
+
+    if (!values.topContacts[index].lastName) {
+      return values.topContacts[index].firstName || '';
+    }
+
+    return (
+      values.topContacts[index].firstName + values.topContacts[index].lastName
+    );
+  }
+  return '';
+};
+
+function FormInner(props: any) {
+  const { name, index, insert, remove, swap, itemsLength } = props;
+  return (
+    <div
+      style={{
+        display: 'flex',
+        padding: 8,
+        border: '1px solid green',
+        margin: 8,
+      }}
+    >
+      <FormItem>
+        <Field
+          name={name(index, 'firstName')}
+          as="input"
+          required
+          placeholder="姓氏"
+        />
+      </FormItem>
+      <FormItem>
+        <Field
+          name={name(index, 'lastName')}
+          as="input"
+          required
+          placeholder="名字"
+        />
+      </FormItem>
+      <FormItem>
+        <Field
+          name={name(index, 'userName')}
+          as="input"
+          required
+          placeholder="姓名"
+          readOnly
+          relyFields={[name(index, 'firstName'), name(index, 'lastName')]}
+          relyFn={(values) => relyFn(values, index)}
+        />
+      </FormItem>
+      <TelephoneForm parentName={`topContacts[${index}]`} />
+      <button type="button" onClick={() => insert(index + 1, {})}>
+        +
+      </button>
+      <button type="button" onClick={() => remove(index)}>
+        -
+      </button>
+      {index > 0 && (
+        <button type="button" onClick={() => swap(index, index - 1)}>
+          ⬆️
+        </button>
+      )}
+      {index < itemsLength - 1 && (
+        <button type="button" onClick={() => swap(index, index + 1)}>
+          ⬇️
+        </button>
+      )}
+    </div>
+  );
+}
+
+const Item = React.memo(FormInner);
+
+function TopContactsForm() {
+  const {
+    getFieldName: name,
+    items,
+    insert,
+    remove,
+    push,
+    swap,
+  } = useFieldArray('topContacts');
+
+  return (
+    <div style={{ paddingTop: 16, paddingBottom: 16 }}>
+      <label>添加常用联系人</label>
+      {items.map((_telephone, index) => (
+        <Item
+          key={index}
+          index={index}
+          name={name}
+          itemsLength={items.length}
+          insert={insert}
+          remove={remove}
+          swap={swap}
+        />
+      ))}
+      <button type="button" onClick={() => push({})}>
+        +
+      </button>
+    </div>
+  );
+}
+```
+
+`FormDemo.tsx`
+
+```tsx
+function FormDemo() {
+  const formState = useFormState();
+
+  return (
+    <Form formState={formState}>
+      <FormItem>
+        <Label>用户名</Label>
+        <Field as="input" name="userName" required />
+      </FormItem>
+      <TopContactsForm />
+      <FormValueMonitor>
+        {(values) => <div>表单值：{JSON.stringify(values, undefined, 2)}</div>}
+      </FormValueMonitor>
+    </Form>
+  );
+}
+```
+
+运行效果：
+
+<Playground>{() => <RelyFieldsInNestForm />}</Playground>
+
+## 全局值关联
+
+这里我们依旧采用深层嵌套表单的示例来说明全局值关联的使用。
+
+假设现在我们需要存储一个字段来表示常用联系人总数,此时我们需要定义一个全局依赖规则，并将这个依赖规则作为`useFormState`的第二个参数对象的`relys`属性。具体实现如下：
+
+```tsx
+const countRely = [
+  'topContacts',
+  (draft) => {
+    if (draft.topContacts) {
+      draft.count = draft.topContacts.length;
+    }
+  },
+];
+
+function FormDemo() {
+  const formState = useFormState({}, { relys: [countRely] });
+  return (
+    <Form formState={formState}>
+      <FormItem>
+        <Label>用户名</Label>
+        <Field as="input" type="text" name="userName" />
+      </FormItem>
+      <TopContactsForm />
+      <FormItem>
+        <Label>常用联系人总数</Label>
+        <Field
+          as="input"
+          type="number"
+          name="count"
+          placeholder="常用联系人总数"
+        />
+      </FormItem>
+      <FormValueMonitor>
+        {(values) => <div>表单值：{JSON.stringify(values, undefined, 2)}</div>}
+      </FormValueMonitor>
+    </Form>
+  );
+}
+```
+
+运行效果：
+
+<Playground>
+  {() => {
+    const countRely = [
+      'topContacts',
+      (draft) => {
+        if (draft.topContacts) {
+          draft.count = draft.topContacts.length;
+        }
+      },
+    ];
+    const formState = useFormState({}, { relys: [countRely] });
+    return (
+      <Form formState={formState}>
+        <FormItem>
+          <Label>用户名</Label>
+          <Field as="input" type="text" name="userName" />
+        </FormItem>
+        <TopContactsForm />
+        <FormItem>
+          <Label>常用联系人总数</Label>
+          <Field
+            as="input"
+            type="number"
+            name="count"
+            placeholder="常用联系人总数"
+          />
+        </FormItem>
+        <FormValueMonitor>
+          {(values) => (
+            <div>表单值：{JSON.stringify(values, undefined, 2)}</div>
+          )}
+        </FormValueMonitor>
+      </Form>
+    );
+  }}
+</Playground>
+
+如果上述示例中的联系人总数不需要存储，只是用来展示统计结果的话，我们不需要使用全局值关联，只需要借助`FormValueMonitor`即可实现，具体如下：
+
+```tsx
+function FormDemo() {
+  const formState = useFormState();
+  return (
+    <Form formState={formState}>
+      <FormItem>
+        <Label>用户名</Label>
+        <Field as="input" type="text" name="userName" />
+      </FormItem>
+      <TopContactsForm />
+      <FormValueMonitor>
+        {(values) => (
+          <div>
+            常用联系人总数：{values.topContacts && values.topContacts.length}
+          </div>
+        )}
+      </FormValueMonitor>
+    </Form>
+  );
+}
+```
+
+运行效果：
+
+<Playground>
+  {() => {
+    const formState = useFormState();
+    return (
+      <Form formState={formState}>
+        <FormItem>
+          <Label>用户名</Label>
+          <Field as="input" type="text" name="userName" />
+        </FormItem>
+        <TopContactsForm />
+        <FormValueMonitor>
+          {(values) => (
+            <div>常用联系人总数：{ values.topContacts && values.topContacts.length}</div>
+          )}
+        </FormValueMonitor>
+      </Form>
+    );
+  }}
 
 </Playground>
