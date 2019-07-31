@@ -4,6 +4,9 @@ import React from 'react';
 import { FormState, FormStateContext } from '@sinoui/rx-form-state';
 
 interface Props {
+  /**
+   * 表单状态
+   */
   formState: FormState<any>;
   children?: React.ReactNode;
 }

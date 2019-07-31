@@ -64,7 +64,6 @@ export default {
         'Form',
         'FormItem',
         'FormItemField',
-        'FieldError',
         'Label',
         '@sinoui/sinoui-components-forms',
         'Form',

@@ -7,6 +7,9 @@ import FieldError from './FieldError';
 import useFormItemState from './useFormItemState';
 
 interface Props {
+  /**
+   * 表单项名称
+   */
   name?: string;
   children: React.ReactNode;
 }

@@ -1,0 +1,72 @@
+---
+name: Form
+route: /form
+menu: API
+---
+
+import { Props, Playground } from 'docz';
+import { useFormState } from '@sinoui/rx-form-state';
+import { FormItem, Label, Field } from '@sinoui/web-forms';
+import Form from '../../packages/web-forms/src/Form';
+
+# Form
+
+用来渲染表单的组件，可以包含多个表单域。
+
+## 属性
+
+<Props of={Form} />
+
+## 使用方式
+
+一个完整表单的渲染需要以下几个重要的 API：
+
+- Form - 渲染表单
+- useFormState - 表单状态管理
+- FormItem - 渲染表单项
+- Label - 渲染表单项的标签
+- Field - 渲染表单控件
+
+具体使用：
+
+```tsx
+import React from 'react';
+import { useFormState } from '@sinoui/rx-form-state';
+import Form, { FormItem, Label, Field } from '@sinoui/web-forms';
+
+export default function FormDemo() {
+  const formState = useFormState();
+  return (
+    <Form formState={formState}>
+      <FormItem>
+        <Label>用户名</Label>
+        <Field as="input" name="userName" required />
+      </FormItem>
+      <FormItem>
+        <Label>密码</Label>
+        <Field as="input" name="password" type="password" required />
+      </FormItem>
+    </Form>
+  );
+}
+```
+
+运行效果：
+
+<Playground>
+  {() => {
+    const formState = useFormState();
+    return (
+      <Form formState={formState}>
+        <FormItem>
+          <Label>用户名</Label>
+          <Field as="input" name="userName" required />
+        </FormItem>
+        <FormItem>
+          <Label>密码</Label>
+          <Field as="input" name="password" type="password" required />
+        </FormItem>
+      </Form>
+    );
+  }}
+</Playground>
