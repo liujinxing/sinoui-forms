@@ -1,0 +1,28 @@
+{
+  "name": "@sinoui/hook-form-state",
+  "private": true,
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "umd:main": "dist/sinoui-hook-form-state.umd.production.js",
+  "module": "dist/sinoui-hook-form-state.es.production.js",
+  "scripts": {
+    "build": "ts-lib-tools build",
+    "test": "ts-lib-tools test",
+    "lint": "ts-lib-tools lint"
+  },
+  "dependencies": {
+    "lodash": "^4.17.15",
+    "lodash-es": "^4.17.15",
+    "immer": "^3.1.3"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^4.0.0",
+    "@testing-library/react": "^8.0.7",
+    "@testing-library/react-hooks": "^1.1.0",
+    "ts-lib-tools": "^0.3.0"
+  }
+}
