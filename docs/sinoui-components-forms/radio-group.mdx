@@ -1,0 +1,86 @@
+---
+name: RadioGroup
+route: /radio-group
+menu: API
+---
+
+import { Props, Playground } from 'docz';
+import { useFormState, FormValueMonitor } from '@sinoui/rx-form-state';
+import Form, { FormItem, Label } from '@sinoui/web-forms';
+import { RadioGroup, Radio } from '@sinoui/sinoui-components-forms';
+import RadioGroupApi from '../src/RadioGroupApi';
+
+# RadioGroup
+
+渲染一组单选表单控件。
+
+## 属性
+
+<Props of={RadioGroupApi} />
+
+## 使用方式
+
+基本用法：
+
+```tsx
+import React from 'react';
+import { useFormState, FormValueMonitor } from '@sinoui/rx-form-state';
+import Form, { FormItem, Label } from '@sinoui/web-forms';
+import { RadioGroup, Radio } from '@sinoui/sinoui-components-forms';
+
+function FormDemo() {
+  const formState = useFormState();
+  return (
+    <Form formState={formState}>
+      <FormItem>
+        <Label>性别</Label>
+        <RadioGroup
+          name="sex"
+          validate={(values) => {
+            if (values.sex === '保密') {
+              return '不能选择保密';
+            }
+          }}
+        >
+          <Radio value="男">男</Radio>
+          <Radio value="女">女</Radio>
+          <Radio value="保密">保密</Radio>
+        </RadioGroup>
+      </FormItem>
+      <FormValueMonitor>
+        {(values) => <div>性别：{values.sex}</div>}
+      </FormValueMonitor>
+    </Form>
+  );
+}
+```
+
+运行效果：
+
+<Playground>
+  {() => {
+    const formState = useFormState();
+    return (
+      <Form formState={formState}>
+        <FormItem>
+          <Label>性别</Label>
+          <RadioGroup
+            name="sex"
+            validate={(values) => {
+              if (values.sex === '保密') {
+                return '不能选择保密';
+              }
+            }}
+          >
+            <Radio value="男">男</Radio>
+            <Radio value="女">女</Radio>
+            <Radio value="保密">保密</Radio>
+          </RadioGroup>
+        </FormItem>
+        <FormValueMonitor>
+          {(values) => <div>性别：{values.sex}</div>}
+        </FormValueMonitor>
+      </Form>
+    );
+  }}
+</Playground>
