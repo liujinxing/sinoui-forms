@@ -1,0 +1,85 @@
+---
+name: CheckboxGroup
+route: /checkbox-group
+menu: API
+---
+
+import { Props, Playground } from 'docz';
+import { useFormState, FormValueMonitor } from '@sinoui/rx-form-state';
+import Form, { FormItem, Label } from '@sinoui/web-forms';
+import { Checkbox, CheckboxGroup } from '@sinoui/sinoui-components-forms';
+import CheckboxGroupApi from '../src/CheckboxGroupApi';
+
+# CheckboxGroup
+
+可用来渲染一组复选框的组件。
+
+## 属性
+
+<Props of={CheckboxGroupApi} />
+
+## 使用方式
+
+基本用法：
+
+```tsx
+import React from 'react';
+import { useFormState, FormValueMonitor } from '@sinoui/rx-form-state';
+import Form, { FormItem, Label } from '@sinoui/web-forms';
+import { Checkbox, CheckboxGroup } from '@sinoui/sinoui-components-forms';
+
+function FormDemo() {
+  const formState = useFormState();
+  return (
+    <Form formState={formState}>
+      <FormItem>
+        <Label>爱好</Label>
+        <CheckboxGroup name="fav">
+          <Checkbox value="足球">足球</Checkbox>
+          <Checkbox value="篮球">篮球</Checkbox>
+          <Checkbox value="排球">排球</Checkbox>
+          <Checkbox value="乒乓球">乒乓球</Checkbox>
+        </CheckboxGroup>
+      </FormItem>
+      <FormValueMonitor>
+        {(values) => (
+          <div>
+            个人爱好:
+            {typeof values.fav === 'string'
+              ? values.fav
+              : (values.fav || []).join(',')}
+          </div>
+        )}
+      </FormValueMonitor>
+    </Form>
+  );
+}
+```
+
+运行效果：
+
+<Playground>
+  {() => {
+    const formState = useFormState();
+    return (
+        <Form formState={formState}>
+            <FormItem>
+                <Label>爱好</Label>
+                <CheckboxGroup name="fav">
+                    <Checkbox value="足球">足球</Checkbox>
+                    <Checkbox value="篮球">篮球</Checkbox>
+                    <Checkbox value="排球">排球</Checkbox>
+                    <Checkbox value="乒乓球">乒乓球</Checkbox>
+                </CheckboxGroup>
+            </FormItem>
+            <FormValueMonitor>
+                {values=><div>个人爱好:{typeof(values.fav) === 'string' ? values.fav: (values.fav||[]).join(',')}</div>}
+            </FormValueMonitor>
+        </Form>
+    )
+
+}}
+
+</Playground>
+
+假如我们需要以字符串的形式存储`CheckboxGroup`的值,我们只需要给`CheckboxGroup`组件一个`stringValue`属性即可。
