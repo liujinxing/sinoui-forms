@@ -1,0 +1,68 @@
+---
+name: Checkbox
+route: /checkbox
+menu: API
+---
+
+import { Props, Playground } from 'docz';
+import { useFormState, FormValueMonitor } from '@sinoui/rx-form-state';
+import Form, { FormItem, Label } from '@sinoui/web-forms';
+import { Checkbox } from '@sinoui/sinoui-components-forms';
+import CheckboxFieldApi from '../src/CheckboxFieldApi';
+
+# Checkbox
+
+渲染一个复选框。
+
+## 属性
+
+<Props of={CheckboxFieldApi} />
+
+## 使用方式
+
+`Checkbox`可以单独使用,也可以和[CheckboxGroup](/checkbox-group)结合使用渲染一组复选框。
+
+基本用法：
+
+```tsx
+import React from 'react';
+import { useFormState, FormValueMonitor } from '@sinoui/rx-form-state';
+import Form, { FormItem, Label } from '@sinoui/web-forms';
+import { Checkbox } from '@sinoui/sinoui-components-forms';
+
+function FormState() {
+  const formState = useFormState();
+  return (
+    <Form formState={formState}>
+      <FormItem>
+        <Checkbox name="isAgree" value={true}>
+          同意
+        </Checkbox>
+      </FormItem>
+      <FormValueMonitor>
+        {(values) => <div>表单值:{JSON.stringify(values, undefined, 2)}</div>}
+      </FormValueMonitor>
+    </Form>
+  );
+}
+```
+
+运行效果：
+
+<Playground>
+  {() => {
+    const formState = useFormState();
+    return (
+      <Form formState={formState}>
+        <FormItem>
+          <Checkbox name="isAgree" value={true}>
+            同意
+          </Checkbox>
+        </FormItem>
+        <FormValueMonitor>
+          {(values) => <div>表单值:{JSON.stringify(values, undefined, 2)}</div>}
+        </FormValueMonitor>
+      </Form>
+    );
+  }}
+</Playground>
