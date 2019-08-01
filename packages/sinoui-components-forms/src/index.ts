@@ -4,6 +4,7 @@ import TextInput, { TextInputFieldProps } from './TextInputField';
 import RadioGroup, { RadioGroupFieldProps } from './RadioGroupField';
 import Checkbox from './CheckboxField';
 import CheckboxGroup from './CheckboxGroupField';
+import DatePicker from './DatePickerField';
 
 export {
   Select,
@@ -15,4 +16,5 @@ export {
   Radio,
   Checkbox,
   CheckboxGroup,
+  DatePicker,
 };

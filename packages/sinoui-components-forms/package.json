@@ -11,6 +11,7 @@
   "umd:main": "dist/sinoui-sinoui-components-forms.umd.production.js",
   "module": "dist/sinoui-sinoui-components-forms.es.production.js",
   "dependencies": {
+    "@sinoui/datepicker": "^0.1.27",
     "@sinoui/rx-form-state": "^0.1.0",
     "@sinoui/web-forms": "^0.1.0",
     "classnames": "^2.2.6",

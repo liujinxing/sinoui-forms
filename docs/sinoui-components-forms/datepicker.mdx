@@ -1,0 +1,57 @@
+---
+name: DatePicker
+route: /datepicker
+menu: API
+---
+
+import { Props, Playground } from 'docz';
+import { useFormState, FormValueMonitor } from '@sinoui/rx-form-state';
+import Form, { FormItem, Label } from '@sinoui/web-forms';
+import { DatePicker } from '@sinoui/sinoui-components-forms';
+import DatePickerApi from '../src/DatePickerApi';
+
+# DatePicker
+
+日期选择组件。
+
+## 属性
+
+<Props of={DatePickerApi} />
+
+## 使用方式
+
+```tsx
+import React from 'react';
+import { useFormState, FormValueMonitor } from '@sinoui/rx-form-state';
+import Form, { FormItem, Label } from '@sinoui/web-forms';
+import { DatePicker } from '@sinoui/sinoui-components-forms';
+
+function FormDemo() {
+  const formState = useFormState();
+  return (
+    <Form formState={formState}>
+      <FormItem>
+        <Label>出生日期</Label>
+        <DatePicker name="birthday" />
+      </FormItem>
+    </Form>
+  );
+}
+```
+
+运行效果：
+
+<Playground>
+  {() => {
+    const formState = useFormState();
+    return (
+      <Form formState={formState}>
+        <FormItem>
+          <Label>出生日期</Label>
+          <DatePicker name="birthday" />
+        </FormItem>
+      </Form>
+    )
+}}
+
+</Playground>

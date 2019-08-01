@@ -69,7 +69,6 @@ export default {
         'Form',
         'FormItem',
         'FormItemField',
-        'FieldError',
         'Label',
         'TextInput',
         'Checkbox',
