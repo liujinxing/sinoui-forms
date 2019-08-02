@@ -11,16 +11,7 @@ const emptyArray: string[] = [];
 export type SelectFieldProps = Omit<SelectProps, 'value'> &
   Omit<FieldProps, 'ref'> & { stringValue?: boolean };
 
-const FieldWrapper = styled(Field)`
-  .sinoui-form-item & .sinoui-select-field {
-    margin-top: 4px;
-    width: 100%;
-  }
-
-  .sinoui-form-item & .sinoui-select-field .sinoui-select__content {
-    flex: 1;
-  }
-`;
+const FieldWrapper = styled(Field)``;
 
 const valueExtract = (
   _event: React.ChangeEvent<HTMLSelectElement>,

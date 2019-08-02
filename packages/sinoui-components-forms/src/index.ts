@@ -5,6 +5,9 @@ import RadioGroup, { RadioGroupFieldProps } from './RadioGroupField';
 import Checkbox, { CheckboxFieldProps } from './CheckboxField';
 import CheckboxGroup, { CheckboxGroupFieldProps } from './CheckboxGroupField';
 import DatePicker, { DatePickerFieldProps } from './DatePickerField';
+import Label, { LabelProps } from './Label';
+import FormItem from './FormItem/FormItem';
+import Form from './Form';
 
 export {
   Select,
@@ -20,4 +23,8 @@ export {
   CheckboxGroupFieldProps,
   DatePicker,
   DatePickerFieldProps,
+  Label,
+  LabelProps,
+  FormItem,
+  Form,
 };

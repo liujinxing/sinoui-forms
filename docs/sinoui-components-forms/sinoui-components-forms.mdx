@@ -10,7 +10,7 @@ import {
   FormValueMonitor,
   useBehaviorSubject,
 } from '@sinoui/rx-form-state';
-import Form, { FormItem, Label } from '@sinoui/web-forms';
+
 import {
   Select,
   TextInput,
@@ -19,6 +19,9 @@ import {
   Checkbox,
   CheckboxGroup,
   DatePicker,
+  Form,
+  FormItem,
+  Label,
 } from '@sinoui/sinoui-components-forms';
 import { Row, Column } from 'sinoui-components/Grid';
 import { LoadingButton } from 'sinoui-components/Button';
@@ -205,7 +208,7 @@ function FormDemo() {
     const formState = useFormState(undefined,{onSubmit});
     const isSubmitting = useBehaviorSubject(formState.formState$, 'isSubmitting');
     return (
-      <Form formState={formState}>
+      <Form formState={formState} colon >
         <Row>
           <Column flex={12}>
             <FormItem>
