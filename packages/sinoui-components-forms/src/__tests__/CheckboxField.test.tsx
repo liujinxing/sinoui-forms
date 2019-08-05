@@ -34,7 +34,11 @@ it('改变复选框选中状态', () => {
     '.sinoui-checkbox-button-input',
   ) as any;
 
-  fireEvent.change(checkbox, { target: { checked: true } });
+  fireEvent.click(checkbox);
 
   expect(getByTestId('result')).toHaveTextContent('同意');
+
+  fireEvent.click(checkbox);
+
+  expect(getByTestId('result')).toHaveTextContent('不同意');
 });

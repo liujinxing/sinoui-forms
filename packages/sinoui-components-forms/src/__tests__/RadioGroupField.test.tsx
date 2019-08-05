@@ -1,8 +1,8 @@
+/* eslint-disable import/no-unresolved */
 import React from 'react';
 import { render, fireEvent, cleanup } from '@testing-library/react';
 import Radio from 'sinoui-components/Radio';
 import '@testing-library/jest-dom/extend-expect';
-// eslint-disable-next-line import/no-unresolved
 import { FormValueMonitor } from '@sinoui/rx-form-state';
 import RadioGroupField from '../RadioGroupField';
 import Wrapper from './FormTestWrapper';
