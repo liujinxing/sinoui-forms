@@ -30,7 +30,7 @@ export interface Props {
    */
   contentStyle?: React.CSSProperties;
   /**
-   * 指定展示行数
+   * 定义FormText所占行数，内容超过部分会显示滚动条。一行48px。默认为undefined，表示不做高度约束。
    */
   line?: number;
   children?: React.ReactNode;
@@ -62,10 +62,18 @@ export const FormTextWrapper = Typography.extend.attrs<Props>({
 `;
 
 export default function FormText(props: Props) {
-  const { name, prefix, subfix, text, contentStyle, children } = props;
+  const {
+    name,
+    prefix,
+    subfix,
+    text,
+    contentStyle,
+    children,
+    ...others
+  } = props;
   const fieldValue = useFieldValue(name || '');
   return (
-    <FormTextWrapper {...props}>
+    <FormTextWrapper {...others}>
       {prefix}
       <div style={contentStyle}>{text || fieldValue || children}</div>
       {subfix}

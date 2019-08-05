@@ -8,6 +8,8 @@ import DatePicker, { DatePickerFieldProps } from './DatePickerField';
 import Label, { LabelProps } from './Label';
 import FormItem from './FormItem/FormItem';
 import Form from './Form';
+import FormText, { Props as FormTextProps } from './FormText';
+import ReadonlyText from './ReadonlyText';
 
 export {
   Select,
@@ -27,4 +29,7 @@ export {
   LabelProps,
   FormItem,
   Form,
+  FormText,
+  FormTextProps,
+  ReadonlyText,
 };
