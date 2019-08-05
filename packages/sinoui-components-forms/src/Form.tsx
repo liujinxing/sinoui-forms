@@ -3,7 +3,7 @@
 import React, { useMemo } from 'react';
 import { FormState, FormStateContext } from '@sinoui/rx-form-state';
 
-interface Props {
+export interface Props {
   /**
    * 表单状态
    */

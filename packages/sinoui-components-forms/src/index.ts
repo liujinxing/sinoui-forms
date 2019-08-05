@@ -10,6 +10,7 @@ import FormItem from './FormItem/FormItem';
 import Form from './Form';
 import FormText, { Props as FormTextProps } from './FormText';
 import ReadonlyText from './ReadonlyText';
+import FormDialog from './FormDialog';
 
 export {
   Select,
@@ -32,4 +33,5 @@ export {
   FormText,
   FormTextProps,
   ReadonlyText,
+  FormDialog,
 };
