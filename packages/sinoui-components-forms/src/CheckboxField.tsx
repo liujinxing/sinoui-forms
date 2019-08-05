@@ -11,7 +11,11 @@ import {
 import CheckboxGroupContext from './CheckboxGroupContext';
 
 export type CheckboxFieldProps = CheckboxProps<any> &
-  FieldProps & { dense?: boolean; unCheckedValue?: any };
+  Omit<FieldProps, 'name'> & {
+    dense?: boolean;
+    unCheckedValue?: any;
+    name?: string;
+  };
 
 const valueExtract = (
   event: React.ChangeEvent<HTMLInputElement>,
@@ -26,7 +30,7 @@ const valueExtract = (
  */
 function CheckboxField(props: CheckboxFieldProps) {
   const { checkboxGroup = false } = useContext(CheckboxGroupContext) || {};
-  const { name, value } = props;
+  const { name = '', value } = props;
 
   const fieldError = useFieldError(name);
   const fieldTouched = useFieldTouched(name);
@@ -43,7 +47,7 @@ function CheckboxField(props: CheckboxFieldProps) {
       checked={fieldValue === value}
       error={!!(fieldTouched && fieldError)}
       valueExtract={(event) => valueExtract(event, props)}
-      {...props}
+      {...(props as any)}
     />
   );
 }
