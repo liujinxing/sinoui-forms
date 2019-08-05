@@ -36,8 +36,6 @@ interface FieldConfig<T = any> extends FieldValidateProps {
   /**
    * 表单域异步校验方法
    *
-   * @param {*} value 表单域值
-   * @param {*} values 表单值
    *
    * @returns {(string | undefined | null | Promise<string | undefined>} 返回校验结果
    */
