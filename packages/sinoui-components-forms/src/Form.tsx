@@ -10,9 +10,17 @@ export interface Props {
   formState: FormState<any>;
   children?: React.ReactNode;
   /**
-   * 表单域标签内容后是否有冒号
+   * 标签内容后是否有冒号
    */
   colon?: boolean;
+  /**
+   * 标签与表单域是否水平布局
+   */
+  inline?: boolean;
+  /**
+   * 标签与表单域是否垂直布局
+   */
+  vertical?: boolean;
   /**
    * label的一些配置
    */

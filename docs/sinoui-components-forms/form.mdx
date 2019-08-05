@@ -1,0 +1,67 @@
+---
+name: Form(sinoui-components-forms)
+route: /sinoui-components-forms-form
+menu: API
+---
+
+import { Props, Playground } from 'docz';
+import { useFormState } from '@sinoui/rx-form-state';
+import { TextInput, FormItem, Label } from '@sinoui/sinoui-components-forms';
+import Form from '../../packages/sinoui-components-forms/src/Form';
+
+# Form
+
+用来渲染表单的组件，可以包含多个表单项。
+
+## 属性
+
+<Props of={Form} />
+
+## 使用方式
+
+```tsx
+import React from 'react';
+import { useFormState } from '@sinoui/rx-form-state';
+import {
+  Form,
+  TextInput,
+  FormItem,
+  Label,
+} from '@sinoui/sinoui-components-forms';
+
+function FormDemo() {
+  const formState = useFormState();
+  return (
+    <Form formState={formState} colon>
+      <FormItem>
+        <Label>用户名</Label>
+        <TextInput name="userName" required />
+      </FormItem>
+      <FormItem>
+        <Label>密码</Label>
+        <TextInput name="password" type="password" />
+      </FormItem>
+    </Form>
+  );
+}
+```
+
+运行效果：
+
+<Playground>
+  {() => {
+    const formState = useFormState();
+    return (
+      <Form formState={formState} colon>
+        <FormItem>
+          <Label>用户名</Label>
+          <TextInput name="userName" required />
+        </FormItem>
+        <FormItem>
+          <Label>密码</Label>
+          <TextInput name="password" type="password" />
+        </FormItem>
+      </Form>
+    );
+  }}
+</Playground>

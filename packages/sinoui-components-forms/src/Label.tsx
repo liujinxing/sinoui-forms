@@ -15,7 +15,7 @@ export interface LabelProps {
    */
   vertical?: boolean;
   /**
-   * 布局方式
+   * 对齐方式
    */
   align?: 'left' | 'right' | 'center';
   /**
@@ -32,6 +32,10 @@ export interface LabelProps {
   width?: string;
 }
 
+/**
+ * 表单项标签
+ * @param _props
+ */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function Label(_props: LabelProps) {
   return null;
