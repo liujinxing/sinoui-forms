@@ -17,6 +17,7 @@ function TextInputField(props: TextInputFieldProps) {
       as={TextInput}
       autoComplete="off"
       error={!!(fieldTouched && fieldError)}
+      defaultValue=""
       {...props}
     />
   );
