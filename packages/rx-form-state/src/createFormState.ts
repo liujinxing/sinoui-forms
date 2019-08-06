@@ -63,6 +63,7 @@ function createFormState<T = any>(
   intialValues: T = {} as any,
   options: FormStateOptions<T> = {},
 ): FormState<T> {
+  let innerInitialValues = intialValues;
   const fields: FieldConfig[] = [];
   const formState$ = new BehaviorSubject<FormStateModel<T>>({
     values: intialValues,
@@ -124,6 +125,14 @@ function createFormState<T = any>(
   };
 
   /**
+   * 设置表单初始值
+   */
+  const setInitialValues = (initialValues: T) => {
+    innerInitialValues = initialValues;
+    setValues(initialValues);
+  };
+
+  /**
    * 校验表单
    */
   const validate = () => {
@@ -141,7 +150,7 @@ function createFormState<T = any>(
   /**
    * 重置表单
    */
-  const reset = (defaultValues: T = intialValues) => {
+  const reset = (defaultValues: T = innerInitialValues) => {
     formState$.next(
       produce(formState$.value, (draft: FormStateModel<T>) => {
         draft.values = defaultValues;
@@ -440,6 +449,7 @@ function createFormState<T = any>(
     updateState,
     validate,
     setValues,
+    setInitialValues,
     setTouched: createUpdateSubStateFn('isTouched'),
     setErrors: createUpdateSubStateFn('errors'),
     setPending: createUpdateSubStateFn('isPending'),

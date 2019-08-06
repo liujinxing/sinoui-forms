@@ -35,7 +35,7 @@ function useFormState<T = any>(
     initialValues !== formState.values$.value &&
     !isEqual(initialValues, formState.values$.value)
   ) {
-    formState.setValues(initialValues);
+    formState.setInitialValues(initialValues);
   }
 
   return formState;
