@@ -32,20 +32,12 @@ export default {
     '开始',
     {
       name: '教程',
-      menu: [
-        '值处理',
-        '表单校验',
-        '自定义表单域',
-        '提交表单',
-        '嵌套表单',
-        'web-forms',
-        '与sinoui-components组合',
-      ],
+      menu: ['值处理', '表单校验', '自定义表单域', '提交表单', '嵌套表单'],
     },
+
     {
-      name: 'API',
+      name: '@sinoui/rx-form-state',
       menu: [
-        '@sinoui/rx-form-state',
         'useFormState',
         'FormStateContext',
         'Field',
@@ -59,14 +51,16 @@ export default {
         'useFieldTouched',
         'useFieldArray',
         '数据结构类型',
-        '与rxjs的组合',
-        '@sinoui/web-forms',
-        'Form',
-        'FormItem',
-        'FormItemField',
-        'Label',
-        '@sinoui/sinoui-components-forms',
-        'sinoui-components-forms',
+      ],
+    },
+    {
+      name: '@sinoui/web-forms',
+      menu: ['Form', 'FormItem', 'FormItemField', 'Label'],
+    },
+    {
+      name: '@sinoui/sinoui-components-forms',
+      menu: [
+        '开始',
         'TextInput',
         'Checkbox',
         'CheckboxGroup',
