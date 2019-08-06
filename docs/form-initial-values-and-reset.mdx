@@ -41,9 +41,9 @@ import { useFormState } from '@sinoui/rx-form-state';
 
 function FormDemo() {
   const initialValues = {
-    day: new Date(), // 🔴 每次FormDemo重绘时，day总是一个新的值。
+    day: new Date(), // 😔🔴 每次FormDemo重绘时，day总是一个新的值。
   };
-  const formState = useFormState(initialValues); // 🔴 在FormDemo重绘时，会出现表单值丢失情况
+  const formState = useFormState(initialValues); // 😔🔴 在FormDemo重绘时，会出现表单值丢失情况
 }
 ```
 
@@ -59,7 +59,7 @@ function FormDemo() {
     day: new Date(),
   };
   const formState = useFormState(initialValues, {
-    enableReinitialize: false,
+    enableReinitialize: false, // ✅ 不监听intialValues的变化
   });
 }
 ```
@@ -71,15 +71,15 @@ import { useMemo } from 'react';
 import { useFormState } from '@sinoui/rx-form-state';
 
 function FormDemo() {
+  // ✅ 缓存initialValues
   const initialValues = useMemo(
     () => ({
       day: new Date(),
     }),
     [],
   );
-  const formState = useFormState(initialValues, {
-    enableReinitialize: false,
-  });
+
+  const formState = useFormState(initialValues);
 }
 ```
 
@@ -94,7 +94,7 @@ function FormDemo() {
   const initialValues = {
     day: new Date(),
   };
-  const restState = useRestItemApi('/users', userId, initialValues);
+  const restState = useRestItemApi('/users', userId, initialValues); // ✅ useRestItemApi不会监听initialValues的变化
   const formState = useFormState(restState.data);
 }
 ```
