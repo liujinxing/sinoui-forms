@@ -41,9 +41,9 @@ import { useFormState } from '@sinoui/rx-form-state';
 
 function FormDemo() {
   const initialValues = {
-    day: new Date(),
+    day: new Date(), // 🔴 每次FormDemo重绘时，day总是一个新的值。
   };
-  const formState = useFormState(initialValues);
+  const formState = useFormState(initialValues); // 🔴 在FormDemo重绘时，会出现表单值丢失情况
 }
 ```
 
