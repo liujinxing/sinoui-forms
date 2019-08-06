@@ -12,7 +12,7 @@ it('获取表单状态', () => {
 
     return (
       <FormStateContext.Provider value={formState}>
-        {children}=
+        {children}
       </FormStateContext.Provider>
     );
   };
