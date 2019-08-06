@@ -28,6 +28,7 @@ function RadioGroupField(props: RadioGroupFieldProps) {
       className={classNames('sinoui-radio-group-field', className)}
       valueExtract={valueExtract}
       error={!!(fieldTouched && fieldError)}
+      defaultValue=""
       {...props}
     >
       {children}

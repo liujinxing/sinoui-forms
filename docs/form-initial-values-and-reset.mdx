@@ -4,6 +4,15 @@ route: /form-initial-values-and-reset
 menu: 教程
 ---
 
+import { Playground } from 'docz';
+import { useFormState } from '@sinoui/rx-form-state';
+import {
+  Form,
+  FormItem,
+  Label,
+  TextInput,
+} from '@sinoui/sinoui-components-forms';
+
 # 表单初始值与重置
 
 ## 设置表单初始值
@@ -96,5 +105,127 @@ function FormDemo() {
   };
   const restState = useRestItemApi('/users', userId, initialValues); // ✅ useRestItemApi不会监听initialValues的变化
   const formState = useFormState(restState.data);
+}
+```
+
+## 表单重置
+
+表单重置有两种场景：
+
+- 表单内部有个`type=reset`的按钮
+- 重置按钮位于表单外部
+
+当重置按钮用在`<Form>`中时，点击重置按钮，`Form`组件内部调用`formState.reset`方法重置表单。例如：
+
+```tsx
+import React from 'react';
+import { useFormState } from '@sinoui/rx-form-state';
+import {
+  Form,
+  FormItem,
+  Label,
+  TextInput,
+} from '@sinoui/sinoui-components-forms';
+
+function FormDemo() {
+  const initialValues = { userName: '张三', note: '这是初始化数据' };
+  const formState = useFormState(initialValues);
+
+  return (
+    <Form formState={formState}>
+      <FormItem>
+        <Label>用户名</Label>
+        <TextInput name="userName" />
+      </FormItem>
+      <FormItem>
+        <Label>密码</Label>
+        <TextInput name="password" />
+      </FormItem>
+      <FormItem>
+        <Label>年龄</Label>
+        <TextInput name="age" />
+      </FormItem>
+      <FormItem>
+        <Label>备注</Label>
+        <TextInput name="note" />
+      </FormItem>
+      <button type="reset">重置</button>
+    </Form>
+  );
+}
+```
+
+运行效果：
+
+<Playground>
+  {()=>{
+    const initialValues = { userName: '张三', note: '这是初始化数据' };
+    const formState = useFormState(initialValues);
+
+    return (
+      <Form formState={formState}>
+        <FormItem>
+          <Label>用户名</Label>
+          <TextInput name="userName" />
+        </FormItem>
+        <FormItem>
+          <Label>密码</Label>
+          <TextInput name="password" />
+        </FormItem>
+        <FormItem>
+          <Label>年龄</Label>
+          <TextInput name="age" />
+        </FormItem>
+        <FormItem>
+          <Label>备注</Label>
+          <TextInput name="note" />
+        </FormItem>
+        <button type="reset">重置</button>
+      </Form>
+    );
+
+}}
+
+</Playground>
+
+如果重置按钮在`<Form>`外部使用，在点击重置按钮时，需要调用`formState.reset`方法进行重置。例如：
+
+```tsx
+import React from 'react';
+import { useFormState } from '@sinoui/rx-form-state';
+import {
+  Form,
+  FormItem,
+  Label,
+  TextInput,
+} from '@sinoui/sinoui-components-forms';
+
+function FormDemo() {
+  const initialValues = { userName: '张三', note: '这是初始化数据' };
+  const formState = useFormState(initialValues);
+
+  return (
+    <>
+      <Form formState={formState}>
+        <FormItem>
+          <Label>用户名</Label>
+          <TextInput name="userName" />
+        </FormItem>
+        <FormItem>
+          <Label>密码</Label>
+          <TextInput name="password" />
+        </FormItem>
+        <FormItem>
+          <Label>年龄</Label>
+          <TextInput name="age" />
+        </FormItem>
+        <FormItem>
+          <Label>备注</Label>
+          <TextInput name="note" />
+        </FormItem>
+      </Form>
+      <button onClick={() => formState.reset()}>重置</button>
+    </>
+  );
 }
 ```

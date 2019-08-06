@@ -47,6 +47,7 @@ function CheckboxField(props: CheckboxFieldProps) {
       checked={fieldValue === value}
       error={!!(fieldTouched && fieldError)}
       valueExtract={(event) => valueExtract(event, props)}
+      defaultValue=""
       {...(props as any)}
     />
   );
