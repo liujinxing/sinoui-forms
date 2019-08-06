@@ -11,6 +11,7 @@ import useFieldError from './useFieldError';
 import useFieldTouched from './useFieldTouched';
 import useFormStateContext from './useFormStateContext';
 import useBehaviorSubject from './utils/useBehaviorSubject';
+import useFormSubmitting from './useFormSubmitting';
 
 export * from './types';
 
@@ -29,4 +30,5 @@ export {
   useFormStateContext,
   FieldProps,
   useBehaviorSubject,
+  useFormSubmitting,
 };

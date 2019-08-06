@@ -6,7 +6,7 @@ menu: 教程
 
 import { Playground } from 'docz';
 import Form, { FormItem, Label, Field } from '@sinoui/web-forms';
-import { useFormState, useBehaviorSubject } from '@sinoui/rx-form-state';
+import { useFormState, useFormSubmitting } from '@sinoui/rx-form-state';
 
 # 提交表单
 
@@ -71,10 +71,10 @@ function FormDemo() {
 可以从`formState`中获取`isSubmitting`状态，表示是否正在提交表单。我们可以通过这个状态控制“提交表单”按钮的可用性以及提交中提示语，如下所示：
 
 ```tsx
-import { useBehaviorSubject } from '@sinoui/rx-form-state';
+import { useFormSubmitting } from '@sinoui/rx-form-state';
 
 function FormDemo() {
-  const isSubmitting = useBehaviorSubject(formState.formState$, 'isSubmitting');
+  const isSubmitting = useFormSubmitting(formState);
 
   return (
     <button type="submit" disabled={isSubmitting}>
@@ -100,7 +100,7 @@ function FormDemo() {
       onSubmit,
     });
 
-    const isSubmitting = useBehaviorSubject(formState.formState$, 'isSubmitting');
+    const isSubmitting = useFormSubmitting(formState);
 
     return (<Form formState={formState}>
       <FormItem>
@@ -155,7 +155,7 @@ function FormDemo() {
       onSubmit,
     });
 
-    const isSubmitting = useBehaviorSubject(formState.formState$, 'isSubmitting');
+    const isSubmitting = useFormSubmitting(formState);
 
     return (<div>
       <Form formState={formState}>
@@ -239,7 +239,7 @@ function FormDemo() {
       onSubmit,
     });
 
-    const isSubmitting = useBehaviorSubject(formState.formState$, 'isSubmitting');
+    const isSubmitting = useFormSubmitting(formState);
 
     return (<div>
       <Form formState={formState}>

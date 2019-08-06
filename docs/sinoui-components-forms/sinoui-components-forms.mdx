@@ -8,7 +8,7 @@ import { Playground } from 'docz';
 import {
   useFormState,
   FormValueMonitor,
-  useBehaviorSubject,
+  useFormSubmitting,
 } from '@sinoui/rx-form-state';
 
 import {
@@ -82,7 +82,7 @@ import React from 'react';
 import {
   useFormState,
   FormValueMonitor,
-  useBehaviorSubject,
+  useFormSubmitting,
 } from '@sinoui/rx-form-state';
 import Form, { FormItem, Label } from '@sinoui/web-forms';
 import {
@@ -108,7 +108,7 @@ const onSubmit = (values) => {
 };
 function FormDemo() {
   const formState = useFormState(undefined, { onSubmit });
-  const isSubmitting = useBehaviorSubject(formState.formState$, 'isSubmitting');
+  const isSubmitting = useFormSubmitting(formState);
   return (
     <Form formState={formState}>
       <Row>
@@ -206,7 +206,7 @@ function FormDemo() {
         });
     };
     const formState = useFormState(undefined,{onSubmit});
-    const isSubmitting = useBehaviorSubject(formState.formState$, 'isSubmitting');
+    const isSubmitting = useFormSubmitting(formState);
     return (
       <Form formState={formState} colon >
         <Row>
