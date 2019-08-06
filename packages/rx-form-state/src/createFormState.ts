@@ -446,6 +446,30 @@ function createFormState<T = any>(
     asyncErrors$,
     isPending$,
 
+    get values() {
+      return values$.value;
+    },
+
+    get isSubmitting() {
+      return formState$.value.isSubmitting;
+    },
+
+    get errors() {
+      return errors$.value;
+    },
+
+    get isTouched() {
+      return isTouched$.value;
+    },
+
+    get asyncErrors() {
+      return asyncErrors$.value;
+    },
+
+    get isPending() {
+      return isPending$.value;
+    },
+
     updateState,
     validate,
     setValues,

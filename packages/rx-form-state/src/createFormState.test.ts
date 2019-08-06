@@ -10,7 +10,7 @@ it('读取表单初始值', () => {
     userName: '张三',
   });
 
-  expect(formState.values$.value).toEqual({
+  expect(formState.values).toEqual({
     userName: '张三',
   });
 });
@@ -18,7 +18,7 @@ it('读取表单初始值', () => {
 it('读取默认的表单初始值', () => {
   const formState = createFormState();
 
-  expect(formState.values$.value).toEqual({});
+  expect(formState.values).toEqual({});
 });
 
 it('设置表单值', () => {
@@ -28,7 +28,7 @@ it('设置表单值', () => {
     userName: '张三',
   });
 
-  expect(formState.values$.value).toEqual({
+  expect(formState.values).toEqual({
     userName: '张三',
   });
 });
@@ -42,14 +42,14 @@ it('设置表单初始值', () => {
     userName: '王五',
   });
 
-  expect(formState.values$.value).toEqual({
+  expect(formState.values).toEqual({
     userName: '王五',
   });
 
   formState.setFieldValue('userName', '李四');
   formState.reset();
 
-  expect(formState.values$.value).toEqual({
+  expect(formState.values).toEqual({
     userName: '王五',
   });
 });
@@ -73,7 +73,7 @@ it('表单校验', () => {
   const result = formState.validate();
 
   expect(result).toBe(false);
-  expect(formState.errors$.value).toEqual({
+  expect(formState.errors).toEqual({
     userName: '必填',
   });
 });
@@ -94,7 +94,7 @@ it('表单域校验', () => {
   const result = formState.validate();
 
   expect(result).toBe(false);
-  expect(formState.errors$.value).toEqual({
+  expect(formState.errors).toEqual({
     userName: '必填',
   });
 });
@@ -146,7 +146,7 @@ it('表单校验与表单域校验', () => {
 
   formState.validate();
 
-  expect(formState.errors$.value).toEqual({
+  expect(formState.errors).toEqual({
     userName: '必填',
   });
 
@@ -156,7 +156,7 @@ it('表单校验与表单域校验', () => {
 
   formState.validate();
 
-  expect(formState.errors$.value).toEqual({
+  expect(formState.errors).toEqual({
     userName: '不能以“张”开头',
   });
 });
@@ -169,10 +169,10 @@ it('更新表单状态', () => {
     draft.errors.userName = '长度不够3位';
   });
 
-  expect(formState.values$.value).toEqual({
+  expect(formState.values).toEqual({
     userName: '张三',
   });
-  expect(formState.errors$.value).toEqual({
+  expect(formState.errors).toEqual({
     userName: '长度不够3位',
   });
 });
@@ -201,12 +201,12 @@ it('重置表单', () => {
 
   formState.reset();
 
-  expect(formState.values$.value).toEqual({});
-  expect(formState.errors$.value).toEqual({});
-  expect(formState.isPending$.value).toEqual({});
-  expect(formState.formState$.value.isSubmitting).toBe(false);
-  expect(formState.isTouched$.value).toEqual({});
-  expect(formState.asyncErrors$.value).toEqual({});
+  expect(formState.values).toEqual({});
+  expect(formState.errors).toEqual({});
+  expect(formState.isPending).toEqual({});
+  expect(formState.isSubmitting).toBe(false);
+  expect(formState.isTouched).toEqual({});
+  expect(formState.asyncErrors).toEqual({});
 });
 
 it('有校验错误时，不允许提交表单', async () => {
@@ -230,7 +230,7 @@ it('有校验错误时，不允许提交表单', async () => {
   await formState.submit();
 
   expect(onSubmit).not.toHaveBeenCalled();
-  expect(formState.isTouched$.value).toEqual({
+  expect(formState.isTouched).toEqual({
     userName: true,
   });
 });
@@ -255,7 +255,7 @@ it('有异步校验错误时，不允许提交表单', async () => {
   await formState.submit();
 
   expect(onSubmit).not.toHaveBeenCalled();
-  expect(formState.isTouched$.value).toEqual({
+  expect(formState.isTouched).toEqual({
     userName: true,
   });
 });
@@ -269,17 +269,14 @@ it('提交表单', async () => {
 
   const promise = formState.submit({ preventDefault, stopPropagation } as any);
 
-  expect(formState.formState$.value.isSubmitting).toBe(true);
-  expect(onSubmit).toHaveBeenCalledWith(
-    formState.values$.value,
-    expect.anything(),
-  );
+  expect(formState.isSubmitting).toBe(true);
+  expect(onSubmit).toHaveBeenCalledWith(formState.values, expect.anything());
   expect(preventDefault).toHaveBeenCalled();
   expect(stopPropagation).toHaveBeenCalled();
 
   await promise;
 
-  expect(formState.formState$.value.isSubmitting).toBe(false);
+  expect(formState.isSubmitting).toBe(false);
 });
 
 it('提交表单失败', async () => {
@@ -292,7 +289,7 @@ it('提交表单失败', async () => {
 
   await expect(promise).rejects.toThrowError('失败');
 
-  expect(formState.formState$.value.isSubmitting).toBe(false);
+  expect(formState.isSubmitting).toBe(false);
 });
 
 it('获取表单域状态', () => {
@@ -382,12 +379,12 @@ it('设置表单值', async () => {
 
   formState.setFieldValue('userName', '紫诺');
 
-  expect(formState.values$.value).toEqual({
+  expect(formState.values).toEqual({
     userName: '紫诺',
     userNameCopy: '紫诺',
   });
 
-  expect(formState.errors$.value.userName).toBe('长度不能少于3位');
+  expect(formState.errors.userName).toBe('长度不能少于3位');
 });
 
 it('表单域异步校验', async () => {
@@ -406,7 +403,7 @@ it('表单域异步校验', async () => {
 
   jest.runAllTimers();
 
-  expect(formState.isPending$.value.userName).toBe(true);
+  expect(formState.isPending.userName).toBe(true);
 
   jest.useRealTimers();
 
@@ -414,8 +411,8 @@ it('表单域异步校验', async () => {
     setTimeout(() => resolve(), 10);
   });
 
-  expect(formState.isPending$.value.userName).toBe(false);
-  expect(formState.asyncErrors$.value.userName).toBe('此用户名已存在');
+  expect(formState.isPending.userName).toBe(false);
+  expect(formState.asyncErrors.userName).toBe('此用户名已存在');
 });
 
 it('在表单域异步校验过程中，表单域变更了同步错误', async () => {
@@ -434,7 +431,7 @@ it('在表单域异步校验过程中，表单域变更了同步错误', async (
 
   jest.runAllTimers();
 
-  expect(formState.isPending$.value.userName).toBe(true);
+  expect(formState.isPending.userName).toBe(true);
 
   formState.setFieldState('userName', (draft) => {
     draft.error = '此用户名不够长';
@@ -446,8 +443,8 @@ it('在表单域异步校验过程中，表单域变更了同步错误', async (
     setTimeout(() => resolve(), 10);
   });
 
-  expect(formState.isPending$.value.userName).toBe(false);
-  expect(formState.asyncErrors$.value.userName).toBeFalsy();
+  expect(formState.isPending.userName).toBe(false);
+  expect(formState.asyncErrors.userName).toBeFalsy();
 });
 
 it('表单域异步校验失败', async () => {
@@ -466,7 +463,7 @@ it('表单域异步校验失败', async () => {
 
   jest.runAllTimers();
 
-  expect(formState.isPending$.value.userName).toBe(true);
+  expect(formState.isPending.userName).toBe(true);
 
   jest.useRealTimers();
 
@@ -474,7 +471,7 @@ it('表单域异步校验失败', async () => {
     setTimeout(() => resolve(), 10);
   });
 
-  expect(formState.isPending$.value.userName).toBe(false);
+  expect(formState.isPending.userName).toBe(false);
 });
 
 it('表单域失去焦点', () => {
@@ -483,8 +480,8 @@ it('表单域失去焦点', () => {
 
   formState.blur('userName');
 
-  expect(formState.isTouched$.value.userName).toBe(true);
-  expect(formState.errors$.value.userName).toBe('必填');
+  expect(formState.isTouched.userName).toBe(true);
+  expect(formState.errors.userName).toBe('必填');
 });
 
 it('全局值关联', () => {
@@ -517,11 +514,11 @@ it('全局值关联', () => {
   formState.setFieldValue('B', 'Jacking');
   formState.setFieldValue('C', 'Liu');
 
-  expect(formState.values$.value.A).toBe('Jacking Liu');
+  expect(formState.values.A).toBe('Jacking Liu');
 
   formState.setFieldValue('D', '123456');
 
-  expect(formState.values$.value.E).toBe('123456');
+  expect(formState.values.E).toBe('123456');
 });
 
 it('全局深度值关联', () => {
@@ -558,5 +555,5 @@ it('全局深度值关联', () => {
   formState.setFieldValue('E', 'And');
   formState.setFieldValue('C', 'zinuo');
 
-  expect(formState.values$.value.A).toBe('Jacking And zinuo');
+  expect(formState.values.A).toBe('Jacking And zinuo');
 });

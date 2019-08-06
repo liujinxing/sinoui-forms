@@ -146,24 +146,22 @@ const relys = [
 
 `formState`有以下属性可用来获取不同的表单状态：
 
-| 属性名         | 类型                                 | 描述                                                                      |
-| -------------- | ------------------------------------ | ------------------------------------------------------------------------- |
-| `formState$`   | `BehaviorSubject<FormStateModel<T>>` | 表单状态的[可观察对象](https://rxjs.dev/guide/observable)。               |
-| `values$`      | `BehaviorSubject<T>`                 | 表单值的[可观察对象](https://rxjs.dev/guide/observable)。                 |
-| `errors$`      | `BehaviorSubject<FormStateErrors>`   | 表单同步验证错误状态的[可观察对象](https://rxjs.dev/guide/observable)。   |
-| `isTouched$`   | `BehaviorSubject<FormStateTouched>`  | 表单域被操作状态的[可观察对象](https://rxjs.dev/guide/observable)。       |
-| `asyncErrors$` | `BehaviorSubject<FormStateErrors>`   | 表单异步校验错误状态的[可观察对象](https://rxjs.dev/guide/observable)。   |
-| `isPending$`   | `BehaviorSubject<FormStatePending>`  | 执行异步校验的过程状态的[可观察对象](https://rxjs.dev/guide/observable)。 |
+| 属性名        | 类型               | 描述                     |
+| ------------- | ------------------ | ------------------------ |
+| `values`      | `T`                | 表单值。                 |
+| `errors`      | `FormStateErrors`  | 表单同步验证错误状态。   |
+| `isTouched`   | `FormStateTouched` | 表单域被操作状态。       |
+| `asyncErrors` | `FormStateErrors`  | 表单异步校验错误状态。   |
+| `isPending`   | `FormStatePending` | 执行异步校验的过程状态。 |
 
 `formState`提供的属性都是[可观察对象](https://rxjs.dev/guide/observable)类型。我们可以通过下面的方式获取到当前的值：
 
 ```ts
-const formStateModel = formState.formState$.value;
-const values = formState.values$.value;
-const errors = formState.values$.value;
-const isTouched = formState.isTouched$.value;
-const asyncErrors = formState.asyncErrors$.value;
-const isPending = formState.isPending$.value;
+const values = formState.values;
+const errors = formState.errors;
+const isTouched = formState.isTouched;
+const asyncErrors = formState.asyncErrors;
+const isPending = formState.isPending;
 ```
 
 如果我们要获取变化的数据，可以使用`useBehaviorSubject`：

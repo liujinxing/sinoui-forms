@@ -299,6 +299,36 @@ export interface FormState<T = any> {
   isPending$: BehaviorSubject<FormStatePending>;
 
   /**
+   * 表单值
+   */
+  values: T;
+
+  /**
+   * 表单校验错误
+   */
+  errors: FormStateErrors;
+
+  /**
+   * 表单异步校验错误
+   */
+  asyncErrors: FormStateErrors;
+
+  /**
+   * 表单域被操作状态
+   */
+  isTouched: FormStateTouched;
+
+  /**
+   * 表单域异步校验状态
+   */
+  isPending: FormStatePending;
+
+  /**
+   * 表单提交状态
+   */
+  isSubmitting: boolean;
+
+  /**
    * 更新表单状态
    *
    * @param {(draft: FormStateModel<T>) => void} producer 更新表单状态的方法
