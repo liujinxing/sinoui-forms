@@ -1,0 +1,100 @@
+---
+name: 表单初始值与重置
+route: /form-initial-values-and-reset
+menu: 教程
+---
+
+# 表单初始值与重置
+
+## 设置表单初始值
+
+[`useFormState(initialValues, options)`](api-use-form-state)的第一个参数是表单初始值，它的基本用法是：
+
+```ts
+import { useFormState } from '@sinoui/rx-form-state';
+
+function FormDemo() {
+  const initialValues = {
+    userName: '张三',
+    favs: ['篮球', '足球'],
+  };
+  const formState = useFormState(initialValues);
+}
+```
+
+有时应用需要去服务器端加载表单数据，例如：
+
+```tsx
+import useRestItemApi from '@sinoui/use-rest-item-api';
+import { useFormState } from '@sinoui/rx-form-state';
+
+function FormDemo() {
+  const restState = useRestItemApi('/users', '1');
+  const formState = useFormState(restState.data);
+}
+```
+
+默认情况下，`useFormState`会监听`initialValues`参数的变化，使用深比较的方式判断有变化后，会重新应用表单初始值，所以，下面的代码可能会出现问题：
+
+```ts
+import { useFormState } from '@sinoui/rx-form-state';
+
+function FormDemo() {
+  const initialValues = {
+    day: new Date(),
+  };
+  const formState = useFormState(initialValues);
+}
+```
+
+每次`FormDemo`重绘时，`initialValues.day`都是一个新的值，这样`formState`总是会应用新的`initialValues`，将表单值设置为`initialValues`。可能我们已经在表单中填写了一些数据，但是由于`FormDemo`发生重绘，会导致已填写的数据丢失。
+
+这种情况我们可以不监听`initialValues`的变化：
+
+```ts
+import { useFormState } from '@sinoui/rx-form-state';
+
+function FormDemo() {
+  const initialValues = {
+    day: new Date(),
+  };
+  const formState = useFormState(initialValues, {
+    enableReinitialize: false,
+  });
+}
+```
+
+或者缓存`initialValues`：
+
+```ts
+import { useMemo } from 'react';
+import { useFormState } from '@sinoui/rx-form-state';
+
+function FormDemo() {
+  const initialValues = useMemo(
+    () => ({
+      day: new Date(),
+    }),
+    [],
+  );
+  const formState = useFormState(initialValues, {
+    enableReinitialize: false,
+  });
+}
+```
+
+与`@sinoui/use-rest-item-api`结合使用时，可以这样处理：
+
+```tsx
+import useRestItemApi from '@sinoui/use-rest-item-api';
+import { useFormState } from '@sinoui/rx-form-state';
+
+function FormDemo() {
+  const userId = '1';
+  const initialValues = {
+    day: new Date(),
+  };
+  const restState = useRestItemApi('/users', userId, initialValues);
+  const formState = useFormState(restState.data);
+}
+```

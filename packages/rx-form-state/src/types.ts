@@ -51,7 +51,13 @@ export type RelyRule<T> =
  * 创建表单状态的配置
  */
 export interface FormStateOptions<T> {
+  /**
+   * 指定表单验证逻辑
+   */
   validate?: (values: T) => FormStateErrors | undefined;
+  /**
+   * 指定表单提交逻辑。
+   */
   onSubmit?: (values: T, formState: FormState) => Promise<any> | void;
   /**
    * 指定全局值关联规则
