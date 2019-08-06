@@ -33,6 +33,27 @@ it('设置表单值', () => {
   });
 });
 
+it('设置表单初始值', () => {
+  const formState = createFormState({
+    userName: '张三',
+  });
+
+  formState.setInitialValues({
+    userName: '王五',
+  });
+
+  expect(formState.values$.value).toEqual({
+    userName: '王五',
+  });
+
+  formState.setFieldValue('userName', '李四');
+  formState.reset();
+
+  expect(formState.values$.value).toEqual({
+    userName: '王五',
+  });
+});
+
 it('表单校验', () => {
   const formState = createFormState(
     {},

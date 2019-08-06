@@ -314,6 +314,13 @@ export interface FormState<T = any> {
   setValues(values: T): void;
 
   /**
+   * 设置表单初始值
+   *
+   * @param initialValues 表单初始值
+   */
+  setInitialValues(initialValues: T): void;
+
+  /**
    * 校验表单（注意，此方法不会触发表单域异步校验）
    *
    * @returns {boolean}
