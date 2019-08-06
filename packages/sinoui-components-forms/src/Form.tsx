@@ -41,6 +41,11 @@ export default function Form(props: Props) {
     formState.submit();
   };
 
+  const handleReset = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    formState.reset();
+  };
+
   const context = useMemo(() => {
     return {
       ...formState,
@@ -50,7 +55,7 @@ export default function Form(props: Props) {
 
   return (
     <FormStateContext.Provider value={context}>
-      <form onSubmit={handleSubmit} {...others}>
+      <form onSubmit={handleSubmit} onReset={handleReset} {...others}>
         {children}
       </form>
     </FormStateContext.Provider>
