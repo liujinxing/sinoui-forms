@@ -101,11 +101,12 @@ useFormState<T>(initialValues: T = {}, options?: FormStateOptions<T>): FormState
 
 方法的第一个参数`initialValues`是初始的表单值，可以不指定，默认为`{}`。方法的第二个参数`options`是表单状态管理器的配置，有如下配置选项：
 
-| 配置项   | 类型                                                       | 描述                                                                  |
-| -------- | ---------------------------------------------------------- | --------------------------------------------------------------------- |
-| validate | `(values: T) => FormStateErrors | undefined`               | 指定表单校验逻辑方法。方法接收表单值`values`。                        |
-| onSubmit | `(values: T, formState: FormState) => Promise<any> | void` | 指定表单提交方法。方法接收表单值`values`和表单状态管理器`formState`。 |
-| relys    | `RelyRule<T>[]`                                            | 指定表单域值关联逻辑。                                                |
+| 配置项             | 类型                                                       | 描述                                                                                            |
+| ------------------ | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| validate           | `(values: T) => FormStateErrors | undefined`               | 指定表单校验逻辑方法。方法接收表单值`values`。                                                  |
+| onSubmit           | `(values: T, formState: FormState) => Promise<any> | void` | 指定表单提交方法。方法接收表单值`values`和表单状态管理器`formState`。                           |
+| relys              | `RelyRule<T>[]`                                            | 指定表单域值关联逻辑。                                                                          |
+| enableReinitialize | `boolean`                                                  | 是否监听`initialValues`值变更，如果发生变更，则重新应用新的表单初始值。默认为`true`，表示启用。 |
 
 `relys`是用来指定一组定义表单域值关联计算的规则，例如：
 
@@ -300,18 +301,19 @@ interface FieldStateModel {
 
 `formState`提供了一些方法，用来更新表单状态：
 
-| 方法           | 类型                                                                | 描述                                                                    |
-| -------------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| updateState    | `(producer: (draft: FormStateModel<T>) => void): FormStateModel<T>` | 更新表单状态。                                                          |
-| setValues      | `(values: T) => void`                                               | 更新表单值。                                                            |
-| validate       | `() => boolean`                                                     | 验证表单。返回验证结果。如果有校验错误，则返回`false`，否则返回`true`。 |
-| setErrors      | `(errors: FormStateErrors) => void`                                 | 设置表单校验错误                                                        |
-| setTouched     | `(touched: FormStateTouched) => void`                               | 设置所有表单域的点击状态                                                |
-| setAsyncErrors | `(asyncErrors: FormStateErrors) => void`                            | 设置异步校验错误                                                        |
-| setPending     | `(isPending: FormStatePending): void`                               | 设置表单异步校验的过程状态                                              |
-| reset          | `(defaultValues?: T): void`                                         | 重置表单                                                                |
-| submit         | `(event?: React.FormEvent<HTMLFormElement>): Promise<any>`          | 提交表单                                                                |
-| setSubmitting  | `(submiting: boolean): void`                                        | 设置提交中状态                                                          |
+| 方法             | 类型                                                                | 描述                                                                    |
+| ---------------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| updateState      | `(producer: (draft: FormStateModel<T>) => void): FormStateModel<T>` | 更新表单状态。                                                          |
+| setValues        | `(values: T) => void`                                               | 更新表单值。                                                            |
+| setInitialValues | `(initialValues: T) => void`                                        | 更新表单初始值。                                                        |
+| validate         | `() => boolean`                                                     | 验证表单。返回验证结果。如果有校验错误，则返回`false`，否则返回`true`。 |
+| setErrors        | `(errors: FormStateErrors) => void`                                 | 设置表单校验错误                                                        |
+| setTouched       | `(touched: FormStateTouched) => void`                               | 设置所有表单域的点击状态                                                |
+| setAsyncErrors   | `(asyncErrors: FormStateErrors) => void`                            | 设置异步校验错误                                                        |
+| setPending       | `(isPending: FormStatePending): void`                               | 设置表单异步校验的过程状态                                              |
+| reset            | `(defaultValues?: T): void`                                         | 重置表单                                                                |
+| submit           | `(event?: React.FormEvent<HTMLFormElement>): Promise<any>`          | 提交表单                                                                |
+| setSubmitting    | `(submiting: boolean): void`                                        | 设置提交中状态                                                          |
 
 特别说明一下`updateState()`方法。此方法可以设置表单状态的任何地方，采用的是[immer](https://github.com/immerjs/immer)的方法更新表单状态，例如：
 
