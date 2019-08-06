@@ -25,15 +25,10 @@ npm install --save @sinoui/rx-form-state
 引用：
 
 ```ts
-import Form, {
-  useFormState,
-  FormItem,
-  Field,
-  Label,
-} from '@sinoui/rx-form-state';
+import { useFormState } from '@sinoui/rx-form-state';
 ```
 
-源码路径：[https://github.com/sinoui/sinoui-forms](https://github.com/sinoui/sinoui-forms)。
+源码路径：[https://github.com/sinoui/sinoui-forms-library](https://github.com/sinoui/sinoui-forms-library)。
 
 表单状态管理 hook(`useFormState`)提供以下功能：
 
@@ -55,13 +50,8 @@ import Form, {
 
 ```tsx
 import React from 'react';
-import Form, {
-  useFormState,
-  FormItem,
-  Field,
-  Label,
-  FormValueMonitor,
-} from '@sinoui/rx-form-state';
+import { useFormState, FormValueMonitor } from '@sinoui/rx-form-state';
+import Form, { FormItem, Field, Label } from '@sinoui/web-forms';
 
 function FormDemo() {
   const defaultValues = {};
@@ -133,12 +123,8 @@ function FormDemo() {
 
 ```tsx
 import React from 'react';
-import Form, {
-  FormItem,
-  Field,
-  Label,
-  useFormState,
-} from '@sinoui/rx-form-state';
+import { useFormState } from '@sinoui/rx-form-state';
+import Form, { FormItem, Field, Label } from '@sinoui/web-forms';
 
 /**
  * 定义全局表单校验规则
@@ -231,7 +217,7 @@ function FormDemo() {
 
 ```tsx
 import React from 'react';
-import { Field } from '@sinoui/rx-form-state';
+import { Field } from '@sinoui/web-forms';
 
 function Select(props) {
   return (
@@ -248,12 +234,8 @@ export default Select;
 
 ```tsx
 import React from 'react';
-import Form, {
-  FormItem,
-  Field,
-  Label,
-  useFormState,
-} from '@sinoui/rx-form-state';
+import { useFormState } from '@sinoui/rx-form-state';
+import Form, { FormItem, Field, Label } from '@sinoui/web-forms';
 import Select from './Select';
 
 function FormDemo() {
@@ -317,13 +299,8 @@ function FormDemo() {
 
 ```tsx
 import React from 'react';
-import Form, {
-  FormItem,
-  Field,
-  Label,
-  useFormState,
-  FormValueMonitor,
-} from '@sinoui/rx-form-state';
+import { useFormState, FormValueMonitor } from '@sinoui/rx-form-state';
+import Form, { FormItem, Field, Label } from '@sinoui/web-forms';
 
 function FormDemo() {
   const formState = useFormState({});
@@ -422,13 +399,8 @@ function FormDemo() {
 
 ```tsx
 import React from 'react';
-import Form, {
-  FormItem,
-  Field,
-  Label,
-  useFormState,
-  FormValueMonitor,
-} from '@sinoui/rx-form-state';
+import { useFormState, FormValueMonitor } from '@sinoui/rx-form-state';
+import Form, { FormItem, Field, Label } from '@sinoui/web-forms';
 
 function relyFn(values) {
   if (!values.firstName) {
@@ -533,12 +505,8 @@ function FormDemo() {
 
 ```tsx
 import React from 'react';
-import Form, {
-  FormItem,
-  Field,
-  Label,
-  useFormState,
-} from '@sinoui/rx-form-state';
+import { useFormState } from '@sinoui/rx-form-state';
+import Form, { FormItem, Field, Label } from '@sinoui/web-forms';
 import http from '@sinoui/http';
 
 function validate(values: any) {
@@ -641,7 +609,8 @@ function FormDemo() {
 
 ```tsx
 import React from 'react';
-import { Field, FormItem, useFieldArray } from '@sinoui/rx-form-state';
+import { useFieldArray } from '@sinoui/rx-form-state';
+import { FormItem, Field } from '@sinoui/web-forms';
 
 function TelephoneForm() {
   const {
@@ -706,12 +675,8 @@ export default TelephoneForm;
 
 ```tsx
 import React from 'react';
-import Form, {
-  FormItem,
-  Field,
-  Label,
-  useFormState,
-} from '@sinoui/rx-form-state';
+import { useFormState } from '@sinoui/rx-form-state';
+import Form, { FormItem, Field, Label } from '@sinoui/web-forms';
 import TelephoneForm from './TelephoneForm';
 
 function FormDemo() {
