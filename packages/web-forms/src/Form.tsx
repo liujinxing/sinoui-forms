@@ -19,9 +19,14 @@ export default function Form(props: Props) {
     formState.submit();
   };
 
+  const handleReset = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    formState.reset();
+  };
+
   return (
     <FormStateContext.Provider value={formState}>
-      <form onSubmit={handleSubmit} {...others}>
+      <form onSubmit={handleSubmit} onReset={handleReset} {...others}>
         {children}
       </form>
     </FormStateContext.Provider>
