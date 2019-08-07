@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useMemo } from 'react';
 import { FormState, FormStateContext } from '@sinoui/rx-form-state';
+import classNames from 'classnames';
 
 export interface Props {
   /**
@@ -25,6 +26,14 @@ export interface Props {
    * label的一些配置
    */
   labelProps?: any;
+  /**
+   * 自定义样式类名称
+   */
+  className?: string;
+  /**
+   * 自定义表单样式
+   */
+  style?: React.CSSProperties;
 }
 
 export default function Form(props: Props) {
@@ -33,6 +42,7 @@ export default function Form(props: Props) {
     children,
     colon = false,
     labelProps = {},
+    className,
     ...others
   } = props;
 
@@ -55,7 +65,12 @@ export default function Form(props: Props) {
 
   return (
     <FormStateContext.Provider value={context}>
-      <form onSubmit={handleSubmit} onReset={handleReset} {...others}>
+      <form
+        className={classNames('sinoui-forms', className)}
+        onSubmit={handleSubmit}
+        onReset={handleReset}
+        {...others}
+      >
         {children}
       </form>
     </FormStateContext.Provider>

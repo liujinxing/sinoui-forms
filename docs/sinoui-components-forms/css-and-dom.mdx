@@ -1,0 +1,211 @@
+---
+name: 表单样式定制
+route: /css-and-dom
+menu: '@sinoui/sinoui-components-forms'
+---
+
+# 表单样式定制
+
+对于表单样式定制，我们支持多种方式：
+
+- css
+- styled-components
+- style
+
+## DOM 结构
+
+我们可以根据 DOM 结构自定义表单组件的样式。DOM 结构如下：
+
+```html
+<form class="sinoui-form">
+  <div class="sinoui-form-item">
+    <label class="sinoui-form-label" for="1">姓名</label>
+    <div class="sinoui-form-item__content">
+      <div class="sinoui-form-field">
+        <input type="text" id="1" />
+      </div>
+    </div>
+  </div>
+
+  <div class="sinoui-form-item-error">
+    这是错误信息
+  </div>
+</form>
+```
+
+## 自定义表单元素样式
+
+### 自定义表单样式
+
+`Form`组件接收`style`和`className`两个属性，并且把它们应用给`form`元素。这样定制的 Form 样式不会影响全局。
+
+#### 示例：自定义表单最大宽度和最小宽度，两边留白
+
+全局定制：
+
+`FormDemo.css`
+
+```css
+.sinoui-form {
+  min-width: 960px;
+  max-width: 1024px;
+  margin: auto;
+}
+```
+
+`FormDemo.tsx`
+
+```tsx
+import React from 'react';
+import { Form } from '@sinoui/sinoui-components-forms';
+
+function FormDemo() {
+  return <Form>...</Form>;
+}
+```
+
+局部定制(css 方式)
+
+`FormDemo.tsx`
+
+```tsx
+import React from 'react';
+import { Form } from '@sinoui/sinoui-components-forms';
+
+function FormDemo() {
+  return <Form className="sinoui-form-custom">...</Form>;
+}
+```
+
+`FormDemo.css`
+
+```css
+.sinoui-form-custom {
+  min-width: 960px;
+  max-width: 1024px;
+  margin: auto;
+}
+```
+
+局部定制(styled-components)
+
+```tsx
+import React from 'react';
+import styled from 'styled-components';
+import { Form } from '@sinoui/sinoui-components-forms';
+
+const CustomForm = styled(Form)`
+  minwidth: 960px;
+  maxwidth: 1024px;
+  margin: auto;
+`;
+
+function FormDemo() {
+  return <CustomForm>表单内容</CustomForm>;
+}
+```
+
+### 自定义表单项样式
+
+`FormItem`组件接收`className`和`style`属性，并且把它们应用在 class 为`sinoui-form-item`的`div`元素上。
+除此之外，`FormItem` 还能接收`contentStyle`属性，并将其应用在 class 为`sinoui-form-item__content`的`div`元素上。
+
+我们要定制表单项的样式，全局的方式就是可以自定义`sinoui-form-item`这个样式类的样式。例如：
+
+```css
+.sinoui-form-item {
+  color: #2d3747;
+}
+```
+
+局部的方式可以有很多种：
+
+第一种，css 方式：
+
+`FormDemo.css`
+
+```css
+.custom-sinoui-form-item {
+  color: #2d3747;
+}
+```
+
+`FormDemo.tsx`
+
+```tsx
+import React from 'react';
+import { Form, FormItem } from '@sinoui/sinoui-components-forms';
+
+function FormDemo() {
+  return (
+    <Form>
+      <FormItem className="custom-sinoui-form-item">这是表单项</FormItem>
+    </Form>
+  );
+}
+```
+
+第二种，styled-components 方式：
+
+```tsx
+import React from 'react';
+import styled from 'styled-components';
+import { Form, FormItem } from '@sinoui/sinoui-components-forms';
+
+const CustomFormItem = styled(FormItem)`
+  color: #2d3747;
+`;
+
+function FormDemo() {
+  return (
+    <Form>
+      <CustomFormItem>这是表单项</CustomFormItem>
+    </Form>
+  );
+}
+```
+
+或者
+
+```tsx
+import React from 'react';
+import styled from 'styled-components';
+import { Form, FormItem } from '@sinoui/sinoui-components-forms';
+
+const CustomForm = styled(FormItem)`
+  & .sinoui-form-item {
+    color: #2d3747;
+  }
+`;
+
+function FormDemo() {
+  return (
+    <CustomForm>
+      <FormItem>这是表单项</FormItem>
+    </CustomForm>
+  );
+}
+```
+
+Label 的样式定制同样可以参考上述方式，`Label`组件同样接收`className`和`style`属性，并将其应用给`label`元素。它的样式定制同样支持全局定制和局部定制。例如：
+
+局部方式(css)
+
+`Label.css`
+
+```css
+.custom-sinoui-form-label {
+  width: 120px;
+}
+```
+
+`LabelDemo.tsx`
+
+```tsx
+import React from 'react';
+import { Label } from '@sinoui/sinoui-components-forms';
+
+function LabelDemo() {
+  return <Label className="custom-sinoui-form-label">标签内容</Label>;
+}
+```
