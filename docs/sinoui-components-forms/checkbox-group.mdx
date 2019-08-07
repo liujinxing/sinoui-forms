@@ -6,8 +6,13 @@ menu: '@sinoui/sinoui-components-forms'
 
 import { Props, Playground } from 'docz';
 import { useFormState, FormValueMonitor } from '@sinoui/rx-form-state';
-import Form, { FormItem, Label } from '@sinoui/web-forms';
-import { Checkbox, CheckboxGroup } from '@sinoui/sinoui-components-forms';
+import {
+  Form,
+  FormItem,
+  Label,
+  Checkbox,
+  CheckboxGroup,
+} from '@sinoui/sinoui-components-forms';
 import CheckboxGroupApi from '../src/CheckboxGroupApi';
 
 # CheckboxGroup
@@ -25,13 +30,18 @@ import CheckboxGroupApi from '../src/CheckboxGroupApi';
 ```tsx
 import React from 'react';
 import { useFormState, FormValueMonitor } from '@sinoui/rx-form-state';
-import Form, { FormItem, Label } from '@sinoui/web-forms';
-import { Checkbox, CheckboxGroup } from '@sinoui/sinoui-components-forms';
+import {
+  Form,
+  FormItem,
+  Label,
+  Checkbox,
+  CheckboxGroup,
+} from '@sinoui/sinoui-components-forms';
 
 function FormDemo() {
   const formState = useFormState();
   return (
-    <Form formState={formState}>
+    <Form formState={formState} colon>
       <FormItem>
         <Label>爱好</Label>
         <CheckboxGroup name="fav">
@@ -62,7 +72,7 @@ function FormDemo() {
   {() => {
     const formState = useFormState();
     return (
-        <Form formState={formState}>
+        <Form formState={formState} colon>
             <FormItem>
                 <Label>爱好</Label>
                 <CheckboxGroup name="fav">
@@ -73,7 +83,7 @@ function FormDemo() {
                 </CheckboxGroup>
             </FormItem>
             <FormValueMonitor>
-                {values=><div>个人爱好:{typeof(values.fav) === 'string' ? values.fav: (values.fav||[]).join(',')}</div>}
+                {values=><div style={{ paddingLeft: 36 }}>个人爱好:{typeof(values.fav) === 'string' ? values.fav: (values.fav||[]).join(',')}</div>}
             </FormValueMonitor>
         </Form>
     )
