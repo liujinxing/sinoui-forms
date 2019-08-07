@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-unresolved */
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import FormControlWrapper from 'sinoui-components/Form/FormControl/FormControlWrapper';
-import FormControlContent from 'sinoui-components/Form/FormControl/FormControlContent';
 import memoize from 'lodash/memoize';
 import { useFormStateContext } from '@sinoui/rx-form-state';
 import FormItemError from './FormItemError';
-import FormItemLabel from './FormItemLabel';
+import Label from '../Label';
+import FormItemContent from './FormItemContent';
 
 export interface Props {
   /**
@@ -71,15 +71,10 @@ export interface Props {
   contentStyle?: React.CSSProperties;
 }
 
-export const StyledFormItemLabel = styled(FormItemLabel)`
+export const StyledFormItemLabel = styled(Label)`
   padding-top: 12px;
   padding-bottom: 0px;
   ${(props) => props.vertical && 'display:block;'};
-`;
-
-const StyledFormControlContent = styled(FormControlContent)`
-  padding-bottom: 0px;
-  align-self: flex-end;
 `;
 
 const StyledFormItemWrapper = styled(FormControlWrapper)`
@@ -107,11 +102,10 @@ const getLabel = memoize((children) => {
   let label;
   let props;
 
-  // tslint:disable-next-line:no-any
-  React.Children.forEach(children, (comp: any) => {
+  React.Children.forEach(children, (comp) => {
     if (comp && comp.type && comp.type.displayName === 'Label') {
       label = comp.props.children;
-      /* eslint prefer-destructuring: 0 */
+      // eslint-disable-next-line prefer-destructuring
       props = comp.props;
     }
   });
@@ -160,7 +154,7 @@ function renderLabel(
     const { title: propsTitle, style: propsStyle = {} } = props as any;
 
     if (typeof propsTitle === 'function') {
-      const name = labelProps.name;
+      const { name } = labelProps;
       finalTitle = propsTitle(name);
       // 如果有对比的差异，变更label的颜色，暂时先写死，后期调整
       if (finalTitle) {
@@ -198,7 +192,6 @@ const getFieldRequired = (
  * 表单项组件
  */
 function FormItem(props: Props) {
-  const [focused, setFocused] = useState(false);
   const { sinouiForm } = useFormStateContext();
 
   const {
@@ -241,6 +234,7 @@ function FormItem(props: Props) {
           'sinoui-form-item',
           {
             'sinoui-form-item__inline': inline,
+            'sinoui-form-item__vertical': vertical,
           },
           className,
         )}
@@ -253,22 +247,12 @@ function FormItem(props: Props) {
           required,
           disabled,
           readOnly,
-          focused,
           inline,
           vertical,
         })}
-        <StyledFormControlContent
-          className="sinoui-form-item__content"
-          style={contentStyle}
-        >
-          {React.Children.map(children, (child) => {
-            if (React.isValidElement(child)) {
-              // tslint:disable-next-line:no-any
-              return React.cloneElement(child as any, { readOnly });
-            }
-            return child;
-          })}
-        </StyledFormControlContent>
+        <FormItemContent style={contentStyle} readOnly={readOnly}>
+          {children}
+        </FormItemContent>
       </StyledFormItemWrapper>
       {!inline && (
         <FormItemError

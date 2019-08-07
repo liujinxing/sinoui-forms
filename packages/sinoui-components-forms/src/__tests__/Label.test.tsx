@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import FormItemLabel from '../FormItem/FormItemLabel';
+import Label from '../Label';
 import Wrapper from './FormTestWrapper';
 
 afterEach(cleanup);
@@ -9,7 +9,7 @@ afterEach(cleanup);
 it('渲染Label', () => {
   const { getByText } = render(
     <Wrapper>
-      <FormItemLabel>标签1</FormItemLabel>
+      <Label>标签1</Label>
     </Wrapper>,
   );
 

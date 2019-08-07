@@ -1,4 +1,15 @@
-import React from 'react';
+/* eslint-disable import/no-unresolved */
+import React, { useContext } from 'react';
+import FormLabel from 'sinoui-components/Form/FormControl/FormLabel';
+import {
+  useFormStateContext,
+  useFieldTouched,
+  useFieldError,
+} from '@sinoui/rx-form-state';
+import classNames from 'classnames';
+import FormItemContentContext from './FormItem/FormItemContentContext';
+
+const PureFormLabel = React.memo(FormLabel);
 
 export interface LabelProps {
   /**
@@ -30,16 +41,53 @@ export interface LabelProps {
    * 自定义宽度
    */
   width?: string;
+  /**
+   * 自定义样式类
+   */
+  className?: string;
 }
 
 /**
  * 表单项标签
- * @param _props
+ * @param props
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function Label(_props: LabelProps) {
-  return null;
-}
+const Label: React.SFC<LabelProps> = (props) => {
+  const { name, className } = props;
+  const formState = useFormStateContext();
+  const fieldError = useFieldError(name);
+  const fieldTouched = useFieldTouched(name);
+  const { inFormItemContent } =
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    useContext(FormItemContentContext) || ({} as any);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let otherProps: any = {};
+
+  if (formState.sinouiForm) {
+    otherProps = {
+      colon: formState.sinouiForm.colon,
+      ...formState.sinouiForm.labelProps,
+    };
+  }
+
+  otherProps.error = !!(fieldTouched && fieldError);
+
+  const labelProps = {
+    ...otherProps,
+    ...props,
+  };
+
+  labelProps.htmlFor = labelProps.htmlFor || labelProps.name;
+  labelProps.align = labelProps.vertical ? 'left' : labelProps.align;
+  labelProps.width = labelProps.inline ? 'auto' : labelProps.width;
+
+  return !inFormItemContent ? (
+    <PureFormLabel
+      className={classNames('sinoui-form-label', className)}
+      {...labelProps}
+    />
+  ) : null;
+};
 
 Label.displayName = 'Label';
 
