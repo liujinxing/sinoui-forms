@@ -74,18 +74,6 @@ it('从表单域组件中获取label的for指向', () => {
   expect(label).toHaveAttribute('for', '5');
 });
 
-it('required属性', () => {
-  const { getByText } = render(
-    <Wrapper>
-      <FormItem name="userName" label="标题" required>
-        <div />
-      </FormItem>
-    </Wrapper>,
-  );
-
-  expect(getByText('标题')).toHaveAttribute('required');
-});
-
 it('disabled属性', () => {
   const { container } = render(
     <Wrapper>

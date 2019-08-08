@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-unresolved */
-import React, { useMemo } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import FormControlWrapper from 'sinoui-components/Form/FormControl/FormControlWrapper';
@@ -9,7 +9,6 @@ import { useFormStateContext } from '@sinoui/rx-form-state';
 import FormItemError from './FormItemError';
 import Label from '../Label';
 import FormItemContent from './FormItemContent';
-import useId from './useId';
 import FormItemContext from './FormItemContext';
 import useFormItemState from './useFormItemState';
 

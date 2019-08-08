@@ -5,6 +5,8 @@ import {
   useFormStateContext,
   useFieldTouched,
   useFieldError,
+  FieldConfig,
+  FieldValidateProps,
 } from '@sinoui/rx-form-state';
 import classNames from 'classnames';
 import FormItemContentContext from './FormItem/FormItemContentContext';
@@ -49,6 +51,17 @@ export interface LabelProps {
 }
 
 /**
+ * 获取必填状态
+ */
+function getRequired(fields: (Partial<FieldConfig> & FieldValidateProps)[]) {
+  const idx = fields.findIndex((field) => field.required);
+  if (idx !== -1) {
+    return true;
+  }
+  return false;
+}
+
+/**
  * 表单项标签
  * @param props
  */
@@ -60,7 +73,7 @@ const Label: React.SFC<LabelProps> = (props) => {
   const { inFormItemContent } =
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     useContext(FormItemContentContext) || ({} as any);
-  const { id, fields } = useContext(FormItemContext);
+  const { id, fields = [] } = useContext(FormItemContext);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let otherProps: any = {};
@@ -77,6 +90,7 @@ const Label: React.SFC<LabelProps> = (props) => {
   const labelProps = {
     ...otherProps,
     ...props,
+    required: getRequired(fields),
   };
 
   labelProps.htmlFor = `${id}` || labelProps.htmlFor || labelProps.name;

@@ -8,6 +8,7 @@ import DatePicker, { DatePickerFieldProps } from './DatePickerField';
 import Label, { LabelProps } from './Label';
 import FormItem from './FormItem/FormItem';
 import Form from './Form';
+import Field from './Field';
 
 export {
   Select,
@@ -27,4 +28,5 @@ export {
   LabelProps,
   FormItem,
   Form,
+  Field,
 };

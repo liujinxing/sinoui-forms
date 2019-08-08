@@ -1,11 +1,11 @@
 import React from 'react';
-import { FieldConfig } from '@sinoui/rx-form-state/src';
+import { FieldConfig, FieldValidateProps } from '@sinoui/rx-form-state/src';
 
 export interface FormItemState {
   id: number;
   name?: string;
-  fields: Partial<FieldConfig>[];
-  addField: (field: Partial<FieldConfig>) => void;
+  fields: (Partial<FieldConfig> & FieldValidateProps)[];
+  addField: (field: Partial<FieldConfig> & FieldValidateProps) => void;
   removeField: (fieldName: string) => void;
 }
 
