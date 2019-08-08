@@ -1,10 +1,11 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/no-named-as-default */
 import React, { useMemo } from 'react';
-import { Field, FieldProps } from '@sinoui/web-forms';
+import { FieldProps } from '@sinoui/web-forms';
 import Select, { SelectProps } from 'sinoui-components/Select';
 import styled from 'styled-components';
 import { useFieldError, useFieldTouched } from '@sinoui/rx-form-state';
+import Field from './Field';
 
 const emptyArray: string[] = [];
 

@@ -1,20 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-unresolved */
-import React, { useState } from 'react';
-import styled from 'styled-components';
+import React, { useMemo } from 'react';
 import classNames from 'classnames';
-import FormControlWrapper from 'sinoui-components/Form/FormControl/FormControlWrapper';
-import FormControlContent from 'sinoui-components/Form/FormControl/FormControlContent';
 import memoize from 'lodash/memoize';
-import { useFormStateContext } from '@sinoui/rx-form-state';
+import {
+  useFormStateContext,
+  FieldConfig,
+  FieldValidateProps,
+} from '@sinoui/rx-form-state';
 import FormItemError from './FormItemError';
-import FormItemLabel from './FormItemLabel';
+import Label from '../Label';
+import FormItemContent from './FormItemContent';
+import FormItemContext from './FormItemContext';
+import useFormItemState from './useFormItemState';
+import FormItemContainer from './FormItemContainer';
 
 export interface Props {
-  /**
-   * 是否必填
-   */
-  required?: boolean;
   /**
    * 不可用状态
    */
@@ -32,10 +33,6 @@ export interface Props {
    */
   children: React.ReactNode;
   /**
-   * 提示类型
-   */
-  errorMessageType?: 'none' | 'normal' | 'tooltip';
-  /**
    * 标签和表单域控件水平布局
    */
   inline?: boolean;
@@ -43,10 +40,6 @@ export interface Props {
    * 标签和表单域控件垂直布局
    */
   vertical?: boolean;
-  /**
-   * 获取焦点
-   */
-  focused?: boolean;
   /**
    * 只读状态
    */
@@ -60,42 +53,27 @@ export interface Props {
    */
   className?: string;
   /**
-   * 根据readOnly属性判定是否是必填项
-   * 如果为true：只读时取消表单项的必填校验
-   * 否则，沿用原来的逻辑判断是否为必填项
-   */
-  requiredByReadOnly?: boolean;
-  /**
    * 内容样式
    */
   contentStyle?: React.CSSProperties;
 }
 
-export const StyledFormItemLabel = styled(FormItemLabel)`
-  padding-top: 12px;
-  padding-bottom: 0px;
-  ${(props) => props.vertical && 'display:block;'};
-`;
-
-const StyledFormControlContent = styled(FormControlContent)`
-  padding-bottom: 0px;
-  align-self: flex-end;
-`;
-
-const StyledFormItemWrapper = styled(FormControlWrapper)`
-  & .sinoui-select-field {
-    margin-top: 4px;
-    width: 100%;
+/**
+ * 获取状态
+ * @param fields 表单域
+ * @param path 获取状态名称
+ */
+function getState(
+  fields: (Partial<FieldConfig> &
+    FieldValidateProps & { readOnly?: boolean; disabled?: boolean })[],
+  path: 'required' | 'readOnly' | 'disabled',
+) {
+  const idx = fields.findIndex((field) => field[path]);
+  if (idx !== -1) {
+    return true;
   }
-
-  & .sinoui-select-field .sinoui-select__content {
-    flex: 1;
-  }
-
-  & .sinoui-input-wrapper {
-    margin-top: 4px;
-  }
-`;
+  return false;
+}
 
 /**
  * 获取标签配置
@@ -107,34 +85,15 @@ const getLabel = memoize((children) => {
   let label;
   let props;
 
-  // tslint:disable-next-line:no-any
-  React.Children.forEach(children, (comp: any) => {
+  React.Children.forEach(children, (comp) => {
     if (comp && comp.type && comp.type.displayName === 'Label') {
-      label = comp.props.children;
-      /* eslint prefer-destructuring: 0 */
+      label = comp;
+      // eslint-disable-next-line prefer-destructuring
       props = comp.props;
     }
   });
 
   return { label, props };
-});
-
-const getFormControlProps = memoize((children) => {
-  let formControlProps: {
-    name?: string;
-    required?: boolean;
-    disabled?: boolean;
-    readOnly?: boolean;
-  } = {};
-
-  // tslint:disable-next-line:no-any
-  React.Children.forEach(children, (comp: React.ReactElement<any>) => {
-    if (comp && comp.props && comp.props.name) {
-      formControlProps = comp.props;
-    }
-  });
-
-  return formControlProps;
 });
 
 /**
@@ -147,137 +106,110 @@ function renderLabel(
   labelProps: any,
 ) {
   if (label && typeof label === 'string') {
-    return <StyledFormItemLabel {...labelProps}>{label}</StyledFormItemLabel>;
+    return <Label {...labelProps}>{label}</Label>;
   }
   if (label) {
     return label;
   }
-  const { label: title, props } = getLabel(children);
-  if (title) {
+  const { label: labelComp, props } = getLabel(children);
+  if (labelComp) {
     let finalTitle;
     const newProps = props || {};
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { title: propsTitle, style: propsStyle = {} } = props as any;
 
     if (typeof propsTitle === 'function') {
-      const name = labelProps.name;
+      const { name } = labelProps;
       finalTitle = propsTitle(name);
       // 如果有对比的差异，变更label的颜色，暂时先写死，后期调整
       if (finalTitle) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (newProps as any).style = { ...propsStyle, color: '#f44336' };
       }
     } else {
       finalTitle = propsTitle;
     }
-    return (
-      <StyledFormItemLabel {...labelProps} {...newProps} title={finalTitle}>
-        {title}
-      </StyledFormItemLabel>
-    );
+
+    return React.cloneElement(labelComp as any, {
+      ...labelProps,
+      ...newProps,
+      title: finalTitle,
+    });
   }
   return null;
 }
-
-const getFieldRequired = (
-  children: React.ReactNode,
-  readOnly?: boolean,
-  required?: boolean,
-  requiredByReadOnly?: boolean,
-) => {
-  if (requiredByReadOnly) {
-    if (!readOnly) {
-      return required || getFormControlProps(children).required;
-    }
-    return false;
-  }
-  return required || getFormControlProps(children).required;
-};
 
 /**
  * 表单项组件
  */
 function FormItem(props: Props) {
-  const [focused, setFocused] = useState(false);
   const { sinouiForm } = useFormStateContext();
-
   const {
     label,
-    required: requiredProp,
     disabled: disabledProp,
     readOnly: readOnlyProp,
     inline: inlineProp,
     vertical: verticalProp,
     name: nameProp,
     children,
-    errorMessageType = 'normal',
     className,
     style,
-    requiredByReadOnly,
     contentStyle,
   } = props;
-  const name = nameProp || getFormControlProps(children).name;
-  const readOnly = readOnlyProp || getFormControlProps(children).readOnly;
-  const required = getFieldRequired(
-    children,
-    readOnly,
-    requiredProp,
-    requiredByReadOnly,
-  );
-  const disabled = disabledProp || getFormControlProps(children).disabled;
+
+  const context = useFormItemState(nameProp);
+  const { fields } = context;
+
   const inline = (sinouiForm && sinouiForm.inline) || inlineProp;
   const vertical = (sinouiForm && sinouiForm.vertical) || verticalProp;
+  const readOnly = readOnlyProp || getState(fields, 'readOnly');
+  const disabled = disabledProp || getState(fields, 'disabled');
+
+  const formItemState = useMemo(
+    () => ({
+      ...context,
+      inline,
+      vertical,
+      readOnly,
+      disabled,
+    }),
+    [context, disabled, inline, readOnly, vertical],
+  );
+
+  const name = nameProp || (fields.length > 0 ? fields[0].name : undefined);
+
+  /**
+   * 获取宽度用于grid布局
+   */
   const labelWidth =
     (getLabel(children).props && (getLabel(children) as any).props.width) ||
     (sinouiForm && sinouiForm.labelProps && sinouiForm.labelProps.width) ||
     '120px';
 
-  const helpTextLeft = vertical ? '0px' : labelWidth;
-
   return (
-    <>
-      <StyledFormItemWrapper
+    <FormItemContext.Provider value={formItemState}>
+      <FormItemContainer
         className={classNames(
           'sinoui-form-item',
           {
             'sinoui-form-item__inline': inline,
+            'sinoui-form-item__vertical': vertical,
           },
           className,
         )}
         inline={inline}
+        labelWidth={labelWidth}
         vertical={vertical}
         style={style}
       >
         {renderLabel(label, children, {
           name,
-          required,
-          disabled,
-          readOnly,
-          focused,
-          inline,
-          vertical,
         })}
-        <StyledFormControlContent
-          className="sinoui-form-item__content"
-          style={contentStyle}
-        >
-          {React.Children.map(children, (child) => {
-            if (React.isValidElement(child)) {
-              // tslint:disable-next-line:no-any
-              return React.cloneElement(child as any, { readOnly });
-            }
-            return child;
-          })}
-        </StyledFormControlContent>
-      </StyledFormItemWrapper>
-      {!inline && (
-        <FormItemError
-          name={name}
-          errorMessageType={errorMessageType}
-          paddingLeft={helpTextLeft}
-        />
-      )}
-    </>
+        <FormItemContent style={contentStyle} readOnly={readOnly}>
+          {children}
+        </FormItemContent>
+        {!inline && <FormItemError />}
+      </FormItemContainer>
+    </FormItemContext.Provider>
   );
 }
 
