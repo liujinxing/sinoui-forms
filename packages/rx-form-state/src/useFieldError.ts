@@ -1,7 +1,7 @@
 import { memoize, get } from 'lodash';
 import { FormStateModel } from './types';
 import useFormStateContext from './useFormStateContext';
-import useBehaviorSubjectSelect from './utils/useBehaviorSubjectSelect';
+import useBehaviorSubject from './utils/useBehaviorSubject';
 
 const getFieldError = memoize(
   (fieldName?: string) => (formState: FormStateModel) => {
@@ -25,7 +25,7 @@ const getFieldError = memoize(
  */
 function useFieldError(fieldName?: string) {
   const formState = useFormStateContext();
-  return useBehaviorSubjectSelect<FormStateModel, string | undefined>(
+  return useBehaviorSubject<FormStateModel, string | undefined>(
     formState.formState$,
     getFieldError(fieldName),
   );

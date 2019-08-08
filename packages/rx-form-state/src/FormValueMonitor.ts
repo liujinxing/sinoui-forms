@@ -2,7 +2,7 @@
 import { get } from 'lodash';
 import { useMemo } from 'react';
 import useFormStateContext from './useFormStateContext';
-import useBehaviorSubjectSelect from './utils/useBehaviorSubjectSelect';
+import useBehaviorSubject from './utils/useBehaviorSubject';
 
 interface Props<T> {
   /**
@@ -31,10 +31,7 @@ function FormValueMonitor<T = any>({ path, selector, children }: Props<T>) {
     [path, selector],
   );
   const formState = useFormStateContext();
-  const value = useBehaviorSubjectSelect<any, T>(
-    formState.values$,
-    currentSelector,
-  );
+  const value = useBehaviorSubject<any, T>(formState.values$, currentSelector);
 
   return children(value);
 }

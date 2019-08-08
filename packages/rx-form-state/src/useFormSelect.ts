@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { FormStateModel } from './types';
 import useFormStateContext from './useFormStateContext';
-import useBehaviorSubjectSelect from './utils/useBehaviorSubjectSelect';
+import useBehaviorSubject from './utils/useBehaviorSubject';
 
 /**
  * 提取表单状态的hook
@@ -15,7 +15,7 @@ function useFormSelect<T, M>(
 ) {
   const formState = useFormStateContext();
   const selectorRef = useRef(selector);
-  return useBehaviorSubjectSelect(formState.formState$, selectorRef.current);
+  return useBehaviorSubject(formState.formState$, selectorRef.current);
 }
 
 export default useFormSelect;
