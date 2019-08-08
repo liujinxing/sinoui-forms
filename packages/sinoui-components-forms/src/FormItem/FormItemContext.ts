@@ -7,6 +7,10 @@ export interface FormItemState {
   fields: (Partial<FieldConfig> & FieldValidateProps)[];
   addField: (field: Partial<FieldConfig> & FieldValidateProps) => void;
   removeField: (fieldName: string) => void;
+  inline?: boolean;
+  vertical?: boolean;
+  readOnly?: boolean;
+  disabled?: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

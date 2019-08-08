@@ -34,7 +34,9 @@ function FormItemContent(props: Props) {
       >
         {React.Children.map(children, (child) => {
           if (React.isValidElement(child)) {
-            return React.cloneElement(child, { readOnly });
+            return React.cloneElement(child, {
+              readOnly,
+            });
           }
           return child;
         })}

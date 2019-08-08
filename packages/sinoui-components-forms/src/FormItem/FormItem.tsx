@@ -1,16 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-unresolved */
-import React from 'react';
-import styled from 'styled-components';
+import React, { useMemo } from 'react';
 import classNames from 'classnames';
-import FormControlWrapper from 'sinoui-components/Form/FormControl/FormControlWrapper';
 import memoize from 'lodash/memoize';
-import { useFormStateContext } from '@sinoui/rx-form-state';
+import {
+  useFormStateContext,
+  FieldConfig,
+  FieldValidateProps,
+} from '@sinoui/rx-form-state';
 import FormItemError from './FormItemError';
 import Label from '../Label';
 import FormItemContent from './FormItemContent';
 import FormItemContext from './FormItemContext';
 import useFormItemState from './useFormItemState';
+import FormItemContainer from './FormItemContainer';
 
 export interface Props {
   /**
@@ -29,10 +32,6 @@ export interface Props {
    * 子节点
    */
   children: React.ReactNode;
-  /**
-   * 提示类型
-   */
-  errorMessageType?: 'none' | 'normal' | 'tooltip';
   /**
    * 标签和表单域控件水平布局
    */
@@ -59,26 +58,22 @@ export interface Props {
   contentStyle?: React.CSSProperties;
 }
 
-export const StyledFormItemLabel = styled(Label)`
-  padding-top: 12px;
-  padding-bottom: 0px;
-  ${(props) => props.vertical && 'display:block;'};
-`;
-
-const StyledFormItemWrapper = styled(FormControlWrapper)`
-  & .sinoui-select-field {
-    margin-top: 4px;
-    width: 100%;
+/**
+ * 获取状态
+ * @param fields 表单域
+ * @param path 获取状态名称
+ */
+function getState(
+  fields: (Partial<FieldConfig> &
+    FieldValidateProps & { readOnly?: boolean; disabled?: boolean })[],
+  path: 'required' | 'readOnly' | 'disabled',
+) {
+  const idx = fields.findIndex((field) => field[path]);
+  if (idx !== -1) {
+    return true;
   }
-
-  & .sinoui-select-field .sinoui-select__content {
-    flex: 1;
-  }
-
-  & .sinoui-input-wrapper {
-    margin-top: 4px;
-  }
-`;
+  return false;
+}
 
 /**
  * 获取标签配置
@@ -92,31 +87,13 @@ const getLabel = memoize((children) => {
 
   React.Children.forEach(children, (comp) => {
     if (comp && comp.type && comp.type.displayName === 'Label') {
-      label = comp.props.children;
+      label = comp;
       // eslint-disable-next-line prefer-destructuring
       props = comp.props;
     }
   });
 
   return { label, props };
-});
-
-const getFormControlProps = memoize((children) => {
-  let formControlProps: {
-    name?: string;
-
-    disabled?: boolean;
-    readOnly?: boolean;
-  } = {};
-
-  // tslint:disable-next-line:no-any
-  React.Children.forEach(children, (comp: React.ReactElement<any>) => {
-    if (comp && comp.props && comp.props.name) {
-      formControlProps = comp.props;
-    }
-  });
-
-  return formControlProps;
 });
 
 /**
@@ -129,13 +106,13 @@ function renderLabel(
   labelProps: any,
 ) {
   if (label && typeof label === 'string') {
-    return <StyledFormItemLabel {...labelProps}>{label}</StyledFormItemLabel>;
+    return <Label {...labelProps}>{label}</Label>;
   }
   if (label) {
     return label;
   }
-  const { label: title, props } = getLabel(children);
-  if (title) {
+  const { label: labelComp, props } = getLabel(children);
+  if (labelComp) {
     let finalTitle;
     const newProps = props || {};
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -146,17 +123,17 @@ function renderLabel(
       finalTitle = propsTitle(name);
       // 如果有对比的差异，变更label的颜色，暂时先写死，后期调整
       if (finalTitle) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (newProps as any).style = { ...propsStyle, color: '#f44336' };
       }
     } else {
       finalTitle = propsTitle;
     }
-    return (
-      <StyledFormItemLabel {...labelProps} {...newProps} title={finalTitle}>
-        {title}
-      </StyledFormItemLabel>
-    );
+
+    return React.cloneElement(labelComp as any, {
+      ...labelProps,
+      ...newProps,
+      title: finalTitle,
+    });
   }
   return null;
 }
@@ -166,7 +143,6 @@ function renderLabel(
  */
 function FormItem(props: Props) {
   const { sinouiForm } = useFormStateContext();
-
   const {
     label,
     disabled: disabledProp,
@@ -175,29 +151,43 @@ function FormItem(props: Props) {
     vertical: verticalProp,
     name: nameProp,
     children,
-    errorMessageType = 'normal',
     className,
     style,
     contentStyle,
   } = props;
-  const name = nameProp || getFormControlProps(children).name;
-  const readOnly = readOnlyProp || getFormControlProps(children).readOnly;
 
-  const disabled = disabledProp || getFormControlProps(children).disabled;
+  const context = useFormItemState(nameProp);
+  const { fields } = context;
+
   const inline = (sinouiForm && sinouiForm.inline) || inlineProp;
   const vertical = (sinouiForm && sinouiForm.vertical) || verticalProp;
+  const readOnly = readOnlyProp || getState(fields, 'readOnly');
+  const disabled = disabledProp || getState(fields, 'disabled');
+
+  const formItemState = useMemo(
+    () => ({
+      ...context,
+      inline,
+      vertical,
+      readOnly,
+      disabled,
+    }),
+    [context, disabled, inline, readOnly, vertical],
+  );
+
+  const name = nameProp || (fields.length > 0 ? fields[0].name : undefined);
+
+  /**
+   * 获取宽度用于grid布局
+   */
   const labelWidth =
     (getLabel(children).props && (getLabel(children) as any).props.width) ||
     (sinouiForm && sinouiForm.labelProps && sinouiForm.labelProps.width) ||
     '120px';
 
-  const helpTextLeft = vertical ? '0px' : labelWidth;
-
-  const context = useFormItemState(name);
-
   return (
-    <FormItemContext.Provider value={context}>
-      <StyledFormItemWrapper
+    <FormItemContext.Provider value={formItemState}>
+      <FormItemContainer
         className={classNames(
           'sinoui-form-item',
           {
@@ -207,21 +197,18 @@ function FormItem(props: Props) {
           className,
         )}
         inline={inline}
+        labelWidth={labelWidth}
         vertical={vertical}
         style={style}
       >
         {renderLabel(label, children, {
           name,
-          disabled,
-          readOnly,
-          inline,
-          vertical,
         })}
         <FormItemContent style={contentStyle} readOnly={readOnly}>
           {children}
         </FormItemContent>
-      </StyledFormItemWrapper>
-      {!inline && <FormItemError />}
+        {!inline && <FormItemError />}
+      </FormItemContainer>
     </FormItemContext.Provider>
   );
 }

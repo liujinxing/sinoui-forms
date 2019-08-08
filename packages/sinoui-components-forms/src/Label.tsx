@@ -21,14 +21,6 @@ export interface LabelProps {
   name?: string;
   htmlFor?: string;
   /**
-   * 标签与表单域是否水平布局
-   */
-  inline?: boolean;
-  /**
-   * 标签与表单域是否垂直布局
-   */
-  vertical?: boolean;
-  /**
    * 对齐方式
    */
   align?: 'left' | 'right' | 'center';
@@ -73,7 +65,9 @@ const Label: React.SFC<LabelProps> = (props) => {
   const { inFormItemContent } =
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     useContext(FormItemContentContext) || ({} as any);
-  const { id, fields = [] } = useContext(FormItemContext);
+  const { id, fields = [], inline, vertical, readOnly, disabled } = useContext(
+    FormItemContext,
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let otherProps: any = {};
@@ -81,6 +75,8 @@ const Label: React.SFC<LabelProps> = (props) => {
   if (formState.sinouiForm) {
     otherProps = {
       colon: formState.sinouiForm.colon,
+      vertical,
+      inline,
       ...formState.sinouiForm.labelProps,
     };
   }
@@ -91,6 +87,8 @@ const Label: React.SFC<LabelProps> = (props) => {
     ...otherProps,
     ...props,
     required: getRequired(fields),
+    readOnly,
+    disabled,
   };
 
   labelProps.htmlFor = `${id}` || labelProps.htmlFor || labelProps.name;

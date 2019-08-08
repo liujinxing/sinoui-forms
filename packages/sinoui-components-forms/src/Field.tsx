@@ -10,14 +10,16 @@ import FormItemContext from './FormItem/FormItemContext';
 /**
  * 表单域组件
  */
-function Field(props: RxFieldProps) {
-  const { name, required } = props;
+function Field(props: RxFieldProps & { readOnly?: boolean }) {
+  const { name, required, readOnly, disabled } = props;
   const { id, addField, removeField } = useContext(FormItemContext);
 
   useEffect(() => {
     const fieldConfig = {
       name,
       required,
+      readOnly,
+      disabled,
     };
     if (addField) {
       addField(fieldConfig);
@@ -27,7 +29,7 @@ function Field(props: RxFieldProps) {
       };
     }
     return undefined;
-  }, [name, addField, removeField, required]);
+  }, [name, addField, removeField, required, readOnly, disabled]);
 
   return (
     <div className="sinoui-form-field">
