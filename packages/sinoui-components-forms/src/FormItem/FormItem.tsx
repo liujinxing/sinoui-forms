@@ -14,10 +14,6 @@ import useFormItemState from './useFormItemState';
 
 export interface Props {
   /**
-   * 是否必填
-   */
-  required?: boolean;
-  /**
    * 不可用状态
    */
   disabled?: boolean;
@@ -46,10 +42,6 @@ export interface Props {
    */
   vertical?: boolean;
   /**
-   * 获取焦点
-   */
-  focused?: boolean;
-  /**
    * 只读状态
    */
   readOnly?: boolean;
@@ -61,12 +53,6 @@ export interface Props {
    * 自定义样式类名
    */
   className?: string;
-  /**
-   * 根据readOnly属性判定是否是必填项
-   * 如果为true：只读时取消表单项的必填校验
-   * 否则，沿用原来的逻辑判断是否为必填项
-   */
-  requiredByReadOnly?: boolean;
   /**
    * 内容样式
    */
@@ -118,7 +104,7 @@ const getLabel = memoize((children) => {
 const getFormControlProps = memoize((children) => {
   let formControlProps: {
     name?: string;
-    required?: boolean;
+
     disabled?: boolean;
     readOnly?: boolean;
   } = {};
@@ -175,21 +161,6 @@ function renderLabel(
   return null;
 }
 
-const getFieldRequired = (
-  children: React.ReactNode,
-  readOnly?: boolean,
-  required?: boolean,
-  requiredByReadOnly?: boolean,
-) => {
-  if (requiredByReadOnly) {
-    if (!readOnly) {
-      return required || getFormControlProps(children).required;
-    }
-    return false;
-  }
-  return required || getFormControlProps(children).required;
-};
-
 /**
  * 表单项组件
  */
@@ -198,7 +169,6 @@ function FormItem(props: Props) {
 
   const {
     label,
-    required: requiredProp,
     disabled: disabledProp,
     readOnly: readOnlyProp,
     inline: inlineProp,
@@ -208,17 +178,11 @@ function FormItem(props: Props) {
     errorMessageType = 'normal',
     className,
     style,
-    requiredByReadOnly,
     contentStyle,
   } = props;
   const name = nameProp || getFormControlProps(children).name;
   const readOnly = readOnlyProp || getFormControlProps(children).readOnly;
-  const required = getFieldRequired(
-    children,
-    readOnly,
-    requiredProp,
-    requiredByReadOnly,
-  );
+
   const disabled = disabledProp || getFormControlProps(children).disabled;
   const inline = (sinouiForm && sinouiForm.inline) || inlineProp;
   const vertical = (sinouiForm && sinouiForm.vertical) || verticalProp;
@@ -248,7 +212,6 @@ function FormItem(props: Props) {
       >
         {renderLabel(label, children, {
           name,
-          required,
           disabled,
           readOnly,
           inline,
