@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-unresolved */
-import React, { useContext } from 'react';
+import React, { useContext, useCallback } from 'react';
 import { Field, FieldProps } from '@sinoui/web-forms';
 import Checkbox, { CheckboxProps } from 'sinoui-components/Checkbox';
 import {
@@ -17,28 +17,19 @@ export type CheckboxFieldProps = CheckboxProps<any> &
     name?: string;
   };
 
-const valueExtract = (
-  event: React.ChangeEvent<HTMLInputElement>,
-  props: CheckboxFieldProps,
-) => {
-  const { checked } = event.target;
-  return checked ? props.value : props.unCheckedValue;
-};
-
-/**
- * 复选框组件
- */
-function CheckboxField(props: CheckboxFieldProps) {
-  const { checkboxGroup = false } = useContext(CheckboxGroupContext) || {};
-  const { name = '', value } = props;
+function InnerCheckboxField(props: CheckboxFieldProps) {
+  const { name = '', value, unCheckedValue } = props;
 
   const fieldError = useFieldError(name);
   const fieldTouched = useFieldTouched(name);
   const fieldValue = useFieldValue(name);
-
-  if (checkboxGroup) {
-    return <Checkbox {...props} className="sinoui-checkbox-field" />;
-  }
+  const valueExtract = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const { checked } = event.target;
+      return checked ? value : unCheckedValue;
+    },
+    [value, unCheckedValue],
+  );
 
   return (
     <Field
@@ -46,11 +37,25 @@ function CheckboxField(props: CheckboxFieldProps) {
       as={Checkbox}
       checked={fieldValue === value}
       error={!!(fieldTouched && fieldError)}
-      valueExtract={(event) => valueExtract(event, props)}
+      valueExtract={valueExtract}
       defaultValue=""
       {...(props as any)}
     />
   );
+}
+
+/**
+ * 复选框组件
+ */
+function CheckboxField(props: CheckboxFieldProps) {
+  const { checkboxGroup = false } = useContext(CheckboxGroupContext) || {};
+  const { name } = props;
+
+  if (checkboxGroup || !name) {
+    return <Checkbox {...props} className="sinoui-checkbox-field" />;
+  }
+
+  return <InnerCheckboxField {...props} />;
 }
 
 export default CheckboxField;
