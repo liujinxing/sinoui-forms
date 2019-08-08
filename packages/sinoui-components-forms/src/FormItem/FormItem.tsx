@@ -7,6 +7,7 @@ import {
   useFormStateContext,
   FieldConfig,
   FieldValidateProps,
+  useFieldError,
 } from '@sinoui/rx-form-state';
 import FormItemError from './FormItemError';
 import Label from '../Label';
@@ -176,6 +177,7 @@ function FormItem(props: Props) {
   );
 
   const name = nameProp || (fields.length > 0 ? fields[0].name : undefined);
+  const hasError = useFieldError(name);
 
   /**
    * 获取宽度用于grid布局
@@ -193,6 +195,7 @@ function FormItem(props: Props) {
           {
             'sinoui-form-item__inline': inline,
             'sinoui-form-item__vertical': vertical,
+            invalid: hasError,
           },
           className,
         )}
