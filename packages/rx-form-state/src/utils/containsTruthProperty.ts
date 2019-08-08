@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-syntax */
 /**
- * 判断是否对象是否包含值为true的属性
+ * 判断对象是否包含值为true的属性
  *
  * @param errors 表单错误
  */
