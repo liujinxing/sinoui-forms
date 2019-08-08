@@ -221,13 +221,7 @@ function FormItem(props: Props) {
           {children}
         </FormItemContent>
       </StyledFormItemWrapper>
-      {!inline && (
-        <FormItemError
-          name={name}
-          errorMessageType={errorMessageType}
-          paddingLeft={helpTextLeft}
-        />
-      )}
+      {!inline && <FormItemError />}
     </FormItemContext.Provider>
   );
 }
