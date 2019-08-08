@@ -1,6 +1,7 @@
 /* eslint-disable import/no-unresolved */
-import { useMemo, useCallback, useRef } from 'react';
+import { useMemo, useCallback, useRef, useState } from 'react';
 import { FieldConfig } from '@sinoui/rx-form-state';
+import { produce } from 'immer';
 import useId from './useId';
 
 /**
@@ -9,8 +10,7 @@ import useId from './useId';
  */
 function useFormItemState(name?: string) {
   const id = useId();
-  const fieldsRef = useRef<Partial<FieldConfig>[]>([]);
-  const fields: Partial<FieldConfig>[] = fieldsRef.current;
+  const [fields, setFields] = useState<Partial<FieldConfig>[]>([]);
 
   /**
    * 新增表单域
@@ -18,9 +18,25 @@ function useFormItemState(name?: string) {
    * @param {Partial<FieldConfig>} field 表单域
    * @returns
    */
-  const addField = useCallback((field) => {
-    fieldsRef.current.push(field);
-  }, []);
+  const addField = useCallback(
+    (field: Partial<FieldConfig>) => {
+      const idx = fields.findIndex((item) => item.name === field.name);
+      if (idx === -1) {
+        setFields(
+          produce((draft) => {
+            draft.push(field);
+          }),
+        );
+      } else {
+        setFields(
+          produce((draft) => {
+            draft.splice(idx, 1, field);
+          }),
+        );
+      }
+    },
+    [fields],
+  );
 
   /**
    * 删除表单域
@@ -28,13 +44,20 @@ function useFormItemState(name?: string) {
    * @param {string} fieldName 表单域名称
    * @returns
    */
-  const removeField = useCallback((fieldName) => {
-    const idx = fieldsRef.current.indexOf(fieldName);
+  const removeField = useCallback(
+    (fieldName) => {
+      const idx = fields.findIndex((field) => field.name === fieldName);
 
-    if (idx !== -1) {
-      fieldsRef.current.splice(idx, 1);
-    }
-  }, []);
+      if (idx !== -1) {
+        setFields(
+          produce((draft) => {
+            draft.splice(idx, 1);
+          }),
+        );
+      }
+    },
+    [fields],
+  );
 
   const context = useMemo(
     () => ({
