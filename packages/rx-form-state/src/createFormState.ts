@@ -25,6 +25,7 @@ import isError from './utils/isError';
 import isFunction from './utils/isFunction';
 import calcNewValues from './utils/calcNewValues';
 import applyGlobalRelyRules from './utils/applyGlobalRelyRules';
+import containsTruthProperty from './utils/containsTruthProperty';
 
 function createSubBehaviorSubject<T, U extends keyof FormStateModel<T>>(
   state$: BehaviorSubject<FormStateModel<T>>,
@@ -468,6 +469,14 @@ function createFormState<T = any>(
 
     get isPending() {
       return isPending$.value;
+    },
+
+    get isFormPending() {
+      return containsTruthProperty(isPending$.value);
+    },
+
+    get isFormValidate() {
+      return !isError(errors$.value) && !isError(asyncErrors$.value);
     },
 
     updateState,

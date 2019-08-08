@@ -13,7 +13,7 @@ function isError(errors: FormStateErrors) {
       if (
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         error.some((item: any) =>
-          typeof item === 'string' || item != null ? isError(item) : false,
+          item && typeof item !== 'string' ? isError(item) : !!item,
         )
       ) {
         return true;

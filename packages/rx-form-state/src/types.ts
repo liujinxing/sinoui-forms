@@ -329,6 +329,16 @@ export interface FormState<T = any> {
   isSubmitting: boolean;
 
   /**
+   * 表单是否正在做异步校验
+   */
+  isFormPending: boolean;
+
+  /**
+   * 表单校验是否通过
+   */
+  isFormValidate: boolean;
+
+  /**
    * 更新表单状态
    *
    * @param {(draft: FormStateModel<T>) => void} producer 更新表单状态的方法

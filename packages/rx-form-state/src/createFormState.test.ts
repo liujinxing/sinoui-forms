@@ -70,12 +70,14 @@ it('表单校验', () => {
     },
   );
 
+  expect(formState.isFormValidate).toBe(true);
   const result = formState.validate();
 
   expect(result).toBe(false);
   expect(formState.errors).toEqual({
     userName: '必填',
   });
+  expect(formState.isFormValidate).toBe(false);
 });
 
 it('表单域校验', () => {
@@ -317,6 +319,8 @@ it('获取表单域状态', () => {
     isTouched: undefined,
   });
 
+  expect(formState.isFormPending).toBe(true);
+
   expect(formState.getFieldState$('userName').value).toBe(
     formState.getFieldState('userName'),
   );
@@ -404,6 +408,7 @@ it('表单域异步校验', async () => {
   jest.runAllTimers();
 
   expect(formState.isPending.userName).toBe(true);
+  expect(formState.isFormPending).toBe(true);
 
   jest.useRealTimers();
 
@@ -412,6 +417,7 @@ it('表单域异步校验', async () => {
   });
 
   expect(formState.isPending.userName).toBe(false);
+  expect(formState.isFormPending).toBe(false);
   expect(formState.asyncErrors.userName).toBe('此用户名已存在');
 });
 
@@ -432,6 +438,7 @@ it('在表单域异步校验过程中，表单域变更了同步错误', async (
   jest.runAllTimers();
 
   expect(formState.isPending.userName).toBe(true);
+  expect(formState.isFormPending).toBe(true);
 
   formState.setFieldState('userName', (draft) => {
     draft.error = '此用户名不够长';
@@ -444,6 +451,7 @@ it('在表单域异步校验过程中，表单域变更了同步错误', async (
   });
 
   expect(formState.isPending.userName).toBe(false);
+  expect(formState.isFormPending).toBe(false);
   expect(formState.asyncErrors.userName).toBeFalsy();
 });
 
@@ -464,6 +472,7 @@ it('表单域异步校验失败', async () => {
   jest.runAllTimers();
 
   expect(formState.isPending.userName).toBe(true);
+  expect(formState.isFormPending).toBe(true);
 
   jest.useRealTimers();
 
@@ -472,6 +481,7 @@ it('表单域异步校验失败', async () => {
   });
 
   expect(formState.isPending.userName).toBe(false);
+  expect(formState.isFormPending).toBe(false);
 });
 
 it('表单域失去焦点', () => {
