@@ -3,7 +3,7 @@ import { render, fireEvent, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import Checkbox from 'sinoui-components/Checkbox';
 // eslint-disable-next-line import/no-unresolved
-import { FormValueMonitor } from '@sinoui/rx-form-state';
+import { FormValueMonitor, Field } from '@sinoui/rx-form-state';
 import Wrapper from './FormTestWrapper';
 import CheckboxGroup from '../CheckboxGroupField';
 
@@ -92,4 +92,30 @@ it('stringValue属性下的值变更', () => {
       fav: '足球,排球',
     }),
   );
+});
+
+it('更改其他表单域时，不会引起CheckboxGroup的重绘', () => {
+  const log = [];
+
+  function Child() {
+    log.push('');
+    return null;
+  }
+
+  const {  getByTestId } = render(
+    <Wrapper>
+      <CheckboxGroup name="fav" stringValue>
+        <Checkbox value="足球">足球</Checkbox>
+        <Checkbox value="篮球">篮球</Checkbox>
+        <Checkbox value="排球">排球</Checkbox>
+        <Checkbox value="乒乓球">乒乓球</Checkbox>
+        <Child />
+      </CheckboxGroup>
+      <Field as="input" name="userName" data-testid="userName" />
+    </Wrapper>,
+  );
+
+  expect(log.length).toBe(1);
+  fireEvent.change(getByTestId('userName'), { target: { value: '123' } });
+  expect(log.length).toBe(1);
 });

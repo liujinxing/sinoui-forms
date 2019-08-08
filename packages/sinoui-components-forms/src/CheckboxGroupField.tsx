@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-unresolved */
-import React from 'react';
+import React, { useMemo } from 'react';
 import { FieldProps } from '@sinoui/web-forms';
 import { CheckboxGroup, CheckboxGroupProps } from 'sinoui-components/Checkbox';
 import {
@@ -14,15 +14,15 @@ import Field from './Field';
 export type CheckboxGroupFieldProps = CheckboxGroupProps<any> &
   FieldProps & { stringValue?: boolean };
 
-const valueExtract = (value: string[], props: CheckboxGroupFieldProps) => {
-  const { stringValue } = props;
-  if (stringValue) {
-    return (value || []).join(',');
-  }
+const stringValueExtract = (value: string[]) => {
+  return (value || []).join(',');
+};
 
+const valueExtract = (value: string[]) => {
   return value;
 };
 
+const checkboxGroupContext = { checkboxGroup: true };
 /**
  * 渲染一组复选框组件
  */
@@ -30,17 +30,21 @@ function CheckboxGroupField(props: CheckboxGroupFieldProps) {
   const { name, stringValue } = props;
   const fieldError = useFieldError(name);
   const fieldTouched = useFieldTouched(name);
-  const fieldValue = useFieldValue(name);
+  const fieldValue = useFieldValue<string | string[]>(name);
+  const value = useMemo(() => {
+    return stringValue && fieldValue && typeof fieldValue === 'string'
+      ? fieldValue.split(',')
+      : fieldValue || [];
+  }, [stringValue, fieldValue]);
+
   return (
-    <CheckboxGroupContext.Provider value={{ checkboxGroup: true }}>
+    <CheckboxGroupContext.Provider value={checkboxGroupContext}>
       <Field
         as={CheckboxGroup}
         error={!!(fieldTouched && fieldError)}
         className="sinoui-checkbox-group-field"
-        value={
-          stringValue && fieldValue ? fieldValue.split(',') : fieldValue || []
-        }
-        valueExtract={(value) => valueExtract(value, props)}
+        value={value}
+        valueExtract={stringValue ? stringValueExtract : valueExtract}
         {...props}
       />
     </CheckboxGroupContext.Provider>
