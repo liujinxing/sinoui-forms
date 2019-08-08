@@ -8,6 +8,7 @@ import {
 } from '@sinoui/rx-form-state';
 import classNames from 'classnames';
 import FormItemContentContext from './FormItem/FormItemContentContext';
+import FormItemContext from './FormItem/FormItemContext';
 
 const PureFormLabel = React.memo(FormLabel);
 
@@ -59,6 +60,7 @@ const Label: React.SFC<LabelProps> = (props) => {
   const { inFormItemContent } =
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     useContext(FormItemContentContext) || ({} as any);
+  const { id, fields } = useContext(FormItemContext);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let otherProps: any = {};
@@ -77,14 +79,14 @@ const Label: React.SFC<LabelProps> = (props) => {
     ...props,
   };
 
-  labelProps.htmlFor = labelProps.htmlFor || labelProps.name;
+  labelProps.htmlFor = `${id}` || labelProps.htmlFor || labelProps.name;
   labelProps.align = labelProps.vertical ? 'left' : labelProps.align;
   labelProps.width = labelProps.inline ? 'auto' : labelProps.width;
 
   return !inFormItemContent ? (
     <PureFormLabel
-      className={classNames('sinoui-form-label', className)}
       {...labelProps}
+      className={classNames('sinoui-form-label', className)}
     />
   ) : null;
 };

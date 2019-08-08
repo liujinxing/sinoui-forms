@@ -61,7 +61,7 @@ it('既不指定label属性，也不写children时，不会渲染label', () => {
   expect(container.querySelector('label')).toBeNull();
 });
 
-it('从表单域组件中获取name', () => {
+it('从表单域组件中获取label的for指向', () => {
   const { container } = render(
     <Wrapper>
       <FormItem>
@@ -71,7 +71,7 @@ it('从表单域组件中获取name', () => {
     </Wrapper>,
   );
   const label = container.querySelector('label');
-  expect(label).toHaveAttribute('for', 'userName');
+  expect(label).toHaveAttribute('for', '5');
 });
 
 it('required属性', () => {

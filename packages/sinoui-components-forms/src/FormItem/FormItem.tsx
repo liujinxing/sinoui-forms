@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-unresolved */
-import React from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import FormControlWrapper from 'sinoui-components/Form/FormControl/FormControlWrapper';
@@ -9,6 +9,9 @@ import { useFormStateContext } from '@sinoui/rx-form-state';
 import FormItemError from './FormItemError';
 import Label from '../Label';
 import FormItemContent from './FormItemContent';
+import useId from './useId';
+import FormItemContext from './FormItemContext';
+import useFormItemState from './useFormItemState';
 
 export interface Props {
   /**
@@ -227,8 +230,10 @@ function FormItem(props: Props) {
 
   const helpTextLeft = vertical ? '0px' : labelWidth;
 
+  const context = useFormItemState(name);
+
   return (
-    <>
+    <FormItemContext.Provider value={context}>
       <StyledFormItemWrapper
         className={classNames(
           'sinoui-form-item',
@@ -261,7 +266,7 @@ function FormItem(props: Props) {
           paddingLeft={helpTextLeft}
         />
       )}
-    </>
+    </FormItemContext.Provider>
   );
 }
 
