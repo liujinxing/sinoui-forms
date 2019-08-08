@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-unresolved */
 import React, { useMemo } from 'react';
-import { Field, FieldProps } from '@sinoui/web-forms';
+import { FieldProps } from '@sinoui/web-forms';
 import { CheckboxGroup, CheckboxGroupProps } from 'sinoui-components/Checkbox';
 import {
   useFieldError,
@@ -9,6 +9,7 @@ import {
   useFieldValue,
 } from '@sinoui/rx-form-state';
 import CheckboxGroupContext from './CheckboxGroupContext';
+import Field from './Field';
 
 export type CheckboxGroupFieldProps = CheckboxGroupProps<any> &
   FieldProps & { stringValue?: boolean };

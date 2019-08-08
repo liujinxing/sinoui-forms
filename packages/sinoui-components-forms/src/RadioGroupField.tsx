@@ -1,9 +1,10 @@
 /* eslint-disable import/no-unresolved */
 import React from 'react';
-import { Field, FieldProps } from '@sinoui/web-forms';
+import { FieldProps } from '@sinoui/web-forms';
 import { RadioGroup, RadioGroupProps } from 'sinoui-components/Radio';
 import { useFieldError, useFieldTouched } from '@sinoui/rx-form-state';
 import classNames from 'classnames';
+import Field from './Field';
 
 export type RadioGroupFieldProps = RadioGroupProps & FieldProps;
 

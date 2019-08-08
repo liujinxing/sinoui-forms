@@ -1,44 +1,34 @@
 /* eslint-disable import/no-unresolved */
-import React from 'react';
-import { FormHelpText } from 'sinoui-components/Form';
-import styled from 'sinoui-components/styles';
-import { useFieldTouched, useFieldError } from '@sinoui/rx-form-state';
+import React, { useContext, useMemo } from 'react';
+import { useFieldError, useFieldTouched } from '@sinoui/rx-form-state';
+import styled from 'styled-components';
+import FormItemContext from './FormItemContext';
 
-export interface Props {
-  /**
-   * 表单域名称
-   */
-  name?: string;
-  /**
-   * 错误类型
-   */
-  errorMessageType?: 'none' | 'normal' | 'tooltip';
-  /**
-   * 左边距
-   */
-  paddingLeft: string;
-}
-
-const CustomFormHelpText = styled(FormHelpText)<Props>`
-  padding-left: ${(props) => props.paddingLeft || '120px'};
+const FormItemErrorWrapper = styled.div`
+  color: ${(props) => props.theme.palette.danger[500]};
+  font-size: 12px;
 `;
 
 /**
- * 表单项错误提示。
+ * 渲染表单域错误信息
  */
-const FormItemError: React.SFC<Props> = ({
-  name,
-  errorMessageType,
-  paddingLeft,
-}) => {
-  const fieldError = useFieldError(name);
-  const fieldTouched = useFieldTouched(name);
+function FormItemError() {
+  const { name, fields } = useContext(FormItemContext);
+  const fieldName = useMemo(
+    () => name || (fields.length > 0 ? fields[0].name : undefined),
+    [name, fields],
+  );
+  const error = useFieldError(fieldName);
+  const isTouched = useFieldTouched(fieldName);
 
-  return errorMessageType !== 'none' && !!(fieldTouched && fieldError) ? (
-    <CustomFormHelpText paddingLeft={paddingLeft} error>
-      {fieldError}
-    </CustomFormHelpText>
+  return error && isTouched ? (
+    <FormItemErrorWrapper
+      data-testid="fieldError"
+      className="sinoui-form-item-error"
+    >
+      {error}
+    </FormItemErrorWrapper>
   ) : null;
-};
+}
 
-export default FormItemError;
+export default React.memo(FormItemError);
