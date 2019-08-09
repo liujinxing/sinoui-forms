@@ -3,7 +3,7 @@ export interface FieldValidateProps {
   /**
    * 指定表单域校验函数
    */
-  validate?: (values: any) => string | undefined | null;
+  validate?: (value:any,values: any) => string | undefined | null;
 
   /**
    * 是否必填

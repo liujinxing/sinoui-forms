@@ -52,7 +52,7 @@ function createValidateFn(props: FieldValidateProps) {
     }
 
     if (props.validate) {
-      return props.validate(values);
+      return props.validate(value, values);
     }
 
     return undefined;

@@ -130,11 +130,8 @@ function FormDemo() {
             <Label width="120px">性别</Label>
             <RadioGroup
               name="sex"
-              validate={(values) =>
-                values &&
-                values.sex !== '男' &&
-                values.sex !== '女' &&
-                '必须是男或者女'
+              validate={(value, values) =>
+                value !== '男' && value !== '女' && '必须是男或者女'
               }
             >
               <Radio value="男">男</Radio>
@@ -228,8 +225,8 @@ function FormDemo() {
               <Label width="120px">性别</Label>
               <RadioGroup
               name="sex"
-              validate={(values) =>
-                values && values.sex !== '男' && values.sex !== '女' && '必须是男或者女'
+              validate={(value, values) =>
+                value !== '男' && value !== '女' && '必须是男或者女'
               }
             >
               <Radio value="男">男</Radio>

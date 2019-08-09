@@ -102,9 +102,9 @@ import TelephoneForm from './src/TelephoneForm';
 当内置校验不满足需求时，我们可以给`Field`组件指定一个`validate`属性做表单同步校验。例如：
 
 ```tsx
-function validate(values) {
-  if (values.userName) {
-    if (/^\d/.test(values.userName)) {
+function validate(value, values) {
+  if (value) {
+    if (/^\d/.test(value)) {
       return '不能以数字开头';
     }
   }
@@ -118,9 +118,9 @@ function validate(values) {
 <Playground>
   {() => {
 
-    function validate(values) {
-      if (values.userName) {
-        if (/^\d/.test(values.userName)) {
+    function validate(value,values) {
+      if (value) {
+        if (/^\d/.test(value)) {
           return '不能以数字开头';
         }
       }

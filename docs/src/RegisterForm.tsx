@@ -1,10 +1,11 @@
+/* eslint-disable import/no-unresolved */
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import Radio, { RadioGroup } from 'sinoui-components/Radio';
 import Form, { FormItem, Label, Field } from '@sinoui/web-forms';
 import { useFormState } from '@sinoui/rx-form-state';
 
-const onSubmit = (values) => {
+const onSubmit = (values: any) => {
   // eslint-disable-next-line no-alert
   alert(`请确认信息后再提交，${JSON.stringify(values)}`);
 };
@@ -12,12 +13,8 @@ const onSubmit = (values) => {
 export default function RegisterForm() {
   const formState = useFormState({}, { onSubmit });
 
-  const validatePassword = (values) => {
-    if (
-      values &&
-      values.confirmPassword &&
-      values.confirmPassword !== values.password
-    ) {
+  const validatePassword = (value: any, values: any) => {
+    if (value && values && value !== values.password) {
       return '两次输入密码必须保持一致';
     }
 

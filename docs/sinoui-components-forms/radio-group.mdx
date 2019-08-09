@@ -46,8 +46,8 @@ function FormDemo() {
         <Label>性别</Label>
         <RadioGroup
           name="sex"
-          validate={(values) => {
-            if (values.sex === '保密') {
+          validate={(value, values) => {
+            if (value === '保密') {
               return '不能选择保密';
             }
           }}
@@ -76,8 +76,8 @@ function FormDemo() {
           <Label>性别</Label>
           <RadioGroup
             name="sex"
-            validate={(values) => {
-              if (values.sex === '保密') {
+            validate={(value, values) => {
+              if (value === '保密') {
                 return '不能选择保密';
               }
             }}

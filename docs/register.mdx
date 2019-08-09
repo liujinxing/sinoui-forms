@@ -34,12 +34,8 @@ const onSubmit = (values) => {
 export default function RegisterForm() {
   const formState = useFormState({}, { onSubmit });
 
-  const validatePassword = (values) => {
-    if (
-      values &&
-      values.confirmPassword &&
-      values.confirmPassword !== values.password
-    ) {
+  const validatePassword = (value, values) => {
+    if (value && values && value !== values.password) {
       return '两次输入密码必须保持一致';
     }
 

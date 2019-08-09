@@ -103,7 +103,7 @@ useFormState<T>(initialValues: T = {}, options?: FormStateOptions<T>): FormState
 
 | 配置项             | 类型                                                       | 描述                                                                                            |
 | ------------------ | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| validate           | `(values: T) => FormStateErrors | undefined`               | 指定表单校验逻辑方法。方法接收表单值`values`。                                                  |
+| validate           | `(value:any,values: T) => FormStateErrors | undefined`     | 指定表单校验逻辑方法。方法接收表单值`values`。                                                  |
 | onSubmit           | `(values: T, formState: FormState) => Promise<any> | void` | 指定表单提交方法。方法接收表单值`values`和表单状态管理器`formState`。                           |
 | relys              | `RelyRule<T>[]`                                            | 指定表单域值关联逻辑。                                                                          |
 | enableReinitialize | `boolean`                                                  | 是否监听`initialValues`值变更，如果发生变更，则重新应用新的表单初始值。默认为`true`，表示启用。 |
