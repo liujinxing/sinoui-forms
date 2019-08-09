@@ -1,0 +1,26 @@
+---
+name: useFieldValue
+route: /api-use-field-value
+menu: '@sinoui/rx-form-state'
+---
+
+# useFieldValue
+
+获取表单域值的 hook。
+
+```tsx
+import React from 'react';
+import { useFieldValue } from '@sinoui/rx-form-state';
+
+function Demo() {
+  const userName = useFieldValue('userName');
+
+  return <div>用户名表单域值：{userName}</div>;
+}
+```
+
+## 关联
+
+- [useFieldState](api-use-field-state)
+- [Field](api-field-component)
+- [useField](api-use-field)
