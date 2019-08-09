@@ -1,0 +1,35 @@
+---
+name: useFieldState
+route: /api-use-field-state
+menu: '@sinoui/rx-form-state'
+---
+
+# useFieldState
+
+获取表单状态的 hook。
+
+```ts
+import { useFieldState } from '@sinoui/rx-form-state';
+
+function Demo() {
+  const formState = sueFormState('userName');
+
+  // ...
+}
+```
+
+## useFieldState 返回的属性
+
+| 属性       | 类型            | 描述                 |
+| ---------- | --------------- | -------------------- |
+| name       | `string`        | 表单域名称           |
+| value      | `T`             | 表单域的值           |
+| error      | `string | null` | 表单域的校验错误信息 |
+| asyncError | `string | null` | 表单域异步错误       |
+| isTouched  | `boolean`       | 表单域被操作过的状态 |
+| isPending  | `boolean`       | 异步校验中状态       |
+
+## 关联
+
+- [useField](api-use-field)
+- [Field](api-field-component)
