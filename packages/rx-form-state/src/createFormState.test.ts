@@ -70,14 +70,14 @@ it('表单校验', () => {
     },
   );
 
-  expect(formState.isFormValidate).toBe(true);
+  expect(formState.isValid).toBe(true);
   const result = formState.validate();
 
   expect(result).toBe(false);
   expect(formState.errors).toEqual({
     userName: '必填',
   });
-  expect(formState.isFormValidate).toBe(false);
+  expect(formState.isValid).toBe(false);
 });
 
 it('表单域校验', () => {
