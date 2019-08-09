@@ -51,6 +51,8 @@ export default {
         'FieldArray',
         'FormValueMonitor',
         'useFormStateContext',
+        'useFormSelect',
+        'useFormSubmitting',
         'useField',
         'useFieldState',
         'useFieldError',

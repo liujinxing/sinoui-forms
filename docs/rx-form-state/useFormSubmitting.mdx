@@ -1,0 +1,49 @@
+---
+name: useFormSubmitting
+route: /api-use-form-submitting
+menu: '@sinoui/rx-form-state'
+---
+
+# useFormSubmitting
+
+获取表单提交中状态的 hook。
+
+```tsx
+import React from 'react';
+import { useFormSubmitting } from '@sinoui/rx-form-state';
+
+function Demo() {
+  const isSubmitting = useFormSubmitting();
+
+  return (
+    <button type="submit" disabled={isSubmitting}>
+      {isSubmitting ? '正在提交' : '提交'}
+    </button>
+  );
+}
+```
+
+## 示例
+
+`useFormSubmitting`有两种用法：
+
+- 在`formState`上下文中使用
+- 在`formState`上下文之外使用
+
+### 在`formState`上下文中使用
+
+```tsx
+const isSubmitting = useFormSubmitting();
+```
+
+### 在`formState`上下文之外使用
+
+```tsx
+const formState = ...; // 通过某种方法获取到`formState`
+
+const isSubmitting = useFormSubmitting(formState);
+```
+
+## 关联
+
+- [useFormSelect](api-use-form-select)
