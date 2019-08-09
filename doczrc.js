@@ -71,12 +71,18 @@ export default {
       name: '@sinoui/sinoui-components-forms',
       menu: [
         '开始',
+        'Form',
+        'FormItem',
+        'Label',
+        'Field',
         'TextInput',
         'Checkbox',
         'CheckboxGroup',
         'RadioGroup',
         'DatePicker',
         'Select',
+        '表单样式定制',
+        '@sinoui/forms到@sinoui/sinoui-components-forms迁移指南',
       ],
     },
     {
