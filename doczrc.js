@@ -53,7 +53,7 @@ export default {
         'useFormStateContext',
         'useField',
         'useFieldState',
-        'useFielError',
+        'useFieldError',
         'useFieldValue',
         'useFieldTouched',
         'useFieldArray',
