@@ -6,7 +6,7 @@ import useBehaviorSubject from './utils/useBehaviorSubject';
 
 interface Props<T> {
   /**
-   * 对象属性访问路径。指定此属性，可摘取表单值的指定字段值。
+   * 对象属性访问路径。指定此属性，可摘取表单值的指定字段值。如果不指定，则返回整个表单值对象。
    */
   path?: string;
   /**
