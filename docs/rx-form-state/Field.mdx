@@ -1,0 +1,32 @@
+---
+name: Field
+route: /api-field-component
+menu: '@sinoui/rx-form-state'
+---
+
+import { Props } from 'docz';
+import FieldApi from './FieldApi';
+
+# Field
+
+表单域组件。
+
+```ts
+import { Field } from '@sinoui/rx-form-state';
+```
+
+用于定制表单域的基础组件。如果你使用的是[@sinoui/sinoui-components-forms](sinoui-components-forms)，请使用[@sinoui/sinoui-components-forms](sinoui-components-forms)的[Field](sinoui-components-forms-field)组件。
+
+关于定制表单域的知识，参考[自定义表单域](custom-field)教程。
+
+## 属性
+
+Field 组件固定的属性有：
+
+<Props of={FieldApi} />
+
+除了这些固定的属性，还可以指定它包含的表单域组件的属性，如`as="input"`，则可以将 input 相关的属性定义在 Field 组件之上，传递给`input`：
+
+```tsx
+<Field as="input" name="userName" placeholder="请输入用户名" />
+```
