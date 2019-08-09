@@ -475,7 +475,7 @@ function createFormState<T = any>(
       return containsTruthProperty(isPending$.value);
     },
 
-    get isFormValidate() {
+    get isValid() {
       return !isError(errors$.value) && !isError(asyncErrors$.value);
     },
 

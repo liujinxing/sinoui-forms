@@ -336,7 +336,7 @@ export interface FormState<T = any> {
   /**
    * 表单校验是否通过
    */
-  isFormValidate: boolean;
+  isValid: boolean;
 
   /**
    * 更新表单状态
