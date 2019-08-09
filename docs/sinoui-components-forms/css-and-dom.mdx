@@ -42,8 +42,6 @@ menu: '@sinoui/sinoui-components-forms'
 
 全局定制：
 
-`FormDemo.css`
-
 ```css
 .sinoui-form {
   min-width: 960px;
@@ -52,29 +50,9 @@ menu: '@sinoui/sinoui-components-forms'
 }
 ```
 
-`FormDemo.tsx`
-
-```tsx
-import React from 'react';
-import { Form } from '@sinoui/sinoui-components-forms';
-
-function FormDemo() {
-  return <Form>...</Form>;
-}
-```
+将上面的代码放入项目的全局样式文件中即可。
 
 局部定制(css 方式)
-
-`FormDemo.tsx`
-
-```tsx
-import React from 'react';
-import { Form } from '@sinoui/sinoui-components-forms';
-
-function FormDemo() {
-  return <Form className="sinoui-form-custom">...</Form>;
-}
-```
 
 `FormDemo.css`
 
@@ -83,6 +61,18 @@ function FormDemo() {
   min-width: 960px;
   max-width: 1024px;
   margin: auto;
+}
+```
+
+`FormDemo.tsx`
+
+```tsx
+import React from 'react';
+import { Form } from '@sinoui/sinoui-components-forms';
+import './FormDemo.css';
+
+function FormDemo() {
+  return <Form className="sinoui-form-custom">...</Form>;
 }
 ```
 
@@ -134,6 +124,7 @@ function FormDemo() {
 ```tsx
 import React from 'react';
 import { Form, FormItem } from '@sinoui/sinoui-components-forms';
+import './FormDemo.css';
 
 function FormDemo() {
   return (
@@ -203,6 +194,7 @@ Label 的样式定制同样可以参考上述方式，`Label`组件同样接收`
 ```tsx
 import React from 'react';
 import { Label } from '@sinoui/sinoui-components-forms';
+import './Label.css';
 
 function LabelDemo() {
   return <Label className="custom-sinoui-form-label">标签内容</Label>;
