@@ -133,19 +133,33 @@ function createFormState<T = any>(
     setValues(initialValues);
   };
 
+  const getAllFieldsTouched = () => {
+    const newTouched = {};
+    fields.forEach((field) => {
+      set(newTouched, field.name, true);
+    });
+    return newTouched;
+  };
+
   /**
    * 校验表单
    */
   const validate = () => {
     const errors = validateForm();
 
+    const isValid = !isError(errors);
+
     formState$.next(
       produce(formState$.value, (draft: FormStateModel<T>) => {
         draft.errors = errors;
+
+        if (!isValid) {
+          draft.isTouched = getAllFieldsTouched();
+        }
       }),
     );
 
-    return !isError(errors);
+    return isValid;
   };
 
   /**
@@ -193,20 +207,16 @@ function createFormState<T = any>(
         return result;
       } catch (e) {
         unstable_runWithPriority(unstable_NormalPriority, () => {
-          setSubmitting(false);
+          updateState((draft) => {
+            draft.isSubmitting = false;
+            // eslint-disable-next-line @typescript-eslint/no-use-before-define
+            if (!formState.isValid) {
+              draft.isTouched = getAllFieldsTouched();
+            }
+          });
         });
         throw e;
       }
-    }
-
-    if (!isValid) {
-      updateState((draft) => {
-        const newTouched = {};
-        fields.forEach((field) => {
-          set(newTouched, field.name, true);
-        });
-        draft.isTouched = newTouched;
-      });
     }
 
     return undefined;

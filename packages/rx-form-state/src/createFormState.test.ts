@@ -70,6 +70,8 @@ it('表单校验', () => {
     },
   );
 
+  formState.addField({ name: 'userName', validate: () => undefined });
+
   expect(formState.isValid).toBe(true);
   const result = formState.validate();
 
@@ -78,6 +80,9 @@ it('表单校验', () => {
     userName: '必填',
   });
   expect(formState.isValid).toBe(false);
+  expect(formState.isTouched).toEqual({
+    userName: true,
+  });
 });
 
 it('表单域校验', () => {
@@ -257,9 +262,6 @@ it('有异步校验错误时，不允许提交表单', async () => {
   await formState.submit();
 
   expect(onSubmit).not.toHaveBeenCalled();
-  expect(formState.isTouched).toEqual({
-    userName: true,
-  });
 });
 
 it('提交表单', async () => {
@@ -292,6 +294,27 @@ it('提交表单失败', async () => {
   await expect(promise).rejects.toThrowError('失败');
 
   expect(formState.isSubmitting).toBe(false);
+});
+
+it('提交表单失败，但是设置了校验错误', async () => {
+  const onSubmit = jest.fn(() => {
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    formState.setAsyncErrors({
+      userName: '用户名已存在',
+    });
+
+    return Promise.reject(new Error('表单提交错误'));
+  });
+
+  const formState = createFormState({}, { onSubmit });
+
+  formState.addField({ name: 'userName', validate: () => undefined });
+
+  const promise = formState.submit();
+
+  await expect(promise).rejects.toThrow();
+  expect(formState.isValid).toBe(false);
+  expect(formState.isTouched.userName).toBe(true);
 });
 
 it('获取表单域状态', () => {
