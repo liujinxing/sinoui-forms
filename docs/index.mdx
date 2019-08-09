@@ -10,22 +10,16 @@ import TelephoneForm from './src/TelephoneForm';
 
 # 表单状态管理
 
+表单状态管理库包含三个模块：
+
+- [@sinoui/rx-form-state](rx-form-state) - 表单状态管理模块
+- [@sinoui/web-forms](form) - 简单封装 html 表单元素的 ui 模块
+- [@sinoui/sinoui-components-forms](sinoui-components-forms) - 封装了 sinoui-components 库的表单及表单域组件的 ui 模块
+
 安装：
 
 ```shell
-yarn add @sinoui/rx-form-state
-```
-
-或
-
-```shell
-npm install --save @sinoui/rx-form-state
-```
-
-引用：
-
-```ts
-import { useFormState } from '@sinoui/rx-form-state';
+yarn add @sinoui/rx-form-state @sinoui/web-forms @sinoui/sinoui-components-forms
 ```
 
 源码路径：[https://github.com/sinoui/sinoui-forms-library](https://github.com/sinoui/sinoui-forms-library)。
@@ -43,6 +37,8 @@ import { useFormState } from '@sinoui/rx-form-state';
 - 嵌套表单，包括简单的嵌套表单和复杂的嵌套表单，复杂的嵌套表单需要和`useFieldArray`结合才能实现
 
 下面我们通过例子来了解表单状态管理几个主要功能的基本用法。
+
+教程部分的示例代码采用的是[@sinoui/web-forms](form)作为 UI 展示的。如果使用的是 sinoui-components，可以参考[@sinoui/sinoui-components-forms](sinoui-components-forms)。教程代码虽然采用的是@sinoui/web-forms，但是可以直接使用@sinoui/sinoui-components-forms 中的组件替换@sinoui/web-forms 相对应的组件即可使用示例代码。
 
 ## 表单值处理
 

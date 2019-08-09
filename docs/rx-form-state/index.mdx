@@ -1,0 +1,32 @@
+---
+name: 开始
+route: /rx-form-state
+menu: '@sinoui/rx-form-state'
+---
+
+# @sinoui/rx-form-state
+
+`@sinoui/rx-form-state`是用来管理表单状态的库。它假设表单由多个[表单域](api-field-component)组成。它管理的表单状态包括：
+
+- 表单值
+- 表单域被操作状态
+- 表单验证
+- 异步校验
+- 提交
+
+使用[useFormState](api-use-form-state)创建表单状态管理器对象，通过[FormStateContext](api-form-state-context)加入到表单上下文中。通过[Field](api-field-component)组件管理单个表单域。还可以通过[useFieldArray](api-use-field-array)和[FieldArray](api-field-array-component)实现嵌套表单。
+
+安装：
+
+```shell
+yarn add @sinoui/rx-form-state
+```
+
+@sinoui/rx-form-state 可以与在 React 和 React native 中使用。可以与多种 UI 库组合使用，如[material-ui](https://material-ui.com/)、[ant design](https://ant.design/index-cn)和 sinoui-components。
+
+提供了两个 UI 模块：
+
+- [@sinoui/web-forms](form) - 简单封装 html 表单元素的 ui 模块
+- [@sinoui/sinoui-components-forms](sinoui-components-forms) - 封装了 sinoui-components 库的表单及表单域组件的 ui 模块
+
+以后计划添加与其他 UI 库、React Native 的集成实现。
