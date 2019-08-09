@@ -3,14 +3,13 @@ import React, { useContext } from 'react';
 import FormLabel from 'sinoui-components/Form/FormControl/FormLabel';
 import {
   useFormStateContext,
-  useFieldTouched,
-  useFieldError,
-  FieldConfig,
   FieldValidateProps,
+  FormUI,
 } from '@sinoui/rx-form-state';
 import classNames from 'classnames';
 import FormItemContentContext from './FormItem/FormItemContentContext';
-import FormItemContext from './FormItem/FormItemContext';
+import FormItemContext, { FormItemState } from './FormItem/FormItemContext';
+import useFieldValid from './useFieldValid';
 
 const PureFormLabel = React.memo(FormLabel);
 
@@ -43,14 +42,41 @@ export interface LabelProps {
 }
 
 /**
- * 获取必填状态
+ * 判断是否包含有必填校验的field
  */
-function getRequired(fields: (Partial<FieldConfig> & FieldValidateProps)[]) {
-  const idx = fields.findIndex((field) => field.required);
-  if (idx !== -1) {
-    return true;
-  }
-  return false;
+function containsRequired(fields: FieldValidateProps[]) {
+  return fields.length > 0 && !!fields[0].required;
+}
+
+/**
+ * 从表单上下文中获取标签属性
+ */
+function getLabelPropsFromSinouiFormContext(sinouiForm: FormUI) {
+  return {
+    colon: sinouiForm.colon,
+    ...sinouiForm.labelProps,
+  };
+}
+
+/**
+ * 从表单项上下文中获取标签属性
+ */
+function getLabelPropsFromFormItemContext({
+  id,
+  fields = [],
+  inline,
+  vertical,
+  readOnly,
+  disabled,
+}: FormItemState) {
+  return {
+    vertical,
+    readOnly,
+    disabled,
+    inline,
+    htmlFor: `${id}`,
+    required: containsRequired(fields),
+  };
 }
 
 /**
@@ -60,40 +86,20 @@ function getRequired(fields: (Partial<FieldConfig> & FieldValidateProps)[]) {
 const Label: React.SFC<LabelProps> = (props) => {
   const { name, className } = props;
   const formState = useFormStateContext();
-  const fieldError = useFieldError(name);
-  const fieldTouched = useFieldTouched(name);
-  const { inFormItemContent } =
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    useContext(FormItemContentContext) || ({} as any);
-  const { id, fields = [], inline, vertical, readOnly, disabled } = useContext(
-    FormItemContext,
-  );
+  const isValid = useFieldValid(name);
+  const { inFormItemContent } = useContext(FormItemContentContext);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let otherProps: any = {};
-
-  if (formState.sinouiForm) {
-    otherProps = {
-      colon: formState.sinouiForm.colon,
-      vertical,
-      inline,
-      ...formState.sinouiForm.labelProps,
-    };
-  }
-
-  otherProps.error = !!(fieldTouched && fieldError);
+  const formItemContext = useContext(FormItemContext);
 
   const labelProps = {
-    ...otherProps,
+    ...getLabelPropsFromSinouiFormContext(formState.sinouiForm || ({} as any)),
+    ...getLabelPropsFromFormItemContext(formItemContext),
     ...props,
-    required: getRequired(fields),
-    readOnly,
-    disabled,
   };
 
-  labelProps.htmlFor = `${id}` || labelProps.htmlFor || labelProps.name;
   labelProps.align = labelProps.vertical ? 'left' : labelProps.align;
   labelProps.width = labelProps.inline ? 'auto' : labelProps.width;
+  labelProps.error = !isValid;
 
   return !inFormItemContent ? (
     <PureFormLabel
