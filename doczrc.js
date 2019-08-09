@@ -60,7 +60,6 @@ export default {
         'useFieldValue',
         'useFieldTouched',
         'useFieldArray',
-        '数据结构类型',
       ],
     },
     {
@@ -82,7 +81,7 @@ export default {
         'DatePicker',
         'Select',
         '表单样式定制',
-        '@sinoui/forms到@sinoui/sinoui-components-forms迁移指南',
+        '@sinoui/forms迁移指南',
       ],
     },
     {

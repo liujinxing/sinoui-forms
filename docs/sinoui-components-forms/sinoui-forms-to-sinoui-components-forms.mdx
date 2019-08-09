@@ -1,5 +1,5 @@
 ---
-name: '@sinoui/forms到@sinoui/sinoui-components-forms迁移指南'
+name: '@sinoui/forms迁移指南'
 route: /sinoui-forms-to-sinoui-components-forms
 menu: '@sinoui/sinoui-components-forms'
 ---
@@ -268,7 +268,7 @@ function FormDemo() {
 ## 表单域的动态显示
 
 在日常开发中我们可能经常遇到需要根据某一个表单域的值控制另一个表单域是否显示的场景。在使用`@sinoui/forms`时，我们可能通过`FormValueMonitor`监听表单状态值，然后根据表单值渲染表单域；同时还可能
-通过`formRef`的方式获取表单值，然后根据值的变化来渲染不同的表单域。而在新的`@sinoui/sinoui-components-forms`中，推荐使用`FormValueMonitor`组件监听值的变化，然后根据需要渲染不同表单域。
+通过`formRef`的方式获取表单值，然后根据值的变化来渲染不同的表单域。而在新的`@sinoui/sinoui-components-forms`中，推荐使用[FormValueMonitor](aip-form-value-monitor-component)组件监听值的变化，然后根据需要渲染不同表单域。
 
 ## 自定义表单域组件
 
