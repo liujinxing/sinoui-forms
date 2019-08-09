@@ -1,0 +1,322 @@
+---
+name: '@sinoui/forms到@sinoui/sinoui-components-forms迁移指南'
+route: /sinoui-forms-to-sinoui-components-forms
+menu: '@sinoui/sinoui-components-forms'
+---
+
+# @sinoui/forms 到@sinoui/sinoui-components-forms 迁移指南
+
+> `@sinoui/forms`到`@sinoui/sinoui-components-forms`的表单状态管理核心已经从[formik](https://github.com/jaredpalmer/formik)
+> 转换成[rx-form-state](https://github.com/sinoui/sinoui-forms-library/tree/master/packages/rx-form-state)。
+
+此篇教程我们一起来了解一下从`@sinoui/forms`切换到`@sinoui/sinoui-components-forms`时，需要特别注意的点。
+
+## 表单创建
+
+`@sinoui/forms`在创建表单时，初始值、校验方法等都是通过`Form`组件属性传入；而使用`@sinoui/sinoui-components-forms`在创建表单时，首先需要创建一个表单状态，并将其作为属性传递给`Form`组件。下面我们来看下具体的使用区别：
+
+使用`@sinoui/forms`
+
+```tsx
+import React from 'react';
+import Form，{FormItem,Label,TextInput} from '@sinoui/forms';
+
+function validate(values: any) {
+  let error: any = {};
+
+  if (values.userName) {
+    if (/^\d/.test(values.userName)) {
+      error['userName'] = '不能以数字开头';
+    }
+  }
+
+  return error;
+}
+
+function FormDemo() {
+  const initialValues = {
+    userName: '张三',
+  };
+
+  return (
+    <Form initialValues={initialValues} validate={validate}>
+      <FormItem>
+        <Label>用户名</Label>
+        <TextInput name="userName" required/>
+      </FormItem>
+    </Form>
+  );
+}
+```
+
+使用`@sinoui/sinoui-components-forms`
+
+```tsx
+import React from 'react';
+import { useFormState } from '@sinoui/rx-form-state';
+import {
+  Form,
+  FormItem,
+  Label,
+  TextInput,
+} from '@sinoui/sinoui-components-forms';
+
+function validate(values: any) {
+  let error: any = {};
+
+  if (values.userName) {
+    if (/^\d/.test(values.userName)) {
+      error['userName'] = '不能以数字开头';
+    }
+  }
+
+  return error;
+}
+
+function FormDemo() {
+  const initialValues = {
+    userName: '张三',
+  };
+
+  const formState = useFormState(initialValues, { validate });
+
+  return (
+    <Form formState={formState}>
+      <FormItem>
+        <Label>用户名</Label>
+        <TextInput name="userName" required />
+      </FormItem>
+    </Form>
+  );
+}
+```
+
+从上述示例中不难看出，与表单项相关的`FormItem`，`Label`，`TextInput`等组件的基本使用方式不变。
+
+## 表单校验
+
+### 表单域校验
+
+表单域校验这里需要特别注意，`@sinoui/forms`中的表单域校验方法类型为`validate?: (value: any, formik?: FormikProps) => string | null | undefined;`，它的第二个参数是表单的所有状态。
+而`@sinoui/sinoui-components-forms`中的表单域校验方法类型为`validate?: (value: any, values?: any) => string | null | undefined;`，这里的第二个参数只是表单的值。
+
+### 获取表单校验状态
+
+由于`formik`的校验是一个异步的过程，并且`formik.validate()`方法并没有返回值，因此使用`@sinoui/forms`获取表单校验状态时，首先需要有个等待过程，并且需要使用`formik.isValid`来获取表单校验状态；
+而使用`@sinoui/sinoui-components-forms`时，获取表单校验状态是一个同步的过程，并且`formState.validate()`方法直接返回校验结果。我们通过一个简单的代码示例看下使用时的区别：
+
+使用`@sinoui/forms`
+
+```ts
+formik.validate();
+
+requestAnimationFrame(() => {
+  console.log(`表单校验状态: ${formik.isValid}`);
+});
+```
+
+使用`@sinoui/sinoui-components-forms`
+
+```ts
+console.log(`表单校验状态: ${formState.validate()}`);
+```
+
+更多关于`@sinoui/sinoui-components-forms`的表单校验请参考[表单校验](/form-validate)。
+
+## 表单值关联
+
+在使用`@sinoui/forms`时，我们提供了一个`useForm`的 hook，`useForm`的第四个参数支持我们自定义值关联的依赖规则。
+如果我们定义`A=B+C`的依赖规则具体使用如下：
+
+`handleFormValueChange.ts`
+
+```ts
+function parseNumber(str) {
+  return str && !isNaN(parseInt(str)) ? parseInt(str) : 0;
+}
+
+function onFieldChange(fieldName: string, oldValues: any, newValues: any) {
+  if (fieldName === 'B' && oldValues.B !== newValues.B) {
+    if (oldValues.C) {
+      return {
+        ...newValues,
+        A: parseNumber(oldValues.C) + parseNumber(newValues.B),
+      };
+    }
+    return {
+      ...newValues,
+      A: newValues.B,
+    };
+  }
+
+  if (fieldName === 'C' && oldValues.C !== newValues.C) {
+    if (oldValues.B) {
+      return {
+        ...newValues,
+        A: parseNumber(oldValues.B) + parseNumber(newValues.C),
+      };
+    }
+    return {
+      ...newValues,
+      A: newValues.C,
+    };
+  }
+}
+
+const handleFormValueChange = [onFieldChange];
+export default handleFormValueChange;
+```
+
+`Demo.tsx`
+
+```tsx
+function Demo() {
+  const [form, formRef, handleFormChange] = useForm(
+    save, // 指定表单提交方法
+    undefined,
+    undefined,
+    handleFormValueChange, //自定义表单值关联规则
+  );
+}
+```
+
+在`@sinoui/sinoui-components-forms`中，我们定义了新的值关联处理方式，其中包括表单域值关联和全局值关联。下面我们看下具体使用方式：
+
+使用表单域值关联处理`A = B + C`时， 我们需要在表单域 A 上定义 relyFields 为['B', 'C']，这样当 B 或者 C 表单域值发生变更时，就会调用 A 表单域的 relyFn 属性。具体如下：
+
+```tsx
+import React from 'react';
+import { useFormState } from '@sinoui/rx-form-state';
+import {
+  Form,
+  TextInput,
+  FormItem,
+  Label,
+} from '@sinoui/sinoui-components-forms';
+
+function parseNumber(str) {
+  return str && !isNaN(parseInt(str)) ? parseInt(str) : 0;
+}
+
+function countA(values) {
+  const { B, C } = values;
+
+  return parseNumber(B) + parseNumber(C);
+}
+
+function FormDemo() {
+  const formState = useFormState();
+  return (
+    <Form>
+      <FormItem>
+        <TextInput
+          name="A"
+          type="number"
+          relyFields={['B', 'C']}
+          relyFn={countA}
+        />
+        <TextInput name="B" type="number" />
+        <TextInput name="C" type="number" />
+      </FormItem>
+    </Form>
+  );
+}
+```
+
+如果 A 不是可见的表单域元素，但是 A 要作为表单数据保存，此时无法使用表单域值关联的方式处理`A = B + C`的关联关系，所以我们需要使用全局值关联，具体方式如下：
+
+```tsx
+import React from 'react';
+import { useFormState, FormValueMonitor } from '@sinoui/rx-form-state';
+import { Form, FormItem, TextInput } from '@sinoui/sinoui-components-forms';
+
+// A = B + C
+const abcRely = [
+  'B',
+  'C',
+  (draft) => {
+    if (draft.B && draft.C) {
+      draft.A = draft.B + draft.C;
+    }
+  },
+];
+
+function FormDemo() {
+  const formState = useFormState(undefined, {
+    relys: [abcRely],
+  });
+
+  return (
+    <Form formState={formState}>
+      <FormItem>
+        <TextInput name="B" />
+      </FormItem>
+      <FormItem>
+        <TextInput name="C" />
+      </FormItem>
+      <FormValueMonitor>
+        {(values) => <div>表单值：{JSON.stringify(values, undefined, 2)}</div>}
+      </FormValueMonitor>
+    </Form>
+  );
+}
+```
+
+上述示例中，我们创建表单状态管理器时，在配置项中指定一个`relys`属性来自定义全局值关联的规则，`relys`接收数组类型的值，表示可以同时定制多个值关联规则。
+更多关于表单值处理的方法，请参考[表单值处理教程](/form-values)。
+
+## 表单域的动态显示
+
+在日常开发中我们可能经常遇到需要根据某一个表单域的值控制另一个表单域是否显示的场景。在使用`@sinoui/forms`时，我们可能通过`FormValueMonitor`监听表单状态值，然后根据表单值渲染表单域；同时还可能
+通过`formRef`的方式获取表单值，然后根据值的变化来渲染不同的表单域。而在新的`@sinoui/sinoui-components-forms`中，推荐使用`FormValueMonitor`组件监听值的变化，然后根据需要渲染不同表单域。
+
+## 自定义表单域组件
+
+在`@sinoui/forms`中，我们使用`Field`组件自定义表单域时，主要使用`render`属性渲染不同表单域组件，比如：
+
+```tsx
+import React from 'react';
+import styled from 'styled-components';
+import TextInput, { TextInputProps } from 'sinoui-components/TextInput';
+import Field, { Props as FieldProps } from './Field';
+
+export const StyledTextInput = styled(TextInput)`
+  padding-top: 4px;
+`;
+
+/**
+ * 输入框
+ */
+export default function TextInputField<T>(props: TextInputProps & FieldProps) {
+  return (
+    <Field
+      {...props}
+      render={({ field, form }) => (
+        <StyledTextInput
+          {...props}
+          {...field}
+          error={form.touched[field.name] && form.errors[field.name]}
+          value={
+            field.value ||
+            (props.value && form.setFieldValue(field.name, props.value))
+          }
+          onChange={(value) => {
+            form.setFieldValue(field.name, value);
+            props.onChange && props.onChange(value, form);
+          }}
+          id={field.name}
+          onBlur={(event) => {
+            field.onBlur(event);
+            if (props.onBlur) {
+              props.onBlur(event);
+            }
+          }}
+        />
+      )}
+    />
+  );
+}
+```
+
+在使用`@sinoui/sinoui-components-forms`时，我们推荐的表单域自定义方式是使用`Field`组件的 as 属性。但是如果需要在表单域值改变时，同时设置多个表单域的值，则需要使用`Field`组件的`render`
+属性。具体的自定义表单域的方式请参考[自定义表单域教程](/custom-field)。

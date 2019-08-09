@@ -491,16 +491,15 @@ function FormDemo() {
 
   return (
     <Form formState={formState}>
-      A：
-      <Field as="input" name="A" />
       B：
       <Field as="input" name="B" />
       C：
       <Field as="input" name="C" />
       D:
       <Field as="input" name="D" />
-      E:
-      <Field as="input" name="E" />
+      <FormValueMonitor>
+        {(values) => <div>表单值：{JSON.stringify(values, undefined, 2)}</div>}
+      </FormValueMonitor>
     </Form>
   );
 }
@@ -534,16 +533,16 @@ function FormDemo() {
     });
 
     return <Form formState={formState}>
-      A：
-      <Field as="input" name="A" />
       B：
       <Field as="input" name="B" />
       C：
       <Field as="input" name="C" />
       D:
       <Field as="input" name="D" />
-      E:
-      <Field as="input" name="E" />
+
+      <FormValueMonitor>
+        {(values) => <div>表单值：{JSON.stringify(values, undefined, 2)}</div>}
+      </FormValueMonitor>
     </Form>;
 
 }}
