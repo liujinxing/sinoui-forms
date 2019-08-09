@@ -1,15 +1,14 @@
 /* eslint-disable import/no-unresolved */
 import React, { useContext } from 'react';
 import FormLabel from 'sinoui-components/Form/FormControl/FormLabel';
-import {
-  useFormStateContext,
-  FieldValidateProps,
-  FormUI,
-} from '@sinoui/rx-form-state';
+import { FieldValidateProps } from '@sinoui/rx-form-state';
 import classNames from 'classnames';
 import FormItemContentContext from './FormItem/FormItemContentContext';
 import FormItemContext, { FormItemState } from './FormItem/FormItemContext';
 import useFieldValid from './useFieldValid';
+import SinouiFormStateContext, {
+  SinouiFormState,
+} from './SinouiFormStateContext';
 
 const PureFormLabel = React.memo(FormLabel);
 
@@ -51,11 +50,14 @@ function containsRequired(fields: FieldValidateProps[]) {
 /**
  * 从表单上下文中获取标签属性
  */
-function getLabelPropsFromSinouiFormContext(sinouiForm: FormUI) {
-  return {
-    colon: sinouiForm.colon,
-    ...sinouiForm.labelProps,
-  };
+function getLabelPropsFromSinouiFormContext(sinouiForm: SinouiFormState) {
+  if (sinouiForm) {
+    return {
+      colon: sinouiForm.colon,
+      ...sinouiForm.labelProps,
+    };
+  }
+  return null;
 }
 
 /**
@@ -85,14 +87,15 @@ function getLabelPropsFromFormItemContext({
  */
 const Label: React.SFC<LabelProps> = (props) => {
   const { name, className } = props;
-  const formState = useFormStateContext();
+
+  const sinouiFormState = useContext(SinouiFormStateContext);
   const isValid = useFieldValid(name);
   const { inFormItemContent } = useContext(FormItemContentContext);
 
   const formItemContext = useContext(FormItemContext);
 
   const labelProps = {
-    ...getLabelPropsFromSinouiFormContext(formState.sinouiForm || ({} as any)),
+    ...getLabelPropsFromSinouiFormContext(sinouiFormState),
     ...getLabelPropsFromFormItemContext(formItemContext),
     ...props,
   };

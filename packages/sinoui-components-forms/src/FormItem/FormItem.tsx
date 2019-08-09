@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-unresolved */
-import React, { useMemo } from 'react';
+import React, { useMemo, useContext } from 'react';
 import classNames from 'classnames';
 import memoize from 'lodash/memoize';
 import {
@@ -15,6 +15,7 @@ import FormItemContent from './FormItemContent';
 import FormItemContext from './FormItemContext';
 import useFormItemState from './useFormItemState';
 import FormItemContainer from './FormItemContainer';
+import SinouiFormStateContext from '../SinouiFormStateContext';
 
 export interface Props {
   /**
@@ -143,7 +144,7 @@ function renderLabel(
  * 表单项组件
  */
 function FormItem(props: Props) {
-  const { sinouiForm } = useFormStateContext();
+  const sinouiFormState = useContext(SinouiFormStateContext);
   const {
     label,
     disabled: disabledProp,
@@ -160,10 +161,22 @@ function FormItem(props: Props) {
   const context = useFormItemState(nameProp);
   const { fields } = context;
 
-  const inline = (sinouiForm && sinouiForm.inline) || inlineProp;
-  const vertical = (sinouiForm && sinouiForm.vertical) || verticalProp;
-  const readOnly = readOnlyProp || getState(fields, 'readOnly');
-  const disabled = disabledProp || getState(fields, 'disabled');
+  const inline =
+    typeof inlineProp === 'boolean'
+      ? inlineProp
+      : sinouiFormState && sinouiFormState.inline;
+  const vertical =
+    typeof verticalProp === 'boolean'
+      ? verticalProp
+      : sinouiFormState && sinouiFormState.vertical;
+  const readOnly =
+    typeof readOnlyProp === 'boolean'
+      ? readOnlyProp
+      : getState(fields, 'readOnly');
+  const disabled =
+    typeof disabledProp === 'boolean'
+      ? disabledProp
+      : getState(fields, 'disabled');
 
   const formItemState = useMemo(
     () => ({
@@ -179,14 +192,6 @@ function FormItem(props: Props) {
   const name = nameProp || (fields.length > 0 ? fields[0].name : undefined);
   const hasError = useFieldError(name);
 
-  /**
-   * 获取宽度用于grid布局
-   */
-  const labelWidth =
-    (getLabel(children).props && (getLabel(children) as any).props.width) ||
-    (sinouiForm && sinouiForm.labelProps && sinouiForm.labelProps.width) ||
-    '120px';
-
   return (
     <FormItemContext.Provider value={formItemState}>
       <FormItemContainer
@@ -200,7 +205,6 @@ function FormItem(props: Props) {
           className,
         )}
         inline={inline}
-        labelWidth={labelWidth}
         vertical={vertical}
         style={style}
       >

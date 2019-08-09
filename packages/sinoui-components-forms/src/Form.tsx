@@ -1,8 +1,9 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef, useEffect, useCallback } from 'react';
 import { FormState, FormStateContext } from '@sinoui/rx-form-state';
 import classNames from 'classnames';
+import SinouiFormStateContext from './SinouiFormStateContext';
 
 export interface Props {
   /**
@@ -41,38 +42,63 @@ export default function Form(props: Props) {
     formState,
     children,
     colon = false,
-    labelProps = {},
+    vertical,
+    inline,
     className,
     ...others
   } = props;
+  const propsRef = useRef(props);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    formState.submit();
-  };
+  useEffect(() => {
+    propsRef.current = props;
+  }, [props]);
 
-  const handleReset = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    formState.reset();
-  };
+  /**
+   * 表单提交
+   */
+  const handleSubmit = useCallback(
+    (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      formState.submit();
+    },
+    [formState],
+  );
 
+  /**
+   * 表单重置
+   */
+  const handleReset = useCallback(
+    (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      formState.reset();
+    },
+    [formState],
+  );
+
+  /**
+   * sinouiFormState的值
+   */
   const context = useMemo(() => {
     return {
-      ...formState,
-      sinouiForm: { ...props, colon, labelProps },
+      labelProps: propsRef.current.labelProps,
+      colon,
+      vertical,
+      inline,
     };
-  }, [colon, formState, labelProps, props]);
+  }, [colon, inline, vertical]);
 
   return (
-    <FormStateContext.Provider value={context}>
-      <form
-        className={classNames('sinoui-forms', className)}
-        onSubmit={handleSubmit}
-        onReset={handleReset}
-        {...others}
-      >
-        {children}
-      </form>
+    <FormStateContext.Provider value={formState}>
+      <SinouiFormStateContext.Provider value={context}>
+        <form
+          className={classNames('sinoui-forms', className)}
+          onSubmit={handleSubmit}
+          onReset={handleReset}
+          {...others}
+        >
+          {children}
+        </form>
+      </SinouiFormStateContext.Provider>
     </FormStateContext.Provider>
   );
 }

@@ -9,20 +9,16 @@ export interface FormItemContainerProps {
    * 垂直布局
    */
   vertical?: boolean;
-  /**
-   * 标签宽度
-   */
-  labelWidth: string;
 }
 
 const defaultStyle = css`
   display: -ms-grid;
   display: grid;
 
-  -ms-grid-columns: ${(props: FormItemContainerProps) => props.labelWidth} 1fr;
+  -ms-grid-columns: auto 1fr;
   -ms-grid-rows: auto auto;
 
-  grid-template-columns: ${(props: FormItemContainerProps) => props.labelWidth} 1fr;
+  grid-template-columns: auto 1fr;
   grid-template-rows: auto auto;
   grid-template-areas:
     'label content'

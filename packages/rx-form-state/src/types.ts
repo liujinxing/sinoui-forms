@@ -182,25 +182,6 @@ export interface FormStatePending {
     | FormStatePending[];
 }
 
-export interface FormUI {
-  /**
-   * 表单域标签内容后是否有冒号
-   */
-  colon: boolean;
-  /**
-   * label配置
-   */
-  labelProps?: any;
-  /**
-   * 表单标签和表单域水平布局
-   */
-  inline?: boolean;
-  /**
-   * 表单标签和表单域垂直布局
-   */
-  vertical?: boolean;
-}
-
 /**
  * 表单状态模型
  */
@@ -514,10 +495,6 @@ export interface FormState<T = any> {
    * @param {string} fieldName
    */
   removeField(fieldName: string): void;
-  /**
-   * 表单样式的配置
-   */
-  sinouiForm?: FormUI;
 }
 
 /**
