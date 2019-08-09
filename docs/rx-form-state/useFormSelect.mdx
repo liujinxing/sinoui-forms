@@ -39,3 +39,15 @@ const userName = useFormSelect(
   (formStateModel) => formStateModel.values.userName,
 );
 ```
+
+## 方法签名
+
+```ts
+function useFormSelect<T, M>(
+  selector: (FormStateModel: FormStateModel<T>) => M,
+): M;
+function useFormSelect<T, M>(
+  formState: FormState<T>,
+  selector: (FormStateModel: FormStateModel<T>) => M,
+): M;
+```
