@@ -1,0 +1,41 @@
+---
+name: useFormSelect
+route: /api-use-form-select
+menu: '@sinoui/rx-form-state'
+---
+
+# useFormSelect
+
+提取表单状态的 hook。
+
+```ts
+import { useFormSelect } from '@sinoui/rx-form-state';
+```
+
+## 基本用法
+
+我们可以通过`useFormSelect`获取到表单中的任何状态，通过`selector`函数定义最终返回的状态数据。
+
+`useFormSelect`有两种用法：
+
+- 在`formState`上下文中使用
+- 在`formState`上下文之外使用
+
+### 在`formState`上下文中使用
+
+```tsx
+const userName = useFormSelect(
+  (formStateModel) => formStateModel.values.userName,
+);
+```
+
+### 在`formState`上下文之外使用
+
+```ts
+const formState = ...; // 通过某种方式获取到formState
+
+const userName = useFormSelect(
+  formState,
+  (formStateModel) => formStateModel.values.userName,
+);
+```
