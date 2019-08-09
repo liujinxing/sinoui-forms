@@ -243,7 +243,7 @@ function createFormState<T = any>(
       }
     }
 
-    return undefined;
+    throw new Error('表单校验失败');
   };
 
   /**
