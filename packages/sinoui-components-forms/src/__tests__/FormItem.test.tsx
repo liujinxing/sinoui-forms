@@ -1,6 +1,6 @@
 /* eslint-disable import/no-unresolved */
 import React from 'react';
-import { render, cleanup } from '@testing-library/react';
+import { render, cleanup, act } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { Label, TextInput } from '@sinoui/sinoui-components-forms';
 import FormItem from '../FormItem/FormItem';
@@ -61,21 +61,8 @@ it('既不指定label属性，也不写children时，不会渲染label', () => {
   expect(container.querySelector('label')).toBeNull();
 });
 
-it('从表单域组件中获取label的for指向', () => {
-  const { container } = render(
-    <Wrapper>
-      <FormItem>
-        <Label>用户名</Label>
-        <TextInput name="userName" />
-      </FormItem>
-    </Wrapper>,
-  );
-  const label = container.querySelector('label');
-  expect(label).toHaveAttribute('for', '5');
-});
-
-it('disabled属性', () => {
-  const { container } = render(
+it('disabled属性', async () => {
+  const { container, rerender } = render(
     <Wrapper>
       <FormItem name="userName" label="标题">
         <TextInput name="userName" disabled />
@@ -84,6 +71,18 @@ it('disabled属性', () => {
   );
 
   const label = container.querySelector('label');
+
+  await Promise.resolve({});
+
+  act(() => {
+    rerender(
+      <Wrapper>
+        <FormItem name="userName" label="标题">
+          <TextInput name="userName" disabled />
+        </FormItem>
+      </Wrapper>,
+    );
+  });
 
   expect(label).toHaveAttribute('disabled');
 });

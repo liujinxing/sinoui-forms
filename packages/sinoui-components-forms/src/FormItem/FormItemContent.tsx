@@ -9,10 +9,6 @@ interface Props {
    */
   style?: React.CSSProperties;
   /**
-   * 是否只读
-   */
-  readOnly?: boolean;
-  /**
    * 子元素
    */
   children?: React.ReactNode;
@@ -25,21 +21,14 @@ const StyledFormControlContent = styled(FormControlContent)`
 
 function FormItemContent(props: Props) {
   const context = { inFormItemContent: true };
-  const { style, children, readOnly } = props;
+  const { style, children } = props;
   return (
     <FormItemContentContext.Provider value={context}>
       <StyledFormControlContent
         className="sinoui-form-item__content"
         style={style}
       >
-        {React.Children.map(children, (child) => {
-          if (React.isValidElement(child)) {
-            return React.cloneElement(child, {
-              readOnly,
-            });
-          }
-          return child;
-        })}
+        {children}
       </StyledFormControlContent>
     </FormItemContentContext.Provider>
   );
