@@ -31,3 +31,17 @@ it('删除Field', () => {
 
   expect(result.current.fields.length).toBe(0);
 });
+
+it('配置项', () => {
+  const { result } = renderHook(() =>
+    useFormItemState('userName', {
+      inlineProp: true,
+      verticalProp: false,
+      readOnlyProp: true,
+    }),
+  );
+
+  expect(result.current.inline).toBeTruthy();
+  expect(result.current.vertical).toBeFalsy();
+  expect(result.current.readOnly).toBeTruthy();
+});

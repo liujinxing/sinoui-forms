@@ -2,13 +2,6 @@
 /* eslint-disable import/no-unresolved */
 import React, { useMemo } from 'react';
 import classNames from 'classnames';
-import memoize from 'lodash/memoize';
-import {
-  useFormStateContext,
-  FieldConfig,
-  FieldValidateProps,
-  useFieldError,
-} from '@sinoui/rx-form-state';
 import FormItemError from './FormItemError';
 import Label from '../Label';
 import FormItemContent from './FormItemContent';
@@ -60,42 +53,22 @@ export interface Props {
 }
 
 /**
- * 获取状态
- * @param fields 表单域
- * @param path 获取状态名称
- */
-function getState(
-  fields: (Partial<FieldConfig> &
-    FieldValidateProps & { readOnly?: boolean; disabled?: boolean })[],
-  path: 'required' | 'readOnly' | 'disabled',
-) {
-  const idx = fields.findIndex((field) => field[path]);
-  if (idx !== -1) {
-    return true;
-  }
-  return false;
-}
-
-/**
  * 获取标签配置
  *
- * @param {any} children
+ * @param {React.ReactNode} children
  * @returns
  */
-const getLabel = memoize((children) => {
+function getLabel(children: React.ReactNode) {
   let label;
-  let props;
 
-  React.Children.forEach(children, (comp) => {
+  React.Children.forEach(children, (comp: any) => {
     if (comp && comp.type && comp.type.displayName === 'Label') {
       label = comp;
-      // eslint-disable-next-line prefer-destructuring
-      props = comp.props;
     }
   });
 
-  return { label, props };
-});
+  return label;
+}
 
 /**
  * 渲染标签
@@ -103,47 +76,28 @@ const getLabel = memoize((children) => {
 function renderLabel(
   label: React.ReactNode,
   children: React.ReactNode,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  labelProps: any,
+  name?: string,
 ) {
   if (label && typeof label === 'string') {
-    return <Label {...labelProps}>{label}</Label>;
+    return <Label name={name}>{label}</Label>;
   }
   if (label) {
-    return label;
+    return React.cloneElement(label as any, { name });
   }
-  const { label: labelComp, props } = getLabel(children);
-  if (labelComp) {
-    let finalTitle;
-    const newProps = props || {};
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { title: propsTitle, style: propsStyle = {} } = props as any;
 
-    if (typeof propsTitle === 'function') {
-      const { name } = labelProps;
-      finalTitle = propsTitle(name);
-      // 如果有对比的差异，变更label的颜色，暂时先写死，后期调整
-      if (finalTitle) {
-        (newProps as any).style = { ...propsStyle, color: '#f44336' };
-      }
-    } else {
-      finalTitle = propsTitle;
-    }
+  const child = getLabel(children);
 
-    return React.cloneElement(labelComp as any, {
-      ...labelProps,
-      ...newProps,
-      title: finalTitle,
-    });
+  if (child) {
+    return React.cloneElement(child as any, { name });
   }
-  return null;
+
+  return child;
 }
 
 /**
  * 表单项组件
  */
 function FormItem(props: Props) {
-  const { sinouiForm } = useFormStateContext();
   const {
     label,
     disabled: disabledProp,
@@ -157,59 +111,39 @@ function FormItem(props: Props) {
     contentStyle,
   } = props;
 
-  const context = useFormItemState(nameProp);
-  const { fields } = context;
-
-  const inline = (sinouiForm && sinouiForm.inline) || inlineProp;
-  const vertical = (sinouiForm && sinouiForm.vertical) || verticalProp;
-  const readOnly = readOnlyProp || getState(fields, 'readOnly');
-  const disabled = disabledProp || getState(fields, 'disabled');
-
-  const formItemState = useMemo(
-    () => ({
-      ...context,
-      inline,
-      vertical,
-      readOnly,
-      disabled,
-    }),
-    [context, disabled, inline, readOnly, vertical],
-  );
+  const context = useFormItemState(nameProp, {
+    inlineProp,
+    verticalProp,
+    readOnlyProp,
+    disabledProp,
+  });
+  const { fields, inline, vertical } = context;
 
   const name = nameProp || (fields.length > 0 ? fields[0].name : undefined);
-  const hasError = useFieldError(name);
 
-  /**
-   * 获取宽度用于grid布局
-   */
-  const labelWidth =
-    (getLabel(children).props && (getLabel(children) as any).props.width) ||
-    (sinouiForm && sinouiForm.labelProps && sinouiForm.labelProps.width) ||
-    '120px';
+  const newLabel = useMemo(() => renderLabel(label, children, name), [
+    children,
+    label,
+    name,
+  ]);
 
   return (
-    <FormItemContext.Provider value={formItemState}>
+    <FormItemContext.Provider value={context}>
       <FormItemContainer
         className={classNames(
           'sinoui-form-item',
           {
             'sinoui-form-item__inline': inline,
             'sinoui-form-item__vertical': vertical,
-            invalid: hasError,
           },
           className,
         )}
         inline={inline}
-        labelWidth={labelWidth}
         vertical={vertical}
         style={style}
       >
-        {renderLabel(label, children, {
-          name,
-        })}
-        <FormItemContent style={contentStyle} readOnly={readOnly}>
-          {children}
-        </FormItemContent>
+        {newLabel}
+        <FormItemContent style={contentStyle}>{children}</FormItemContent>
         {!inline && <FormItemError />}
       </FormItemContainer>
     </FormItemContext.Provider>
