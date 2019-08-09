@@ -6,6 +6,7 @@ import {
   debounceTime,
   mergeMap,
   distinctUntilChanged,
+  filter,
 } from 'rxjs/operators';
 import { produce } from 'immer';
 import { set, get, memoize } from 'lodash';
@@ -181,6 +182,28 @@ function createFormState<T = any>(
   const setSubmitting = createUpdateSubStateFn('isSubmitting');
 
   /**
+   * 等待异步校验完成
+   *
+   * @returns
+   */
+  function waitPending() {
+    if (!containsTruthProperty(isPending$.value)) {
+      return Promise.resolve();
+    }
+    return new Promise((resolve) => {
+      const subscription = isPending$
+        .pipe(
+          map(containsTruthProperty),
+          filter((x) => !x),
+        )
+        .subscribe(() => {
+          resolve();
+          subscription.unsubscribe();
+        });
+    });
+  }
+
+  /**
    * 提交表单
    */
   const submit = async (event?: React.FormEvent<HTMLFormElement>) => {
@@ -195,6 +218,7 @@ function createFormState<T = any>(
 
     if (isValid && options.onSubmit) {
       setSubmitting(true);
+      await waitPending();
       try {
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
         const result = await options.onSubmit(values$.value, formState);
