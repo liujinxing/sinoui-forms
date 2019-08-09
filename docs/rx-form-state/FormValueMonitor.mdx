@@ -1,0 +1,28 @@
+---
+name: FormValueMonitor
+route: /api-form-value-monitor-component
+menu: '@sinoui/rx-form-state'
+---
+
+import { Props } from 'docz';
+import FormValueMonitor from '../../packages/rx-form-state/src/FormValueMonitor';
+
+# FormValueMonitor
+
+表单值监听组件。
+
+```ts
+import { FormValueMonitor } from '@sinoui/rx-form-state';
+```
+
+## 基本用法
+
+```tsx
+<FormValueMonitor path="userName">
+  {(userName) => <div>用户名是：{userName}</div>}
+</FormValueMonitor>
+```
+
+## 属性
+
+<Props of={FormValueMonitor} />

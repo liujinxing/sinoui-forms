@@ -1,0 +1,26 @@
+---
+name: useFieldError
+route: /api-use-field-error
+menu: '@sinoui/rx-form-state'
+---
+
+# useFieldError
+
+获取表单域验证错误状态的 hook。
+
+```tsx
+import React from 'react';
+import { useFieldError } from '@sinoui/rx-form-state';
+
+function Demo() {
+  const errorMsg = useFieldError('userName');
+
+  return <div>表单域验证错误：{errorMsg}</div>;
+}
+```
+
+## 关联
+
+- [useFieldState](api-use-field-state)
+- [Field](api-field-component)
+- [useField](api-use-field)

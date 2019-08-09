@@ -1,0 +1,56 @@
+---
+name: FieldArray
+route: /api-field-array-component
+menu: '@sinoui/rx-form-state'
+---
+
+import { Props } from 'docz';
+import FieldArray from '../../packages/rx-form-state/src/FieldArray';
+
+# FieldArray
+
+辅助开发嵌套表单的组件。
+
+```ts
+import { FieldArray } from '@sinoui/rx-form-state';
+```
+
+使用方式如下：
+
+```tsx
+<FieldArray<T> name="contacts">
+  {(helpers) =>
+    helpers.items.map((item) => (
+      <div>
+        <Field as="input" name={helpers.getFieldName('name')} />
+      </div>
+    ))
+  }
+</FieldArray>
+```
+
+查看[嵌套表单教程](nest-form)，学习更多关于嵌套表单的用法。
+
+## 属性
+
+<Props of={FieldArray} />
+
+## helpers 提供的属性和方法
+
+| 属性、方法   | 类型                                             | 描述                                     |
+| ------------ | ------------------------------------------------ | ---------------------------------------- |
+| items        | `T[]`                                            | 表单属性对应的数据。                     |
+| push         | `(item: T) => void`                              | 添加一条数据。                           |
+| insert       | `(index: number, item: T) => void`               | 在指定位置插入一条数据。                 |
+| remove       | `(index: number) => void`                        | 删除指定位置的数据。                     |
+| move         | `(fromIndex: number, toIndex: number) => void`   | 将数据移动到`toIndex`位置。              |
+| swap         | `(indexA: number, indexB: number) => void`       | 交换`indexA`和`indexB`两个位置上的数据。 |
+| replace      | `(index: number, item: T) => void`               | 替换数据项。                             |
+| pop          | `() => void`                                     | 移除数组的第一个数据项。                 |
+| unshift      | `(item: T) => void`                              | 在数组的头部添加数据项。                 |
+| getFieldName | `(index: number, subFieldName?: string) => void` | 获取表单域名称。                         |
+
+## 关联
+
+- [useFieldArray](api-use-field-array)
+- [嵌套表单教程](nest-form)

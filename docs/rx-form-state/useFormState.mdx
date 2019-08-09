@@ -9,7 +9,7 @@ import { useFormState, FormStateContext, Field } from '@sinoui/rx-form-state';
 
 # useFormState
 
-`useFormState`是用来产生表单状态管理器的自定义 React Hook。通过表单状态管理器，我们可以轻松管理与表单相关的状态，包括：
+`useFormState`是用来创建表单状态管理器对象的自定义 React Hook。通过表单状态管理器对象，我们可以管理与表单相关的状态，包括：
 
 - 表单值
 - 表单校验状态
@@ -20,8 +20,6 @@ import { useFormState, FormStateContext, Field } from '@sinoui/rx-form-state';
 ```ts
 import { useFormState } from '@sinoui/rx-form-state';
 ```
-
-为了方便使用，[@sinoui/web-forms]()和[@sinoui/sinoui-components-forms]()也提供了`useFormState`。
 
 ## 使用方式
 
@@ -38,6 +36,8 @@ function FormDemo() {
 ```
 
 通过`useFormState()`产生的`formState`往往会与[FormStateContext](api-form-state-context-component)结合在一起使用，将`formState`通过 React 上下文的方式共享到子组件：
+
+（注意：[@sinoui/sinoui-components-forms]()的[Form](sinoui-components-forms-form)组件已经集成了[FormStateContext.Provider](api-form-state-context-component)。）
 
 ```tsx
 import React from 'react';
@@ -108,7 +108,7 @@ useFormState<T>(initialValues: T = {}, options?: FormStateOptions<T>): FormState
 | relys              | `RelyRule<T>[]`                                            | 指定表单域值关联逻辑。                                                                          |
 | enableReinitialize | `boolean`                                                  | 是否监听`initialValues`值变更，如果发生变更，则重新应用新的表单初始值。默认为`true`，表示启用。 |
 
-`relys`是用来指定一组定义表单域值关联计算的规则，例如：
+`relys`是用来指定表单域值关联计算的规则，例如：
 
 ```ts
 const relys = [
@@ -138,124 +138,109 @@ const relys = [
 ];
 ```
 
-## 表单状态管理器`formState`
+## 表单状态管理器对象`formState`
 
-`useFormState()`的返回值`formState`就是表单状态管理。通过`formState`，可以获取表单状态，也可以更新表单状态。
+`useFormState()`的返回`formState`表单状态管理器对象。通过`formState`，可以获取和更新表单状态。
 
 ## 获取表单状态
 
 `formState`有以下属性可用来获取不同的表单状态：
 
-| 属性名        | 类型               | 描述                     |
-| ------------- | ------------------ | ------------------------ |
-| `values`      | `T`                | 表单值。                 |
-| `errors`      | `FormStateErrors`  | 表单同步验证错误状态。   |
-| `isTouched`   | `FormStateTouched` | 表单域被操作状态。       |
-| `asyncErrors` | `FormStateErrors`  | 表单异步校验错误状态。   |
-| `isPending`   | `FormStatePending` | 执行异步校验的过程状态。 |
+| 属性名          | 类型               | 描述                         |
+| --------------- | ------------------ | ---------------------------- |
+| `values`        | `T`                | 表单值。                     |
+| `errors`        | `FormStateErrors`  | 表单同步验证错误状态。       |
+| `isTouched`     | `FormStateTouched` | 表单域被操作状态。           |
+| `asyncErrors`   | `FormStateErrors`  | 表单异步校验错误状态。       |
+| `isPending`     | `FormStatePending` | 执行异步校验的过程状态。     |
+| `isSubmitting`  | `boolean`          | 表单提交中状态。             |
+| `isFormPending` | `boolean`          | 表单是否有进行中的异步校验。 |
+| `isValid`       | `boolean`          | 表单验证是否通过。           |
 
-`formState`提供的属性都是[可观察对象](https://rxjs.dev/guide/observable)类型。我们可以通过下面的方式获取到当前的值：
+通过这些属性即可获取到表单值、校验错误等状态。
 
-```ts
-const values = formState.values;
-const errors = formState.errors;
-const isTouched = formState.isTouched;
-const asyncErrors = formState.asyncErrors;
-const isPending = formState.isPending;
-```
+如果你的组件关注表单状态的变更，也就是说当成组成状态使用，那么需要用到下面提供的获取表单状态的 React Hooks：
 
-如果我们要获取变化的数据，可以使用`useBehaviorSubject`：
+| hook                | 类型                                                                                                                                                          | 描述                                              |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| `useFormSubmitting` | `(formState?: FormState) => void`                                                                                                                             | 获取表单提交中状态的 hook。在表单提交时特别有用。 |
+| `useFormSelect`     | `<T, M>(formState: FormState<T>, selector: (FormStateModel: FormStateModel<T>) => M): M` 或者 `<T, M>(selector: (FormStateModel: FormStateModel<T>) => M): M` | 表单同步验证错误状态。                            |
 
-```ts
-import { useBehaviorSubject } from '@sinoui/rx-form-state';
+下面通过两个例子来看一看如果使用这两个 hooks。
 
-const values = useBehaviorSubject(formState.values$);
-```
+### 例子 1：在表单中使用的提交按钮
 
-`values`相当于 React 组件的状态，一旦有新的表单值，则会更新`values`这个 React 组件状态。
+在表单中使用的提交按钮，我们定义为`SubmitButton`组件。在组件内部可以获取到`formState`上下文，所以无需将`formState`传递给上面介绍的两个 hook。如下所示：
 
-到底用哪一种方式获取状态，需要看你使用的场景是否满足下面的规则：
+```tsx
+function SubmitButton() {
+  const isSubmitting = useFormSubmitting();
+  const submitEnabled = useFormSelect(
+    (formStateModel) =>
+      !formStateModel.isFormPending &&
+      formStateModel.isValid &&
+      !formStateModel.isSubmitting,
+  );
 
-- 如果你的 UI 需要在表单状态发生变化时同步做更新，那么就采用`useBehaviorSubject()`方式。
-- 否则，采用第一种方式。
-
-`formState$`包含的数据是整个表单状态，它的类型`FormStateModel`是：
-
-```ts
-/**
- * 表单状态模型
- */
-interface FormStateModel<T extends {} = any> {
-  /**
-   * 表单值
-   */
-  values: T;
-  /**
-   * 表单域校验错误
-   */
-  errors: FormStateErrors;
-  /**
-   * 表单域异步校验错误
-   */
-  asyncErrors: FormStateErrors;
-  /**
-   * 表单域被操作的状态，一般在表单域失去焦点时设置。
-   */
-  isTouched: FormStateTouched;
-  /**
-   * 表单域正在执行异步校验的状态
-   */
-  isPending: FormStatePending;
-  /**
-   * 表单提交中状态
-   */
-  isSubmitting: boolean;
+  return (
+    <button type="submit" disabled={!submitEnabled}>
+      {isSubmitting ? '正在提交表单...' : '提交'}
+    </button>
+  );
 }
 ```
 
-`useBehaviorSubject()`方法的第二个参数可以是一个对象路径，如我们要获取表单提交状态`isSubmitting`:
+使用方式类似如：
 
-```ts
-const isSubmitting = useBehaviorSubject(formState$, 'isSubmitting');
+```tsx
+const formState = useFormState();
+
+<Form formState={formState}>
+  <SubmitButton />
+</Form>;
 ```
 
-我们要获取下面的表单值中的街道信息：
+### 例子 2：在表单外部使用的提交按钮
 
-数据：
+在表单外部使用提交按钮，那么这个按钮无法从上下文中获取到`formState`，则需要通过属性传递给`SubmitButton`。代码如下：
 
-```json
-{
-  "userName": "张三",
-  "address": {
-    "city": "北京",
-    "street": "梧桐里"
-  }
+```tsx
+function SubmitButton({ formState }: { formState: FormState }) {
+  const isSubmitting = useFormSubmitting(formState);
+  const submitEnabled = useFormSelect(
+    formState,
+    (formStateModel) =>
+      !formStateModel.isFormPending &&
+      formStateModel.isValid &&
+      !formStateModel.isSubmitting,
+  );
+
+  return (
+    <button type="submit" disabled={!submitEnabled} onClick={formState.submit}>
+      {isSubmitting ? '正在提交表单...' : '提交'}
+    </button>
+  );
 }
 ```
 
-代码：
+使用方式类似如：
 
-```ts
-const street = useBehaviorSubject(formState.values$, 'address.street');
-```
+```tsx
+const formState = useFormState();
 
-或者：
-
-```ts
-const street = useBehaviorSubject(
-  formState.formState$,
-  'values.address.street',
-);
+<div>
+  <Form formState={formState}></Form>
+  <SubmitButton formState={formState} />
+</div>;
 ```
 
 ## 获取表单域状态
 
 `formState`提供了两个方法，用来直接获取表单域状态的：
 
-| 方法             | 类型                                                    | 描述                                                                      |
-| ---------------- | ------------------------------------------------------- | ------------------------------------------------------------------------- |
-| `getFieldState`  | `(fieldName: string): FieldStateModel`                  | 获取一个表单域状态的方法。                                                |
-| `getFieldState$` | `(fieldName: string): BehaviorSubject<FieldStateModel>` | 获取一个表单域状态的[可观察对象](https://rxjs.dev/guide/observable)的方法 |
+| 方法            | 类型                                   | 描述                       |
+| --------------- | -------------------------------------- | -------------------------- |
+| `getFieldState` | `(fieldName: string): FieldStateModel` | 获取一个表单域状态的方法。 |
 
 获取到的状态有：
 

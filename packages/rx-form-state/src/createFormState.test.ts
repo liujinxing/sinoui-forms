@@ -234,7 +234,7 @@ it('有校验错误时，不允许提交表单', async () => {
 
   formState.addField({ name: 'userName', validate: () => undefined });
 
-  await formState.submit();
+  await expect(formState.submit()).rejects.toThrowError('表单校验失败');
 
   expect(onSubmit).not.toHaveBeenCalled();
   expect(formState.isTouched).toEqual({
@@ -259,7 +259,7 @@ it('有异步校验错误时，不允许提交表单', async () => {
     };
   });
 
-  await formState.submit();
+  await expect(formState.submit()).rejects.toThrowError('表单校验失败');
 
   expect(onSubmit).not.toHaveBeenCalled();
 });
@@ -315,6 +315,15 @@ it('提交表单失败，但是设置了校验错误', async () => {
   await expect(promise).rejects.toThrow();
   expect(formState.isValid).toBe(false);
   expect(formState.isTouched.userName).toBe(true);
+});
+
+it('提交表单时，如果表单校验失败，则返回表单校验错误', async () => {
+  const formState = createFormState();
+  formState.addField({ name: 'userName', validate: () => '必填' });
+
+  const promise = formState.submit();
+
+  expect(promise).rejects.toThrowError('表单校验失败');
 });
 
 it('等待异步校验完成后，完成表单提交', async () => {

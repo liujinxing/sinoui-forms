@@ -1,0 +1,26 @@
+---
+name: useFieldTouched
+route: /api-use-field-touched
+menu: '@sinoui/rx-form-state'
+---
+
+# useFieldValue
+
+获取表单域值的 hook。
+
+```tsx
+import React from 'react';
+import { useFieldTouched } from '@sinoui/rx-form-state';
+
+function Demo() {
+  const touched = useFieldTouched('userName');
+
+  return <div>用户名表单域被操作状态：{touched}</div>;
+}
+```
+
+## 关联
+
+- [useFieldState](api-use-field-state)
+- [Field](api-field-component)
+- [useField](api-use-field)

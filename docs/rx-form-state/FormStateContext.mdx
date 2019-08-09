@@ -1,0 +1,57 @@
+---
+name: FormStateContext
+route: /api-form-state-context
+menu: '@sinoui/rx-form-state'
+---
+
+# FormStateContext
+
+表单状态上下文。
+
+```ts
+import { FormStateContext } from '@sinoui/rx-form-state';
+```
+
+一般用不到 FormStateContext，@sinoui/web-forms 的[Form](form)和@sinoui/sinoui-components-forms 的[Form](sinoui-components-forms-form)都已经内置了`FormStateContext`。
+
+往上下文中提供`formState`：
+
+```tsx
+import React from 'react';
+import { useFormState, FormStateContext } from '@sinoui/rx-form-state';
+
+function FormDemo() {
+  const formState = useFormState();
+
+  return (
+    <FormStateContext.Provider value={formState}>
+      <form>...</form>
+    </FormStateContext.Provider>
+  );
+}
+```
+
+从上下文中获取`formState`：
+
+```tsx
+import React, { useContext } from 'react';
+import { FormStateContext } from '@sinoui/rx-form-state';
+
+function ChildComponent() {
+  const formState = useContext(FormStateContext);
+
+  // ...
+}
+```
+
+也可以使用[useFormStateContext](api-use-form-state-context)从上下文中获取`formState`：
+
+```tsx
+import { useFormStateContext } from '@sinoui/rx-form-state';
+
+function ChildComponent() {
+  const formState = useFormStateContext();
+
+  // ...
+}
+```

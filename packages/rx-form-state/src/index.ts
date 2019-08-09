@@ -13,8 +13,6 @@ import useFormStateContext from './useFormStateContext';
 import useBehaviorSubject from './utils/useBehaviorSubject';
 import useFormSubmitting from './useFormSubmitting';
 import useFomrSelect from './useFormSelect';
-import isError from './utils/isError';
-import containsTruthyProperty from './utils/containsTruthProperty';
 
 export * from './types';
 
@@ -35,6 +33,4 @@ export {
   useBehaviorSubject,
   useFormSubmitting,
   useFomrSelect,
-  isError,
-  containsTruthyProperty,
 };
