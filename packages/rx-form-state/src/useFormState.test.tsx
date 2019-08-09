@@ -20,7 +20,7 @@ it('指定表单初始值', () => {
   expect(result.current.values$.value).toEqual({ userName: '张三' });
 });
 
-it('指定表单校验逻辑和表单提交处理', () => {
+it('指定表单校验逻辑和表单提交处理', async () => {
   const onSubmit = jest.fn();
   onSubmit.mockResolvedValue('ok');
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,11 +38,11 @@ it('指定表单校验逻辑和表单提交处理', () => {
 
   expect(result.current.errors$.value).toEqual({});
 
-  result.current.submit();
+  await result.current.submit();
 
   expect(onSubmit).toHaveBeenCalledWith(
     result.current.values$.value,
-    expect.anything(),
+    result.current,
   );
 });
 

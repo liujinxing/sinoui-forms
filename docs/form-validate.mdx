@@ -414,11 +414,7 @@ function FormDemo() {
   const onSubmit = (values) => {
     http.post('/api/test/form', values).then((result) => {
       if (result.code === '501') {
-        let isTouched = {};
-        const keys = Object.keys(result.msg);
-        keys.forEach((key) => (isTouched[key] = true));
         formState.setAsyncErrors(result.msg);
-        formState.setTouched(isTouched);
       }
     });
   };
@@ -451,11 +447,7 @@ function FormDemo() {
     const onSubmit = (values) => {
        handleReponse().then(result=>{
            if(result.code==='501'){
-               let isTouched ={};
-               const keys = Object.keys(result.msg);
-               keys.forEach(key=>isTouched[key] = true);
-               formState.setAsyncErrors(result.msg);
-               formState.setTouched(isTouched)
+              formState.setAsyncErrors(result.msg);
            }
        })
     };
