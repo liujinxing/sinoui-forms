@@ -1,0 +1,46 @@
+---
+name: useField
+route: /api-use-field
+menu: '@sinoui/rx-form-state'
+---
+
+# useField
+
+获取表单域状态和设置表单域状态方法的 hook。
+
+```ts
+imoprt { useField } from '@sinoui/rx-form-state';
+
+function FieldDemo() {
+  const field = useField('userName');
+
+  // ...
+}
+```
+
+## useField 返回的属性和方法
+
+| 属性或方法      | 类型                                                                    | 描述                          |
+| --------------- | ----------------------------------------------------------------------- | ----------------------------- |
+| name            | `string`                                                                | 表单域名称                    |
+| value           | `T`                                                                     | 表单域的值                    |
+| error           | `string | null`                                                         | 表单域的校验错误信息          |
+| asyncError      | `string | null`                                                         | 表单域异步错误                |
+| isTouched       | `boolean`                                                               | 表单域被操作过的状态          |
+| isPending       | `boolean`                                                               | 异步校验中状态                |
+| formState       | `FormState`                                                             | 表单状态管理器对象            |
+| addField        | `(fieldConfig: fieldConfig) => void`                                    | 向 formState 添加表单域配置   |
+| removeField     | `() => void`                                                            | 从 formState 中移除表单域配置 |
+| setFieldValue   | `(value: T) => void`                                                    | 设置表单域的值。              |
+| blur            | `() => void`                                                            | 表单域失去焦点的回调函数。    |
+| validateField   | `() => void`                                                            | 验证表单域。                  |
+| setFieldState   | `(producer: (draft: FieldStateModel<T>) => void) => FieldStateModel<T>` | 设置表单域的状态。            |
+| setFieldTouched | `(isTouched?: boolean) => void`                                         | 设置表单域的被操作状态。      |
+| setError        | `(error?: string) => void`                                              | 设置表单域的验证错误。        |
+| setAsyncError   | `(asyncError?: string) => void`                                         | 设置异步校验错误。            |
+| setFieldPending | `(isPending: boolean) => void`                                          | 设置表单域异步校验中状态。    |
+
+## 关联
+
+- [useFieldState](api-use-field-state)
+- [Field](api-field-component)
