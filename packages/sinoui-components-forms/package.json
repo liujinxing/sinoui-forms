@@ -2,7 +2,7 @@
   "name": "@sinoui/sinoui-components-forms",
   "version": "1.0.0-alpha.2",
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/sinoui-components-forms/src/index.d.ts",
   "homepage": "https://sinoui.github.io/sinoui-forms-library",
   "bugs": {
     "url": "https://github.com/sinoui/sinoui-forms-library/issues"

@@ -1,5 +1,9 @@
 # 版本变更记录
 
+## v1.0.0-alpha.3 (2019.8.12)
+
+- fix: 修复 d.ts 文件引用错误
+
 ## v1.0.0-alpha.2 (2019.8.12)
 
 补充 homepage、issues page、source repository 配置。
