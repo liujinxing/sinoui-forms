@@ -1,6 +1,6 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import {
   Field as RxField,
   FieldProps as RxFieldProps,
@@ -25,22 +25,31 @@ function Field(props: RxFieldProps & { readOnly?: boolean }) {
     disabled = disabledFromFormItem,
   } = props;
 
-  useEffect(() => {
-    const fieldConfig = {
-      name,
-      required,
-      readOnly,
-      disabled,
-    };
-    if (addField) {
-      addField(fieldConfig);
+  const isFieldExitRef = useRef([]);
+  const fieldConfig = {
+    name,
+    required,
+    readOnly,
+    disabled,
+  };
 
+  if (name) {
+    if (isFieldExitRef.current.indexOf(name as never) === -1) {
+      if (addField) {
+        addField(fieldConfig);
+        isFieldExitRef.current.push(name as never);
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (removeField) {
       return () => {
         removeField(name);
       };
     }
     return undefined;
-  }, [addField, disabled, name, readOnly, removeField, required]);
+  }, [name, removeField]);
 
   return (
     <div className="sinoui-form-field">

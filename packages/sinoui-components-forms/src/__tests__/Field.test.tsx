@@ -133,3 +133,21 @@ it('value不存在时，显示默认值', () => {
 
   expect(getByTestId('field')).toHaveAttribute('value', '默认值');
 });
+
+it('每次渲染时，只commit一次', () => {
+  let count = 0;
+
+  function Child() {
+    count += 1;
+
+    return null;
+  }
+
+  render(
+    <Wrapper>
+      <Field as={Child} name="count" />
+    </Wrapper>,
+  );
+
+  expect(count).toBe(1);
+});
