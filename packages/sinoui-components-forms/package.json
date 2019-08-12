@@ -1,6 +1,6 @@
 {
   "name": "@sinoui/sinoui-components-forms",
-  "version": "1.0.0-alpha.2",
+  "version": "1.0.0-alpha.3",
   "main": "dist/index.js",
   "types": "dist/sinoui-components-forms/src/index.d.ts",
   "homepage": "https://sinoui.github.io/sinoui-forms-library",
@@ -21,7 +21,7 @@
   "dependencies": {
     "@sinoui/datepicker": "^0.1.27",
     "@sinoui/rx-form-state": "^1.0.0-alpha.2",
-    "@sinoui/web-forms": "^1.0.0-alpha.2",
+    "@sinoui/web-forms": "^1.0.0-alpha.3",
     "classnames": "^2.2.6",
     "immer": "^3.2.0",
     "lodash": "^4.17.15",
