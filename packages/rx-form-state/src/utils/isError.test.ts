@@ -12,4 +12,22 @@ it('判断校验结果', () => {
       itemA: ['', '', ''],
     }),
   ).toBeFalsy();
+
+  expect(
+    isError({
+      a: {
+        b: '必填',
+      },
+    }),
+  ).toBeTruthy();
+
+  expect(
+    isError({
+      a: [
+        {
+          b: '必填',
+        },
+      ],
+    }),
+  ).toBeTruthy();
 });

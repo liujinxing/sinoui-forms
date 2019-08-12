@@ -3,13 +3,10 @@
 import React, { useMemo } from 'react';
 import { FieldProps } from '@sinoui/web-forms';
 import { CheckboxGroup, CheckboxGroupProps } from 'sinoui-components/Checkbox';
-import {
-  useFieldError,
-  useFieldTouched,
-  useFieldValue,
-} from '@sinoui/rx-form-state';
+import { useFieldValue } from '@sinoui/rx-form-state';
 import CheckboxGroupContext from './CheckboxGroupContext';
 import Field from './Field';
+import useFieldValid from './useFieldValid';
 
 export type CheckboxGroupFieldProps = CheckboxGroupProps<any> &
   FieldProps & { stringValue?: boolean };
@@ -28,8 +25,7 @@ const checkboxGroupContext = { checkboxGroup: true };
  */
 function CheckboxGroupField(props: CheckboxGroupFieldProps) {
   const { name, stringValue } = props;
-  const fieldError = useFieldError(name);
-  const fieldTouched = useFieldTouched(name);
+  const isValid = useFieldValid(name);
   const fieldValue = useFieldValue<string | string[]>(name);
   const value = useMemo(() => {
     return stringValue && fieldValue && typeof fieldValue === 'string'
@@ -41,7 +37,7 @@ function CheckboxGroupField(props: CheckboxGroupFieldProps) {
     <CheckboxGroupContext.Provider value={checkboxGroupContext}>
       <Field
         as={CheckboxGroup}
-        error={!!(fieldTouched && fieldError)}
+        error={!isValid}
         className="sinoui-checkbox-group-field"
         value={value}
         valueExtract={stringValue ? stringValueExtract : valueExtract}

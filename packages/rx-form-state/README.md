@@ -81,7 +81,7 @@ function setFieldValue(fieldName: string, value: string) {
 
   unstable_runWithPriority(unstable_NormalPriority, () => {
     const newState = updateState((draft) => {
-      calcNewValues(draft.values, fields, fieldName);
+      applyFieldRelyRules(draft.values, fields, fieldName);
     });
 
     unstable_runWithPriority(unstable_LowPriority, () => {

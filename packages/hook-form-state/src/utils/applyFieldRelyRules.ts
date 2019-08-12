@@ -47,7 +47,7 @@ function isSame(newValue: any, oldValue: any) {
  * @param fields 所有表单域
  * @param filedName 发生变更的表单域名称
  */
-function calcNewValues(
+function applyFieldRelyRules(
   values: ValuesType,
   fields: FieldConfig[],
   fieldName: string,
@@ -86,4 +86,4 @@ function calcNewValues(
   inner(fieldName);
 }
 
-export default calcNewValues;
+export default applyFieldRelyRules;

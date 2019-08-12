@@ -79,6 +79,10 @@
   "jest": {
     "moduleNameMapper": {
       "@sinoui/(rx-form-state|sinoui-components-forms|web-forms)": "<rootDir>/packages/$1/src"
-    }
+    },
+    "collectCoverageFrom": [
+      "packages/**/*.{ts,tsx}",
+      "!packages/hook-form-state/**"
+    ]
   }
 }

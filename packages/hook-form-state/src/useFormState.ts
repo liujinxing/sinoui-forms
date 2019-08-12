@@ -3,7 +3,7 @@ import { useCallback, useRef, useEffect, useReducer } from 'react';
 import { produce } from 'immer';
 import debounce from 'lodash/debounce';
 import { get, set } from 'lodash';
-import calcNewValues from './utils/calcNewValues';
+import applyFieldRelyRules from './utils/applyFieldRelyRules';
 import reducer, { Reducer, State } from './reducer';
 import isError from './utils/isError';
 import { FieldConfig, FormErrors, FormPending, FormTouched } from './types';
@@ -56,7 +56,7 @@ function useFormState<T extends {}>(defaultValues: T, options?: Options) {
   const setFieldValueInner = useCallback((fieldName: string, value: any) => {
     const newValues = produce(valuesRef.current, (draft) => {
       set(draft, fieldName, value);
-      calcNewValues(draft, fieldsRef.current, fieldName);
+      applyFieldRelyRules(draft, fieldsRef.current, fieldName);
     });
 
     valuesRef.current = newValues;

@@ -615,3 +615,40 @@ it('全局深度值关联', () => {
 
   expect(formState.values.A).toBe('Jacking And zinuo');
 });
+
+it('设置表单域的校验状态', () => {
+  const formState = createFormState();
+
+  formState.setFieldError('userName', '必填');
+  formState.setFieldTouched('userName', true);
+  formState.setFieldAsyncError('userName', '不能为空');
+  formState.setFieldPending('userName', false);
+
+  expect(formState.getFieldState('userName').isTouched).toBe(true);
+  expect(formState.getFieldState('userName').error).toBe('必填');
+  expect(formState.getFieldState('userName').asyncError).toBe('不能为空');
+  expect(formState.getFieldState('userName').isPending).toBe(false);
+});
+
+it('重复添加表单域', () => {
+  const validate1 = jest.fn();
+  const validate2 = jest.fn();
+  const formState = createFormState();
+
+  formState.addField({ name: 'userName', validate: validate1 });
+  formState.addField({ name: 'userName', validate: validate2 });
+
+  formState.validate();
+
+  expect(validate1).not.toBeCalled();
+  expect(validate2).toBeCalled();
+});
+
+it('表单校验返回undefined', () => {
+  const validate = jest.fn();
+  const formState = createFormState(null, { validate });
+
+  formState.validate();
+
+  expect(formState.errors).toEqual({});
+});

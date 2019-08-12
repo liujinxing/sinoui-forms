@@ -4,12 +4,11 @@ import React, { useContext, useCallback } from 'react';
 import { FieldProps } from '@sinoui/web-forms';
 import Checkbox, { CheckboxProps } from 'sinoui-components/Checkbox';
 import {
-  useFieldError,
-  useFieldTouched,
   useFieldValue,
 } from '@sinoui/rx-form-state';
 import CheckboxGroupContext from './CheckboxGroupContext';
 import Field from './Field';
+import useFieldValid from './useFieldValid';
 
 export type CheckboxFieldProps = CheckboxProps<any> &
   Omit<FieldProps, 'name'> & {
@@ -21,8 +20,7 @@ export type CheckboxFieldProps = CheckboxProps<any> &
 function InnerCheckboxField(props: CheckboxFieldProps) {
   const { name = '', value, unCheckedValue } = props;
 
-  const fieldError = useFieldError(name);
-  const fieldTouched = useFieldTouched(name);
+  const isValid = useFieldValid(name);
   const fieldValue = useFieldValue(name);
   const valueExtract = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,7 +35,7 @@ function InnerCheckboxField(props: CheckboxFieldProps) {
       dense
       as={Checkbox}
       checked={fieldValue === value}
-      error={!!(fieldTouched && fieldError)}
+      error={!isValid}
       valueExtract={valueExtract}
       defaultValue=""
       {...(props as any)}

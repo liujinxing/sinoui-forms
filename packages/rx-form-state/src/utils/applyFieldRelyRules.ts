@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-continue */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { get, set } from 'lodash';
@@ -30,7 +31,7 @@ export function getFields(fields: FieldConfig[], fieldName: string) {
  * @param newValue 表单域当前的值
  * @param oldValue 变更之前的值
  */
-function isSame(newValue: any, oldValue: any) {
+export function isSame(newValue: any, oldValue: any) {
   if (Array.isArray(newValue) && Array.isArray(oldValue)) {
     return (
       newValue === oldValue ||
@@ -42,12 +43,13 @@ function isSame(newValue: any, oldValue: any) {
 }
 
 /**
+ * 应用表单域值关联规则
  *
  * @param values 表单的值
  * @param fields 所有表单域
  * @param filedName 发生变更的表单域名称
  */
-function calcNewValues(
+function applyFieldRelyRules(
   values: ValuesType,
   fields: FieldConfig[],
   fieldName: string,
@@ -86,4 +88,4 @@ function calcNewValues(
   inner(fieldName);
 }
 
-export default calcNewValues;
+export default applyFieldRelyRules;

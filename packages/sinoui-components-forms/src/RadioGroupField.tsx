@@ -2,9 +2,9 @@
 import React from 'react';
 import { FieldProps } from '@sinoui/web-forms';
 import { RadioGroup, RadioGroupProps } from 'sinoui-components/Radio';
-import { useFieldError, useFieldTouched } from '@sinoui/rx-form-state';
 import classNames from 'classnames';
 import Field from './Field';
+import useFieldValid from './useFieldValid';
 
 export type RadioGroupFieldProps = RadioGroupProps & FieldProps;
 
@@ -20,15 +20,14 @@ const valueExtract = (
  */
 function RadioGroupField(props: RadioGroupFieldProps) {
   const { children, className, name } = props;
-  const fieldError = useFieldError(name);
-  const fieldTouched = useFieldTouched(name);
+  const isValid = useFieldValid(name);
 
   return (
     <Field
       as={RadioGroup}
       className={classNames('sinoui-radio-group-field', className)}
       valueExtract={valueExtract}
-      error={!!(fieldTouched && fieldError)}
+      error={!isValid}
       defaultValue=""
       {...props}
     >

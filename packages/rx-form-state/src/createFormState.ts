@@ -24,7 +24,7 @@ import {
 } from './types';
 import isError from './utils/isError';
 import isFunction from './utils/isFunction';
-import calcNewValues from './utils/calcNewValues';
+import applyFieldRelyRules from './utils/applyFieldRelyRules';
 import applyGlobalRelyRules from './utils/applyGlobalRelyRules';
 import containsTruthProperty from './utils/containsTruthProperty';
 
@@ -325,7 +325,7 @@ function createFormState<T = any>(
       mergeMap(async (fieldName) => {
         const field = fields.find((item) => item.name === fieldName);
         const asyncValidate = field ? field.asyncValidate : undefined;
-        if (!field || !asyncValidate) {
+        if (!asyncValidate) {
           return { error: undefined, fieldName };
         }
         try {
@@ -385,7 +385,7 @@ function createFormState<T = any>(
 
     unstable_runWithPriority(unstable_NormalPriority, () => {
       updateState((draft) => {
-        calcNewValues(draft.values, fields as any, fieldName);
+        applyFieldRelyRules(draft.values, fields as any, fieldName);
       });
 
       if (options.relys && options.relys.length > 0) {
