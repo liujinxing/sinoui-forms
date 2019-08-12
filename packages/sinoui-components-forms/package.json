@@ -3,6 +3,14 @@
   "version": "1.0.0-alpha.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "homepage": "https://sinoui.github.io/sinoui-forms-library",
+  "bugs": {
+    "url": "https://github.com/sinoui/sinoui-forms-library/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sinoui/sinoui-forms-library.git"
+  },
   "scripts": {
     "build": "ts-lib-tools build",
     "test": "ts-lib-tools test",

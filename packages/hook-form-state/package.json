@@ -6,6 +6,14 @@
   "types": "dist/index.d.ts",
   "umd:main": "dist/sinoui-hook-form-state.umd.production.js",
   "module": "dist/sinoui-hook-form-state.es.production.js",
+  "homepage": "https://sinoui.github.io/sinoui-forms-library",
+  "bugs": {
+    "url": "https://github.com/sinoui/sinoui-forms-library/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sinoui/sinoui-forms-library.git"
+  },
   "scripts": {
     "build": "ts-lib-tools build",
     "test": "ts-lib-tools test",

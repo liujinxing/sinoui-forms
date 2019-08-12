@@ -5,6 +5,14 @@
   "workspaces": [
     "packages/*"
   ],
+  "homepage": "https://sinoui.github.io/sinoui-forms-library",
+  "bugs": {
+    "url": "https://github.com/sinoui/sinoui-forms-library/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sinoui/sinoui-forms-library.git"
+  },
   "scripts": {
     "test": "ts-lib-tools test",
     "build": "lerna run build",

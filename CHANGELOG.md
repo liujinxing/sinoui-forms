@@ -1,5 +1,9 @@
 # 版本变更记录
 
+## v1.0.0-alpha.2 (2019.8.12)
+
+补充 homepage、issues page、source repository 配置。
+
 ## v1.0.0-alpha.1 (2019.8.12)
 
 v1.0.0-alpha.0 打包错误，重新发布。

@@ -10,6 +10,14 @@
   },
   "umd:main": "dist/sinoui-web-forms.umd.production.js",
   "module": "dist/sinoui-web-forms.es.production.js",
+  "homepage": "https://sinoui.github.io/sinoui-forms-library",
+  "bugs": {
+    "url": "https://github.com/sinoui/sinoui-forms-library/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sinoui/sinoui-forms-library.git"
+  },
   "dependencies": {
     "@sinoui/rx-form-state": "^1.0.0-alpha.1",
     "classnames": "^2.2.6"
