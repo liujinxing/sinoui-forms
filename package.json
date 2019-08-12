@@ -18,7 +18,7 @@
     "build": "lerna run build",
     "format": "ts-lib-tools format",
     "lint": "ts-lib-tools lint",
-    "prepublishOnly": "ts-lib-tools build",
+    "prepublishOnly": "lerna run build",
     "gen": "ts-lib-tools gen-module",
     "doc:dev": "docz dev",
     "doc:build": "docz build",
