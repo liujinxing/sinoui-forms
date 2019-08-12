@@ -30,14 +30,14 @@ function Demo() {
 
 | 属性、方法   | 类型                                             | 描述                                     |
 | ------------ | ------------------------------------------------ | ---------------------------------------- |
-| items        | `T[]`                                            | 表单属性对应的数据。                     |
+| items        | `T[]`                                            | 嵌套表单列表数据。                       |
 | push         | `(item: T) => void`                              | 添加一条数据。                           |
 | insert       | `(index: number, item: T) => void`               | 在指定位置插入一条数据。                 |
 | remove       | `(index: number) => void`                        | 删除指定位置的数据。                     |
 | move         | `(fromIndex: number, toIndex: number) => void`   | 将数据移动到`toIndex`位置。              |
 | swap         | `(indexA: number, indexB: number) => void`       | 交换`indexA`和`indexB`两个位置上的数据。 |
 | replace      | `(index: number, item: T) => void`               | 替换数据项。                             |
-| pop          | `() => void`                                     | 移除数组的第一个数据项。                 |
+| pop          | `() => void`                                     | 移除数组的最后一个数据项。               |
 | unshift      | `(item: T) => void`                              | 在数组的头部添加数据项。                 |
 | getFieldName | `(index: number, subFieldName?: string) => void` | 获取表单域名称。                         |
 

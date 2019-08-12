@@ -565,7 +565,7 @@ export interface FieldArrayHelpers<T> {
   replace(index: number, item: T): void;
 
   /**
-   * 移除数组的第一个数据项
+   * 移除数组的最后一个数据项
    */
   pop(): void;
 

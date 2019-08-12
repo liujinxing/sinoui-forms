@@ -119,7 +119,7 @@ function useFieldArray<T>(fieldName: string) {
     };
 
     /**
-     * 移除数组的第一个数据项
+     * 移除数组的最后一个数据项
      */
     const pop = () => {
       const updater = (newItems: any[]) => {

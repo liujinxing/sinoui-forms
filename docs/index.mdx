@@ -34,11 +34,12 @@ yarn add @sinoui/rx-form-state @sinoui/web-forms @sinoui/sinoui-components-forms
 - 一次性设置多个表单域的值
 - 表单域值关联
 - 表单提交
-- 嵌套表单，包括简单的嵌套表单和复杂的嵌套表单，复杂的嵌套表单需要和`useFieldArray`结合才能实现
+- 嵌套表单，包括简单的嵌套表单和复杂的嵌套表单，复杂的嵌套表单需要和[useFieldArray](/api-use-field-array)或[FieldArray](/api-field-array-component)结合才能实现
 
 下面我们通过例子来了解表单状态管理几个主要功能的基本用法。
 
-教程部分的示例代码采用的是[@sinoui/web-forms](form)作为 UI 展示的。如果使用的是 sinoui-components，可以参考[@sinoui/sinoui-components-forms](sinoui-components-forms)。教程代码虽然采用的是@sinoui/web-forms，但是可以直接使用@sinoui/sinoui-components-forms 中的组件替换@sinoui/web-forms 相对应的组件同样可运行示例代码。
+教程部分的示例代码采用的是[@sinoui/web-forms](form)作为 UI 展示的。如果使用的是 sinoui-components，可以参考[@sinoui/sinoui-components-forms](sinoui-components-forms)。
+教程代码虽然采用的是@sinoui/web-forms，但是可以直接使用@sinoui/sinoui-components-forms 中的组件替换@sinoui/web-forms 相对应的组件运行示例。
 
 ## 表单值处理
 
@@ -104,7 +105,7 @@ function FormDemo() {
 
 可以在使用`useFormState`时，传入第二个对象参数，在里面指定表单全局校验规则;
 可以给`Field`组件指定`validate`属性，做表单域级别的同步校验，指定`asyncValidate`属性指定表单域级别的异步校验规则。
-其中，表单域级别的同步校验，有几个常用属性：
+其中，表单域级别的同步校验，有几个内置校验属性：
 
 - required 必填校验
 - trimRequired 去掉首尾空白符之后的必填校验
@@ -125,7 +126,6 @@ import Form, { FormItem, Field, Label } from '@sinoui/web-forms';
 /**
  * 定义全局表单校验规则
  */
-
 function validate(values: any) {
   let error: any = {};
 
@@ -391,7 +391,7 @@ function FormDemo() {
 
 ## 表单域值关联
 
-我们可以给`Field`组件指定`relyFields`属性表示跟哪个表单域关联，同时指定`relyFn`函数属性定义依赖规则。
+我们可以给`Field`组件指定`relyFields`属性表示跟哪些表单域关联，同时指定`relyFn`函数属性定义依赖规则。
 
 ```tsx
 import React from 'react';
@@ -599,7 +599,7 @@ function FormDemo() {
 
 ## 嵌套表单
 
-简单的嵌套表单我们只需要在指定 name 时，做些处理就行。复杂的嵌套表单(可编辑数据行)，则需要结合`useFieldArray`来实现。下面我们以一个简单的示例来说明具体使用方式：
+简单的嵌套表单我们只需要在指定 name 时，做些处理就行。复杂的嵌套表单(可编辑数据行)，则需要结合[useFieldArray](/api-use-field-array)或[FieldArray](/api-field-array-component)来实现。下面我们以一个简单的示例来说明具体使用方式：
 
 `TelePhoneForm.tsx`
 
