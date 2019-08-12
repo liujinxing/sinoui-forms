@@ -1,7 +1,7 @@
 {
   "name": "@sinoui/hook-form-state",
   "private": true,
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0-alpha.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "umd:main": "dist/sinoui-hook-form-state.umd.production.js",
