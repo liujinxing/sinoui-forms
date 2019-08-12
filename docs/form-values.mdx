@@ -20,7 +20,7 @@ import { useFormState, FormValueMonitor } from '@sinoui/rx-form-state';
 
 ## 创建表单状态上下文
 
-无论我们要收集表单值、表单验证还是提交表单，我们都需要先创建表单状态的上下文。通过[useFormState](api-use-form-state)可创建表单状态，并将它指定给[Form](api-form-component)组件，建立表单状态上下文。如下所示：
+无论我们要收集表单值、表单验证还是提交表单，我们都需要先创建表单状态的上下文。通过[useFormState](api-use-form-state)可创建表单状态，并将它指定给[Form](form)组件，建立表单状态上下文。如下所示：
 
 ```tsx
 import Form, { useFormState } from '@sinoui/web-forms';
@@ -157,11 +157,11 @@ function FormDemo() {
 
 </Playground>
 
-注意：为了直观的看到表单值变化，使用了[FormValueMonitor](api-form-value-minitor-component)组件来监听表单值并以 JSON 格式展现出来。
+注意：为了直观的看到表单值变化，使用了[FormValueMonitor](/api-form-value-monitor-component)组件来监听表单值并以 JSON 格式展现出来。
 
 ## 展现表单值
 
-上一小节的示例中已经演示了采用[FormValueMonitor](api-form-value-minitor-component)组件来展现表单值。这一小节详细介绍用[FormValueMonitor](api-form-value-minitor-component)组件展现表单值。
+上一小节的示例中已经演示了采用[FormValueMonitor](/api-form-value-monitor-component)组件来展现表单值。这一小节详细介绍用[FormValueMonitor](/api-form-value-monitor-component)组件展现表单值。
 
 `FormValueMonitor`组件会监控表单的值变化，一旦值发生变化，就会获取到新的表单值，并用新表单值作为参数调用`children`属性指定的渲染函数，展现出表单值。如下所示：
 

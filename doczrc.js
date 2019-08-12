@@ -64,7 +64,7 @@ export default {
     },
     {
       name: '@sinoui/web-forms',
-      menu: ['Form', 'FormItem', 'FormItemField', 'Label'],
+      menu: ['Form', 'FormItem', 'Field', 'Label'],
     },
     {
       name: '@sinoui/sinoui-components-forms',

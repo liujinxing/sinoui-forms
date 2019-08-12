@@ -140,7 +140,7 @@ const relys = [
 
 ## 表单状态管理器对象`formState`
 
-`useFormState()`的返回`formState`表单状态管理器对象。通过`formState`，可以获取和更新表单状态。
+`useFormState()`返回`formState`表单状态管理器对象。通过`formState`，可以获取和更新表单状态。
 
 ## 获取表单状态
 
@@ -159,14 +159,14 @@ const relys = [
 
 通过这些属性即可获取到表单值、校验错误等状态。
 
-如果你的组件关注表单状态的变更，也就是说当成组成状态使用，那么需要用到下面提供的获取表单状态的 React Hooks：
+如果你的组件关注表单状态的变更，也就是说当成组件状态使用，那么需要用到下面提供的获取表单状态的 React Hooks：
 
 | hook                                         | 类型                                                                                                                                                          | 描述                                              |
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
 | [useFormSubmitting](api-use-form-submitting) | `(formState?: FormState) => void`                                                                                                                             | 获取表单提交中状态的 hook。在表单提交时特别有用。 |
 | [useFormSelect](api-use-form-select)         | `<T, M>(formState: FormState<T>, selector: (FormStateModel: FormStateModel<T>) => M): M` 或者 `<T, M>(selector: (FormStateModel: FormStateModel<T>) => M): M` | 提取表单状态的 hook。                             |
 
-下面通过两个例子来看一看如果使用这两个 hooks。
+下面通过两个例子来看一看如何使用这两个 hooks。
 
 ### 例子 1：在表单中使用的提交按钮
 

@@ -59,7 +59,7 @@ export default function Form(props: Props) {
   const handleSubmit = useCallback(
     (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      formState.submit();
+      formState.submit().catch(() => {});
     },
     [formState],
   );
