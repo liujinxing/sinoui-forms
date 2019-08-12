@@ -1,5 +1,9 @@
 # 版本变更记录
 
+## v1.0.0-alpha.4 (2019.8.12)
+
+- fix(@sinoui/sinoui-components-forms): 修复 Field 组件会无限更新的缺陷
+
 ## v1.0.0-alpha.3 (2019.8.12)
 
 - fix: 修复 d.ts 文件引用错误

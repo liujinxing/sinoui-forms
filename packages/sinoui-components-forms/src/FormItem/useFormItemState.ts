@@ -56,22 +56,18 @@ function useFormItemState(name: string | undefined, options?: Options) {
    */
   const addField = useCallback(
     (field: Partial<FieldConfig> & FieldValidateProps) => {
-      const idx = fields.findIndex((item) => item.name === field.name);
-      if (idx === -1) {
-        setFields(
-          produce((draft) => {
+      setFields(
+        produce((draft: (Partial<FieldConfig> & FieldValidateProps)[]) => {
+          const idx = draft.findIndex((item) => item.name === field.name);
+          if (idx === -1) {
             draft.push(field);
-          }),
-        );
-      } else {
-        setFields(
-          produce((draft) => {
+          } else {
             draft.splice(idx, 1, field);
-          }),
-        );
-      }
+          }
+        }),
+      );
     },
-    [fields],
+    [],
   );
 
   /**
@@ -80,20 +76,16 @@ function useFormItemState(name: string | undefined, options?: Options) {
    * @param {string} fieldName 表单域名称
    * @returns
    */
-  const removeField = useCallback(
-    (fieldName) => {
-      const idx = fields.findIndex((field) => field.name === fieldName);
-
-      if (idx !== -1) {
-        setFields(
-          produce((draft) => {
-            draft.splice(idx, 1);
-          }),
-        );
-      }
-    },
-    [fields],
-  );
+  const removeField = useCallback((fieldName) => {
+    setFields(
+      produce((draft: (Partial<FieldConfig> & FieldValidateProps)[]) => {
+        const idx = draft.findIndex((field) => field.name === fieldName);
+        if (idx !== -1) {
+          draft.splice(idx, 1);
+        }
+      }),
+    );
+  }, []);
   const { inlineProp, verticalProp, readOnlyProp, disabledProp } =
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     optionsRef.current || ({} as any);

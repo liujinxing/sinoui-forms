@@ -1,4 +1,6 @@
+import React, { useEffect } from 'react';
 import { renderHook } from '@testing-library/react-hooks';
+import { render } from '@testing-library/react';
 import useFormItemState from '../FormItem/useFormItemState';
 
 it('formItemState被定义', () => {
@@ -44,4 +46,28 @@ it('配置项', () => {
   expect(result.current.inline).toBeTruthy();
   expect(result.current.vertical).toBeFalsy();
   expect(result.current.readOnly).toBeTruthy();
+});
+
+it('循环渲染的问题', () => {
+  let count = 0;
+  function Wrapper() {
+    const { addField, removeField } = useFormItemState('userName', {
+      readOnlyProp: false,
+    });
+
+    useEffect(() => {
+      addField({ name: 'userName' });
+      return () => {
+        removeField('userName');
+      };
+    }, [addField, removeField]);
+
+    count += 1;
+
+    return null;
+  }
+
+  render(<Wrapper />);
+
+  expect(count).toBe(2);
 });
