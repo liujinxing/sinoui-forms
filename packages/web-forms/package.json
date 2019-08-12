@@ -1,6 +1,6 @@
 {
   "name": "@sinoui/web-forms",
-  "version": "0.1.0",
+  "version": "1.0.0-alpha.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -11,17 +11,17 @@
   "umd:main": "dist/sinoui-web-forms.umd.production.js",
   "module": "dist/sinoui-web-forms.es.production.js",
   "dependencies": {
-    "@sinoui/rx-form-state": "^0.1.0",
+    "@sinoui/rx-form-state": "^1.0.0-alpha.0",
     "classnames": "^2.2.6"
   },
   "peerDependencies": {
     "react": ">=16.8.0"
   },
   "devDependencies": {
-    "@types/classnames": "^2.2.9",
     "@testing-library/jest-dom": "^4.0.0",
     "@testing-library/react": "^8.0.7",
     "@testing-library/react-hooks": "^1.1.0",
+    "@types/classnames": "^2.2.9",
     "@types/lodash": "^4.14.136",
     "@types/scheduler": "^0.12.1",
     "@types/shallowequal": "^1.1.1",
