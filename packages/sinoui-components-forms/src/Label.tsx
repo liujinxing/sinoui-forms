@@ -53,12 +53,34 @@ function getLabelPropsFromSinouiFormContext(sinouiForm: SinouiFormState) {
 }
 
 /**
+ * 克隆对象的非undefined的属性
+ *
+ * @param object 对象
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function cloneObjectValue(object: any) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const newObj: any = {};
+  const keys = Object.keys(object);
+
+  keys.forEach((key) => {
+    if (object[key] !== undefined) {
+      newObj[key] = object[key];
+    }
+  });
+
+  return newObj;
+}
+
+/**
  * 表单项标签
  * @param props
  */
 const Label: React.SFC<LabelProps> = (props) => {
-  const formItemContext = useContext(FormItemContext).useFormItem();
-  const { name = formItemContext.name, className } = props;
+  const { name: nameFromFormItemContext, ...formItemProps } = useContext(
+    FormItemContext,
+  ).useFormItem();
+  const { name = nameFromFormItemContext, className } = props;
 
   const sinouiFormState = useContext(SinouiFormStateContext);
   const isValid = useFieldValid(name);
@@ -66,7 +88,7 @@ const Label: React.SFC<LabelProps> = (props) => {
 
   const labelProps = {
     ...getLabelPropsFromSinouiFormContext(sinouiFormState),
-    ...formItemContext,
+    ...formItemProps,
     ...props,
   };
 
@@ -76,7 +98,7 @@ const Label: React.SFC<LabelProps> = (props) => {
 
   return !inFormItemContent ? (
     <PureFormLabel
-      {...labelProps}
+      {...cloneObjectValue(labelProps)}
       className={classNames('sinoui-form-label', className)}
     />
   ) : null;
