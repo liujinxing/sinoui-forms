@@ -73,25 +73,15 @@ function getLabel(children: React.ReactNode) {
 /**
  * 渲染标签
  */
-function renderLabel(
-  label: React.ReactNode,
-  children: React.ReactNode,
-  name?: string,
-) {
+function renderLabel(label: React.ReactNode, children: React.ReactNode) {
   if (label && typeof label === 'string') {
-    return <Label name={name}>{label}</Label>;
+    return <Label>{label}</Label>;
   }
   if (label) {
-    return React.cloneElement(label as any, { name });
+    return label;
   }
 
-  const child = getLabel(children);
-
-  if (child) {
-    return React.cloneElement(child as any, { name });
-  }
-
-  return child;
+  return getLabel(children);
 }
 
 /**
@@ -100,31 +90,28 @@ function renderLabel(
 function FormItem(props: Props) {
   const {
     label,
-    disabled: disabledProp,
-    readOnly: readOnlyProp,
-    inline: inlineProp,
-    vertical: verticalProp,
-    name: nameProp,
+    disabled,
+    readOnly,
+    inline,
+    vertical,
+    name,
     children,
     className,
     style,
     contentStyle,
   } = props;
 
-  const context = useFormItemState(nameProp, {
-    inlineProp,
-    verticalProp,
-    readOnlyProp,
-    disabledProp,
+  const context = useFormItemState({
+    name,
+    inline,
+    vertical,
+    readOnly,
+    disabled,
   });
-  const { fields, inline, vertical } = context;
 
-  const name = nameProp || (fields.length > 0 ? fields[0].name : undefined);
-
-  const newLabel = useMemo(() => renderLabel(label, children, name), [
+  const newLabel = useMemo(() => renderLabel(label, children), [
     children,
     label,
-    name,
   ]);
 
   return (

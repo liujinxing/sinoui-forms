@@ -1,10 +1,9 @@
 /* eslint-disable import/no-unresolved */
 import React, { useContext } from 'react';
 import FormLabel from 'sinoui-components/Form/FormControl/FormLabel';
-import { FieldValidateProps } from '@sinoui/rx-form-state';
 import classNames from 'classnames';
 import FormItemContentContext from './FormItem/FormItemContentContext';
-import FormItemContext, { FormItemState } from './FormItem/FormItemContext';
+import FormItemContext from './FormItem/FormItemContext';
 import useFieldValid from './useFieldValid';
 import SinouiFormStateContext, {
   SinouiFormState,
@@ -41,13 +40,6 @@ export interface LabelProps {
 }
 
 /**
- * 判断是否包含有必填校验的field
- */
-function containsRequired(fields: FieldValidateProps[]) {
-  return fields.length > 0 && !!fields[0].required;
-}
-
-/**
  * 从表单上下文中获取标签属性
  */
 function getLabelPropsFromSinouiFormContext(sinouiForm: SinouiFormState) {
@@ -61,24 +53,23 @@ function getLabelPropsFromSinouiFormContext(sinouiForm: SinouiFormState) {
 }
 
 /**
- * 从表单项上下文中获取标签属性
+ * 克隆对象的非undefined的属性
+ *
+ * @param object 对象
  */
-function getLabelPropsFromFormItemContext({
-  id,
-  fields = [],
-  inline,
-  vertical,
-  readOnly,
-  disabled,
-}: FormItemState) {
-  return {
-    vertical,
-    readOnly,
-    disabled,
-    inline,
-    htmlFor: `${id}`,
-    required: containsRequired(fields),
-  };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function cloneObjectValue(object: any) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const newObj: any = {};
+  const keys = Object.keys(object);
+
+  keys.forEach((key) => {
+    if (object[key] !== undefined) {
+      newObj[key] = object[key];
+    }
+  });
+
+  return newObj;
 }
 
 /**
@@ -86,17 +77,18 @@ function getLabelPropsFromFormItemContext({
  * @param props
  */
 const Label: React.SFC<LabelProps> = (props) => {
-  const { name, className } = props;
+  const { name: nameFromFormItemContext, ...formItemProps } = useContext(
+    FormItemContext,
+  ).useFormItem();
+  const { name = nameFromFormItemContext, className } = props;
 
   const sinouiFormState = useContext(SinouiFormStateContext);
   const isValid = useFieldValid(name);
   const { inFormItemContent } = useContext(FormItemContentContext);
 
-  const formItemContext = useContext(FormItemContext);
-
   const labelProps = {
     ...getLabelPropsFromSinouiFormContext(sinouiFormState),
-    ...getLabelPropsFromFormItemContext(formItemContext),
+    ...formItemProps,
     ...props,
   };
 
@@ -106,7 +98,7 @@ const Label: React.SFC<LabelProps> = (props) => {
 
   return !inFormItemContent ? (
     <PureFormLabel
-      {...labelProps}
+      {...cloneObjectValue(labelProps)}
       className={classNames('sinoui-form-label', className)}
     />
   ) : null;

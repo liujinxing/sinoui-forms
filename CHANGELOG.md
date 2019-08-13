@@ -3,6 +3,7 @@
 ## v1.0.0-alpha.5
 
 - fix(@sinoui/rx-form-state): useFomrSelect -> useFormSelect
+- improve(@sinoui/sinoui-components-forms): 优化 Field 初始化时的二次渲染
 
 ## v1.0.0-alpha.4 (2019.8.12)
 

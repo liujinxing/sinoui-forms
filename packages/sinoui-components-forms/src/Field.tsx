@@ -5,55 +5,57 @@ import {
   Field as RxField,
   FieldProps as RxFieldProps,
 } from '@sinoui/rx-form-state';
+import shallowEqual from 'shallowequal';
 import FormItemContext from './FormItem/FormItemContext';
+import { FieldConfig } from './FormItem/types';
 
-/**
- * 表单域组件
- */
-function Field(props: RxFieldProps & { readOnly?: boolean }) {
-  const { name, required } = props;
-  const {
-    id,
-    addField,
-    removeField,
-    readOnly: readOnlyFromFormItem,
-    disabled: disabledFromFormItem,
-  } = useContext(FormItemContext);
+function useField(props: RxFieldProps & { readOnly?: boolean }) {
+  const { addField, removeField, useFormItemProps } = useContext(
+    FormItemContext,
+  );
+  const formItemProps = useFormItemProps();
 
   const {
-    readOnly = readOnlyFromFormItem,
-    disabled = disabledFromFormItem,
+    name,
+    required,
+    readOnly = formItemProps.readOnly,
+    disabled = formItemProps.disabled,
   } = props;
 
-  const isFieldExitRef = useRef([]);
+  const addedFieldRef = useRef<FieldConfig | null>(null);
   const fieldConfig = {
     name,
     required,
     readOnly,
     disabled,
   };
-
-  if (name) {
-    if (isFieldExitRef.current.indexOf(name as never) === -1) {
-      if (addField) {
-        addField(fieldConfig);
-        isFieldExitRef.current.push(name as never);
-      }
-    }
+  if (name && addField && !shallowEqual(addedFieldRef.current, fieldConfig)) {
+    addField(fieldConfig);
+    addedFieldRef.current = fieldConfig;
   }
 
   useEffect(() => {
     if (removeField) {
       return () => {
+        addedFieldRef.current = null;
         removeField(name);
       };
     }
     return undefined;
   }, [name, removeField]);
+}
+
+/**
+ * 表单域组件
+ */
+function Field(props: RxFieldProps & { readOnly?: boolean }) {
+  const formItemProps = useContext(FormItemContext).useFormItemProps();
+
+  useField(props);
 
   return (
     <div className="sinoui-form-field">
-      <RxField {...(props as any)} id={`${id}`} />
+      <RxField {...(props as any)} id={`${formItemProps.id}`} />
     </div>
   );
 }
