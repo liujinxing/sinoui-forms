@@ -1,9 +1,10 @@
-import React from 'react';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+import React, { useContext } from 'react';
+import { render, cleanup, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import Field from '../Field';
 import FormItemContext from '../FormItem/FormItemContext';
 import Wrapper from './FormTestWrapper';
+import useFormItemState from '../FormItem/useFormItemState';
 
 const formItemState = {
   name: 'userName',
@@ -11,7 +12,10 @@ const formItemState = {
   id: 1,
   addField: jest.fn(),
   removeField: jest.fn(),
-};
+  useFormItem: () => ({ name: 'userName', id: 1 }),
+  useFormItemProps: () => ({ name: 'userName', id: 1 }),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+} as any;
 
 afterEach(cleanup);
 
@@ -50,9 +54,7 @@ it('使用render属性渲染一个输入框', async () => {
           render={({ setFieldValue }) => (
             <input
               placeholder="请输入用户名"
-              onChange={(event) =>
-                setFieldValue('userName', event.target.value)
-              }
+              onChange={(event) => setFieldValue(event.target.value)}
             />
           )}
         />
@@ -134,20 +136,82 @@ it('value不存在时，显示默认值', () => {
   expect(getByTestId('field')).toHaveAttribute('value', '默认值');
 });
 
-it('每次渲染时，只commit一次', () => {
+it('创建Field时，render两次label，执行一次渲染', () => {
   let count = 0;
 
   function Child() {
+    const formItemProps = useContext(FormItemContext).useFormItemProps();
     count += 1;
+
+    return <div>`${formItemProps.name}`</div>;
+  }
+
+  const labelLog: (string | undefined)[] = [];
+  function Label() {
+    const formItem = useContext(FormItemContext).useFormItem();
+    labelLog.push(formItem.name);
 
     return null;
   }
 
+  function FieldWrapper({ children }: { children?: React.ReactNode }) {
+    const context = useFormItemState();
+
+    return (
+      <Wrapper>
+        <FormItemContext.Provider value={context}>
+          {children}
+        </FormItemContext.Provider>
+      </Wrapper>
+    );
+  }
+
   render(
-    <Wrapper>
+    <FieldWrapper>
+      <Label />
       <Field as={Child} name="count" />
-    </Wrapper>,
+    </FieldWrapper>,
   );
 
   expect(count).toBe(1);
+  expect(labelLog).toEqual([undefined, 'count']);
+});
+
+it('更新Field的name，同步到formitem上下文中', () => {
+  const labelLog: (string | undefined)[] = [];
+  function Label() {
+    const formItem = useContext(FormItemContext).useFormItem();
+    labelLog.push(formItem.name);
+
+    return null;
+  }
+
+  function FieldWrapper({ children }: { children?: React.ReactNode }) {
+    const context = useFormItemState();
+
+    return (
+      <Wrapper>
+        <FormItemContext.Provider value={context}>
+          {children}
+        </FormItemContext.Provider>
+      </Wrapper>
+    );
+  }
+  const { rerender } = render(
+    <FieldWrapper>
+      <Label />
+      <Field as="input" name="count" />
+    </FieldWrapper>,
+  );
+
+  act(() => {
+    rerender(
+      <FieldWrapper>
+        <Label />
+        <Field as="input" name="userName" />
+      </FieldWrapper>,
+    );
+  });
+
+  expect(labelLog).toEqual([undefined, 'count', 'count', 'userName']);
 });

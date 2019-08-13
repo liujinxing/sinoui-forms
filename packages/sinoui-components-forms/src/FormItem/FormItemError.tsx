@@ -13,13 +13,9 @@ const FormItemErrorWrapper = styled.div`
  * 渲染表单域错误信息
  */
 function FormItemError() {
-  const { name, fields } = useContext(FormItemContext);
-  const fieldName = useMemo(
-    () => name || (fields.length > 0 ? fields[0].name : undefined),
-    [name, fields],
-  );
-  const error = useFieldError(fieldName);
-  const isTouched = useFieldTouched(fieldName);
+  const { name } = useContext(FormItemContext).useFormItem();
+  const error = useFieldError(name);
+  const isTouched = useFieldTouched(name);
 
   return error && isTouched ? (
     <FormItemErrorWrapper

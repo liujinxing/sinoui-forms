@@ -4,16 +4,9 @@ import '@testing-library/jest-dom/extend-expect';
 import Label from '../Label';
 import Wrapper from './FormTestWrapper';
 import FormItemContext from '../FormItem/FormItemContext';
+import createFormItemContext from '../FormItem/createFormItemContext';
 
 afterEach(cleanup);
-
-const context = {
-  id: 1,
-  name: 'userName',
-  fields: [{ name: 'userName', required: true }],
-  addField: jest.fn(),
-  removeField: jest.fn(),
-};
 
 it('渲染Label', () => {
   const { getByText } = render(
@@ -26,6 +19,11 @@ it('渲染Label', () => {
 });
 
 it('如果第一个field存在必填校验，则Label会有必填样式', () => {
+  const context = createFormItemContext({
+    id: 1,
+    fields: [{ name: 'userName', required: true }],
+  });
+
   const { getByText } = render(
     <Wrapper>
       <FormItemContext.Provider value={context}>
@@ -38,16 +36,14 @@ it('如果第一个field存在必填校验，则Label会有必填样式', () => 
 });
 
 it('包含多个表单域时，第一个field没有required属性时，Label没有required属性', () => {
-  const newContext = {
+  const context = createFormItemContext({
     id: 1,
     name: 'userName',
     fields: [{ name: 'userName' }, { name: 'password', required: true }],
-    addField: jest.fn(),
-    removeField: jest.fn(),
-  };
+  });
   const { getByText } = render(
     <Wrapper>
-      <FormItemContext.Provider value={newContext}>
+      <FormItemContext.Provider value={context}>
         <Label>用户名</Label>
       </FormItemContext.Provider>
     </Wrapper>,
@@ -57,6 +53,11 @@ it('包含多个表单域时，第一个field没有required属性时，Label没�
 });
 
 it('如果label属性指定了htmlFor属性，则采用label元素的for应为htmlFor指定的值', () => {
+  const context = createFormItemContext({
+    id: 1,
+    fields: [{ name: 'userName', required: true }],
+  });
+  
   const { container } = render(
     <Wrapper>
       <FormItemContext.Provider value={context}>

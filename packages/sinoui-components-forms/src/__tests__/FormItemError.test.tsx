@@ -7,18 +7,16 @@ import FormItemError from '../FormItem/FormItemError';
 import FormItemContext from '../FormItem/FormItemContext';
 import Wrapper from './FormTestWrapper';
 import Field from '../Field';
-
-const context = {
-  id: 1,
-  name: 'userName',
-  fields: [{ name: 'userName', required: true }, { name: 'password' }],
-  addField: jest.fn(),
-  removeField: jest.fn(),
-};
+import createFormItemContext from '../FormItem/createFormItemContext';
 
 afterEach(cleanup);
 
 it('校验没有错误时，不渲染', () => {
+  const context = createFormItemContext({
+    id: 1,
+    name: 'userName',
+    fields: [],
+  });
   const { queryByTestId } = render(
     <Wrapper>
       <FormItemContext.Provider value={context}>
@@ -31,11 +29,14 @@ it('校验没有错误时，不渲染', () => {
 });
 
 it('校验错误出错，但touched状态为false时，不渲染', () => {
+  const context = createFormItemContext({
+    id: 1,
+    name: 'userName',
+    fields: [],
+  });
   const { queryByTestId, getByTestId } = render(
     <Wrapper>
-      <FormItemContext.Provider
-        value={{ ...context, name: 'userName', fields: [] }}
-      >
+      <FormItemContext.Provider value={context}>
         <Field as="input" name="userName" required data-testid="field" />
         <FormItemError />
       </FormItemContext.Provider>
@@ -52,9 +53,14 @@ it('校验错误出错，但touched状态为false时，不渲染', () => {
 });
 
 it('校验出错，并且touched为true时，渲染组件', () => {
+  const context = createFormItemContext({
+    id: 1,
+    name: 'userName',
+    fields: [],
+  });
   const { getByTestId } = render(
     <Wrapper>
-      <FormItemContext.Provider value={{ ...context, name: 'userName' }}>
+      <FormItemContext.Provider value={context}>
         <Field as="input" name="userName" required data-testid="field" />
         <FormItemError />
       </FormItemContext.Provider>
