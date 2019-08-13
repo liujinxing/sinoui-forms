@@ -12,7 +12,7 @@ import useFieldTouched from './useFieldTouched';
 import useFormStateContext from './useFormStateContext';
 import useBehaviorSubject from './utils/useBehaviorSubject';
 import useFormSubmitting from './useFormSubmitting';
-import useFomrSelect from './useFormSelect';
+import useFormSelect from './useFormSelect';
 
 export * from './types';
 
@@ -32,5 +32,5 @@ export {
   FieldProps,
   useBehaviorSubject,
   useFormSubmitting,
-  useFomrSelect,
+  useFormSelect,
 };
