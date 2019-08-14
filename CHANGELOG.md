@@ -4,8 +4,9 @@
 
 - fix(@sinoui/rx-form-state): useFomrSelect -> useFormSelect
 - improve(@sinoui/sinoui-components-forms): 优化 Field 初始化时的二次渲染
-- fix: 修复所有模块的 Field 指定 as 组件的属性提示错误的缺陷
+- fix: 修复所有模块的 Field 指定 as 组件的属性提示错误的缺陷 (#3)
 - fix: 修复@sinoui/sinoui-components-forms 的 Field 组件和@sinoui/web-forms 的 Field 组件无法引用到 as 组件的缺陷，使用`innerRef`即可引用到。
+- feat(@sinoui/sinoui-components-forms): Field 组件给 as 组件`error`属性 (#4)
 
 ### 破坏性变更
 
