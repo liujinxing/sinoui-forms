@@ -1,37 +1,55 @@
-# sinoui-forms
+# sinoui-forms-library
 
-主要用于表单状态管理。
+用于表单状态管理的库：
 
-`useFormState`提供以下功能：
+- @sinoui/rx-form-state - 表单状态管理库，可以用于 react、react-native 的表单状态管理库
+- @sinoui/sinoui-components-forms - 适配 sinoui-components 的表单组件库
 
-- 表单值变更处理
-- 表单校验
+`@sinoui/rx-form-state`支持以下特性：
+
+- 便捷的表单值处理
+- 表单校验、异步校验
 - 表单提交
 - 嵌套表单
-- 表单域值关联
+- 表单值关联
+- 可以有任何 UI 库、组件结合使用
+
+@sinoui/rx-form-state 内部采用的是局部状态管理，表单域的值变更只会引起表单域本身重绘，不会扩散到整个表单。这从根本上解决了大部分表单状态管理库面临的性能问题。开发人员不需要掌握 React 性能优化的知识点，就能开发出复杂的、性能优越的表单应用。
+
+更多特性和用法查看[官方文档](https://sinoui.github.io/sinoui-forms-library/)。
 
 ## 依赖安装
 
 ```shell
-yarn add sinoui-forms
+yarn add @sinoui/rx-form-state @sinoui/sinoui-components-forms
 ```
 
 或
 
 ```shell
-npm install --save sinoui-forms
+npm install --save @sinoui/rx-form-state @sinoui/sinoui-components-forms
 ```
 
 ## 快速使用
 
+示例采用了 sinoui-components 库，需要安装以下依赖才可运行：
+
+```shell
+yarn add styled-components@3.4.10
+```
+
+示例：
+
 ```tsx
 import React from 'react';
-import useFormState, {
+import { useFormState } from '@sinoui/rx-form-state';
+import {
+  Form,
   FormItem,
   Field,
   Label,
-  FormStateContext,
-} from 'sinoui-forms';
+  TextInput,
+} from '@sinoui/sinoui-components-forms';
 import Button from 'sinoui-components/Button';
 import http from '@sinoui/http';
 
@@ -54,22 +72,17 @@ function FormDemo() {
   const formState = useFormState(defaultValues, { validate, onSubmit });
 
   return (
-    <FormStateContext.Provider value={formState}>
+    <Form formState={formState}>
       <FormItem>
         <Label>用户名</Label>
-        <Field as="input" name="userName" required />
+        <TextInput name="userName" required />
       </FormItem>
       <FormItem>
         <Label>密码</Label>
-        <Field
-          as="input"
-          name="password"
-          required
-          compProps={{ type: 'password' }}
-        />
+        <TextInput type="password" name="password" required />
       </FormItem>
       <Button onClick={() => formState.onSubmit()}>登录</Button>
-    </FormStateContext.Provider>
+    </Form>
   );
 }
 ```
@@ -121,16 +134,6 @@ yarn doc:publish
 ```
 
 ### 发布文档
-
-在发布文档之前，在`package.json`中配置好`homepage`，如下所示：
-
-```json
-{
-  "homepage": "https://sinouiincubator.github.io/editable-data-table"
-}
-```
-
-配置完之后就可以执行下面的命令行发布文档：
 
 ```shell
 yarn doc:publish
