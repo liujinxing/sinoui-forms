@@ -8,6 +8,7 @@ import {
 import shallowEqual from 'shallowequal';
 import FormItemContext from './FormItem/FormItemContext';
 import { FieldConfig } from './FormItem/types';
+import useFieldValid from './useFieldValid';
 
 type FieldProps<AsCompProps, T> = Omit<RxFieldProps<AsCompProps, T>, 'as'> & {
   readOnly?: boolean;
@@ -61,13 +62,19 @@ type GenericFieldHTMLAttributes =
 function Field<AsCompProps = GenericFieldHTMLAttributes, T = string>(
   props: FieldProps<AsCompProps, T>,
 ) {
+  const { name } = props;
   const formItemProps = useContext(FormItemContext).useFormItemProps();
+  const isValid = useFieldValid(name);
 
   useField(props);
 
   return (
     <div className="sinoui-form-field">
-      <RxField {...(props as any)} id={`${formItemProps.id}`} />
+      <RxField
+        {...(props as any)}
+        id={`${formItemProps.id}`}
+        error={!isValid}
+      />
     </div>
   );
 }
