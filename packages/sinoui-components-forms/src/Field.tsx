@@ -9,7 +9,12 @@ import shallowEqual from 'shallowequal';
 import FormItemContext from './FormItem/FormItemContext';
 import { FieldConfig } from './FormItem/types';
 
-function useField(props: RxFieldProps & { readOnly?: boolean }) {
+type FieldProps<AsCompProps, T> = Omit<RxFieldProps<AsCompProps, T>, 'as'> & {
+  readOnly?: boolean;
+  as?: React.ReactType<AsCompProps>;
+};
+
+function useField(props: FieldProps<any, any>) {
   const { addField, removeField, useFormItemProps } = useContext(
     FormItemContext,
   );
@@ -45,10 +50,17 @@ function useField(props: RxFieldProps & { readOnly?: boolean }) {
   }, [name, removeField]);
 }
 
+type GenericFieldHTMLAttributes =
+  | JSX.IntrinsicElements['input']
+  | JSX.IntrinsicElements['select']
+  | JSX.IntrinsicElements['textarea'];
+
 /**
  * 表单域组件
  */
-function Field(props: RxFieldProps & { readOnly?: boolean }) {
+function Field<AsCompProps = GenericFieldHTMLAttributes, T = string>(
+  props: FieldProps<AsCompProps, T>,
+) {
   const formItemProps = useContext(FormItemContext).useFormItemProps();
 
   useField(props);

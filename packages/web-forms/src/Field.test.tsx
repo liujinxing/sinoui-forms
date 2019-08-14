@@ -133,3 +133,15 @@ it('value不存在时，显示默认值', () => {
 
   expect(getByTestId('field')).toHaveAttribute('value', '默认值');
 });
+
+it('验证Field组件给as组件添加属性时的ts提示', () => {
+  function Child(props: { childProp: string }) {
+    // eslint-disable-next-line no-console
+    console.log(props);
+    return null;
+  }
+
+  const element = <Field as={Child} childProp="1" name="userName" />;
+
+  expect(element).toBeDefined();
+});

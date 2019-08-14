@@ -215,3 +215,14 @@ it('更新Field的name，同步到formitem上下文中', () => {
 
   expect(labelLog).toEqual([undefined, 'count', 'count', 'userName']);
 });
+
+it('验证Field组件给as组件添加属性时的ts提示', () => {
+  function Child(props: { childProp: string }) {
+    console.log(props);
+    return null;
+  }
+
+  const element = <Field as={Child} childProp="1" name="userName" />;
+
+  expect(element).toBeDefined();
+});

@@ -4,6 +4,36 @@
 
 - fix(@sinoui/rx-form-state): useFomrSelect -> useFormSelect
 - improve(@sinoui/sinoui-components-forms): 优化 Field 初始化时的二次渲染
+- fix: 修复所有模块的 Field 指定 as 组件的属性提示错误的缺陷
+- fix: 修复@sinoui/sinoui-components-forms 的 Field 组件和@sinoui/web-forms 的 Field 组件无法引用到 as 组件的缺陷，使用`innerRef`即可引用到。
+
+### 破坏性变更
+
+[@sinoui/rx-form-state | Field](https://sinoui.github.io/sinoui-forms-library/api-field-component)的`ref`属性引用不到`as`组件元素，需要换成`innerRef`属性。如下所示：
+
+之前的方式：
+
+```tsx
+<Field
+  as="input"
+  ref={(instance) => {
+    instance.focus();
+  }}
+  name="userName"
+/>
+```
+
+调整之后的方式：
+
+```tsx
+<Field
+  as="input"
+  innerRef={(instance) => {
+    instance.focus();
+  }}
+  name="userName"
+/>
+```
 
 ## v1.0.0-alpha.4 (2019.8.12)
 

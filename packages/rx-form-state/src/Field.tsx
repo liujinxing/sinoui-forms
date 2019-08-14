@@ -9,7 +9,7 @@ import { FieldValidateProps, FieldModel } from './types';
 import createValidateFn from './utils/createValidateFn';
 import useFormStateContext from './useFormStateContext';
 
-interface FieldConfig<T = any> extends FieldValidateProps {
+interface FieldConfig<AsCompProps = any, T = any> extends FieldValidateProps {
   /**
    * 表单域名称。可以指定路径。
    *
@@ -23,7 +23,7 @@ interface FieldConfig<T = any> extends FieldValidateProps {
   /**
    * 指定表单域组件
    */
-  as?: React.ReactType;
+  as?: React.ReactType<AsCompProps>;
   /**
    * 默认值。
    */
@@ -55,6 +55,11 @@ interface FieldConfig<T = any> extends FieldValidateProps {
    * 指定渲染函数
    */
   render?: (props: FieldModel<T>) => React.ReactNode;
+
+  /**
+   * 引用as组件的ref
+   */
+  innerRef?: React.Ref<any>;
 }
 
 /**
@@ -73,16 +78,17 @@ type GenericFieldHTMLAttributes =
   | JSX.IntrinsicElements['select']
   | JSX.IntrinsicElements['textarea'];
 
-export type RxFieldProps<AsCompProps = {}, T = any> = FieldConfig<T> &
-  AsCompProps &
-  GenericFieldHTMLAttributes;
+export type RxFieldProps<
+  AsCompProps = GenericFieldHTMLAttributes,
+  T = any
+> = FieldConfig<AsCompProps, T> & AsCompProps;
 
 /**
  * 设置表单域配置hook
  *
  * @param props 表单域组件属性
  */
-function useSetFieldConfig(props: RxFieldProps) {
+function useSetFieldConfig(props: RxFieldProps<any, any>) {
   const { addField, removeField } = useFormStateContext();
   const { name } = props;
   const propsRef = useValueRef(props);
@@ -103,10 +109,9 @@ function useSetFieldConfig(props: RxFieldProps) {
 /**
  * 表单域组件
  */
-const ForwardRefField = React.forwardRef(function Field<
-  AsCompProps = {},
-  T = string
->(props: RxFieldProps<AsCompProps, T>, ref: any) {
+function Field<AsCompProps = GenericFieldHTMLAttributes, T = string>(
+  props: RxFieldProps<AsCompProps, T>,
+) {
   const {
     as: AsComp,
     render,
@@ -120,8 +125,9 @@ const ForwardRefField = React.forwardRef(function Field<
     required,
     onChange,
     onBlur,
+    innerRef,
     ...rest
-  } = props;
+  } = props as any;
   const field = useField<any>(name);
   const { setFieldValue, value = defaultValue, blur, isTouched, error } = field;
   const valueExtractRef = useValueRef(valueExtract);
@@ -163,12 +169,12 @@ const ForwardRefField = React.forwardRef(function Field<
       <AsComp
         data-testid="field-comp"
         {...rest}
+        ref={innerRef}
         name={name}
         value={value === undefined ? defaultValue : value}
         onBlur={handleBlur}
         onChange={handleChange}
         data-error={isTouched && !!error}
-        ref={ref}
       />
     );
   }
@@ -178,6 +184,6 @@ const ForwardRefField = React.forwardRef(function Field<
   }
 
   return null;
-});
+}
 
-export default ForwardRefField;
+export default Field;
