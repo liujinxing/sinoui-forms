@@ -18,24 +18,21 @@
 
 更多特性和用法查看[官方文档](https://sinoui.github.io/sinoui-forms-library/)。
 
-## 依赖安装
+## 文档
 
-```shell
-yarn add @sinoui/rx-form-state @sinoui/sinoui-components-forms
-```
-
-或
-
-```shell
-npm install --save @sinoui/rx-form-state @sinoui/sinoui-components-forms
-```
+- [开始入手](https://sinoui.github.io/sinoui-forms-library/)
+- [教程](https://sinoui.github.io/sinoui-forms-library/form-values)
+- [@sinoui/rx-form-state API](https://sinoui.github.io/sinoui-forms-library/rx-form-state)
+- [@sinoui/web-forms API](https://sinoui.github.io/sinoui-forms-library/form)
+- [@sinoui/web-components-forms API](https://sinoui.github.io/sinoui-forms-library/sinoui-components-forms)
+- [案例分析](https://sinoui.github.io/sinoui-forms-library/login)
 
 ## 快速使用
 
 示例采用了 sinoui-components 库，需要安装以下依赖才可运行：
 
 ```shell
-yarn add styled-components@3.4.10
+yarn add @sinoui/rx-form-state @sinoui/sinoui-components-forms sinoui-components styled-components@3.4.10
 ```
 
 示例：
