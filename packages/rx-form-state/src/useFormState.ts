@@ -31,7 +31,7 @@ function useFormState<T = any>(
   );
 
   if (
-    !(options && options.enableReinitialize !== false) &&
+    !(options && options.enableReinitialize === false) &&
     initialValues !== formState.values$.value &&
     !isEqual(initialValues, formState.values$.value)
   ) {

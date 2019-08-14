@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { renderHook } from '@testing-library/react-hooks';
-import { render, fireEvent, cleanup } from '@testing-library/react';
+import { render, fireEvent, cleanup, act } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import useFormState from './useFormState';
 import FormStateContext from './FormStateContext';
@@ -107,4 +107,19 @@ it('重绘时不会引起无限重绘', () => {
   fireEvent.click(getByTestId('setInitialValuesButton'));
 
   expect(getByTestId('userNameField')).toHaveAttribute('value', '测试');
+});
+
+it('useFormState指定options时，不会应用新的初始值', () => {
+  // issue #2
+  const { result, rerender } = renderHook((initialValues) =>
+    useFormState(initialValues, { onSubmit: jest.fn() }),
+  );
+
+  act(() => {
+    rerender({ userName: '张三' });
+  });
+
+  expect(result.current.values).toEqual({
+    userName: '张三',
+  });
 });
