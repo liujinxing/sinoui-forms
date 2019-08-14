@@ -7,10 +7,17 @@ import {
 } from '@sinoui/rx-form-state';
 import FormItemContext from './FormItemContext';
 
+type GenericFieldHTMLAttributes =
+  | JSX.IntrinsicElements['input']
+  | JSX.IntrinsicElements['select']
+  | JSX.IntrinsicElements['textarea'];
+
 /**
  * 表单域组件
  */
-function Field(props: RxFieldProps) {
+function Field<AsCompProps = GenericFieldHTMLAttributes, T = string>(
+  props: RxFieldProps<AsCompProps, T>,
+) {
   const { name } = props;
   const { id, addField, removeField } = useContext(FormItemContext);
 

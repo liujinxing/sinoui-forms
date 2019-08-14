@@ -215,3 +215,46 @@ it('更新Field的name，同步到formitem上下文中', () => {
 
   expect(labelLog).toEqual([undefined, 'count', 'count', 'userName']);
 });
+
+it('验证Field组件给as组件添加属性时的ts提示', () => {
+  function Child(props: { childProp: string }) {
+    console.log(props);
+    return null;
+  }
+
+  const element = <Field as={Child} childProp="1" name="userName" />;
+
+  expect(element).toBeDefined();
+});
+
+it('给as组件应用上error属性', () => {
+  function FieldWrapper({ children }: { children?: React.ReactNode }) {
+    const context = useFormItemState();
+
+    return (
+      <Wrapper>
+        <FormItemContext.Provider value={context}>
+          {children}
+        </FormItemContext.Provider>
+      </Wrapper>
+    );
+  }
+
+  const log: (boolean | undefined)[] = [];
+  function Child({ error, ...rest }: { error?: boolean }) {
+    log.push(error);
+    return <input {...rest} />;
+  }
+
+  const { getByTestId } = render(
+    <FieldWrapper>
+      <Field as={Child} name="count" required data-testid="field" />
+    </FieldWrapper>,
+  );
+
+  expect(log).toEqual([false]);
+
+  fireEvent.blur(getByTestId('field'));
+
+  expect(log).toEqual([false, true]);
+});

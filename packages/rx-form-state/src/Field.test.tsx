@@ -193,3 +193,35 @@ it('自定义值提取器', () => {
 
   expect(getByTestId('field')).toHaveAttribute('value', '解析出来的值:紫诺');
 });
+
+it('验证Field组件给as组件添加属性时的ts提示', () => {
+  // fix #3
+  function Child(props: { childProp: string }) {
+    // eslint-disable-next-line no-console
+    console.log(props);
+    return null;
+  }
+
+  const element = <Field as={Child} childProp="1" name="userName" />;
+
+  expect(element).toBeDefined();
+});
+
+it('innerRef', () => {
+  const { getByTestId } = render(
+    <Wrapper>
+      <Field
+        as="input"
+        name="userName"
+        data-testid="field"
+        innerRef={(instance) => {
+          if (instance) {
+            instance.focus();
+          }
+        }}
+      />
+    </Wrapper>,
+  );
+
+  expect(getByTestId('field')).toHaveFocus();
+});

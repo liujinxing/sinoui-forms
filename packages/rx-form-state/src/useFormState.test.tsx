@@ -122,4 +122,21 @@ it('useFormState指定options时，不会应用新的初始值', () => {
   expect(result.current.values).toEqual({
     userName: '张三',
   });
+  
+it('指定options情况下重绘时可能导致restState被重置', () => {
+  const { result, rerender } = renderHook(() =>
+    useFormState(undefined, { onSubmit: jest.fn() }),
+  );
+
+  act(() => {
+    result.current.setFieldValue('userName', '测试');
+  });
+
+  expect(result.current.values.userName).toBe('测试');
+
+  act(() => {
+    rerender();
+  });
+
+  expect(result.current.values.userName).toBe('测试');
 });
